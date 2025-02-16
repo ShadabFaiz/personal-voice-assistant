@@ -1,5 +1,6 @@
 # VoiceChat-AI (Self Hosted everything)
-Self hosted Voice Chat interaction with a self hosted AI in real time. Everything needs to be self hosted.
+
+**GOAL:** Develop a Self hosted Voice Chat application with a self hosted AI in real time. Everything needs to be self hosted, and in real time.You will be interacting the LLM using voice instead of typings.
 
 ### v0.0.1 (Self host Ollama)
 1. Self host Ollama on windows/WSL with any model. This model will be used for interaction. It may be switched to different model later.
@@ -41,7 +42,9 @@ ___
 ___
 
 ### v0.0.6 (Integrating any STT)
-1. Integrate real-time Speech to text. (can be within same application or host a sperate server for it.)
+1. Integrate real-time Speech to Text. (can be within same application or host a sperate server for it.)
+     1. Using cloud service (Not a option since it has to be self hosted)
+     2. Using Pre-existing solution that convert audio to text in real time. Host them locally on a server.
 
 ___
 
