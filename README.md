@@ -1,4 +1,4 @@
-# VoiceChat-AI (Self Hosted everything)
+# AI-VoiceChat (Self Hosted everything)
 
 **GOAL:** Develop a Self hosted Voice Chat application with a self hosted AI in real time. Everything needs to be self hosted, and in real time.You will be interacting the LLM using voice instead of typings.
 
