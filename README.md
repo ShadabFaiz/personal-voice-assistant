@@ -11,18 +11,20 @@ ___
 ### v0.0.2 (Accessing Ollama from WSL 2)
 1. Start Ollama with env host to 0.0.0.0 so that request coming from WSL 2 will be accepted.
 2. serve ollama with the updated env.
-3. Test if we can communicate with ollama api from WSL 2.
+3. Find windows IP from WSL 2. We will need to use this ip to interact with ollama.
+4. Test if we can communicate with ollama api from WSL 2 cli. (try to hit any ollam api from cli).
 
 ___
 
 ### v0.0.3 (Starting a Nestjs project)
 1. Start a nestjs project on WSL 2.
 2. Create a module **Ollama**.
-3. Connect with ollama running on windows 10.
-4. Create an endpoint POST `/ollama/chat` with body `{ prompt: 'Howdy!! }`.
-5. Pass the prompt to ollama.
-6. Stream ollama response back to client instead of waiting for complete response.
-7. Test it
+3. Create controller / services for it.
+5. Connect with ollama running on windows 10. (NOTE: the endpoint needs to be of the windows machine, not `localhost:11434`.)
+6. Create an endpoint POST `/ollama/chat` with body `{ prompt: 'Howdy!! }`.
+7. Pass the prompt to ollama.
+8. Stream ollama response back to client instead of waiting for complete response.
+9. Test it
 
 ___
 
