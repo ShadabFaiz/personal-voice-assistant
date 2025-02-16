@@ -2,6 +2,7 @@ import { Logger, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import configuration from './config/configuration';
 import { OllamaModule } from './modules/ollama/ollama.moduel';
+import { PicovoiceTranscriptor } from './modules/voiceChat/services/transcriptors/picovoiceTranscriptor';
 import { VoiceChatModule } from './modules/voiceChat/voice-chat.moduel';
 
 @Module({
@@ -14,6 +15,7 @@ import { VoiceChatModule } from './modules/voiceChat/voice-chat.moduel';
     VoiceChatModule
   ],
   controllers: [],
-  providers: [Logger],
+  providers: [Logger, PicovoiceTranscriptor],
+
 })
 export class AppModule { }

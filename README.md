@@ -16,7 +16,7 @@ ___
 
 ___
 
-### v0.0.3 (Starting a Nestjs project)
+### v0.0.3 (Starting a Nestjs ~project)
 1. Start a nestjs project on WSL 2.
 2. Create a module **Ollama**.
 3. Create controller / services for it.
