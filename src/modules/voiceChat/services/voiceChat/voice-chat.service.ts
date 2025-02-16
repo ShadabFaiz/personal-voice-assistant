@@ -6,6 +6,7 @@ import mic from 'mic';
 import moment from 'moment-timezone';
 import * as path from 'path';
 import { AppConfig } from '../../../../config/configuration.interface';
+import { PicovoiceTranscriptor } from '../transcriptors/picovoiceTranscriptor';
 import { MicInstanceConfigs } from './configs';
 
 @Injectable()
@@ -16,7 +17,10 @@ export class VoiceChatService {
   private isRecording: boolean = false;
   private readonly logger = new Logger(VoiceChatService.name);
 
-  constructor(private configService: ConfigService<AppConfig>) { }
+  constructor(
+    private configService: ConfigService<AppConfig>,
+    private readonly picovoiceTranscriptor: PicovoiceTranscriptor
+  ) { }
 
   startRecording(res: Response) {
     try {
@@ -65,6 +69,13 @@ export class VoiceChatService {
   private initializeMicInstance() {
     this.micInstance = mic(MicInstanceConfigs);
     this.micInputStream = this.micInstance.getAudioStream();
+    this.micInputStream.on('data', (data: Buffer) => {
+      // Convert audio buffer to Int16Array
+      const audioBuffer = this.convertBufferToInt16Array(data);
+      // Process the audio with PicovoiceTranscriptor for real-time transcription
+      const transcript = this.picovoiceTranscriptor.transcribe(audioBuffer);
+      this.logger.log(`Real-time transcription: ${transcript}`);
+    });
     this.micInputStream.on('error', (err: Error) => {
       this.logger.error('Error in micInputStream:', err);
     });
@@ -83,6 +94,14 @@ export class VoiceChatService {
       this.file = null;
       this.logger.log('File closed...');
     });
+  }
+
+  private convertBufferToInt16Array(buffer: Buffer): Int16Array {
+    const pcmData = new Int16Array(buffer.length / 2);
+    for (let i = 0; i < buffer.length; i += 2) {
+      pcmData[i / 2] = buffer.readInt16LE(i);
+    }
+    return pcmData;
   }
 
   private getFilePath() {

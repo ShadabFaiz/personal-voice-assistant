@@ -22,7 +22,7 @@ export class PicovoiceTranscriptor {
     async transcribeAudioFile(filePath: string) {
         try {
             const audioBuffer = await this.getAudioBufferFromFile(filePath);
-            const transcription = this.processInFrames(audioBuffer);
+            const transcription = this.transcribe(audioBuffer);
             this.release();
             return transcription;
         } catch (error) {
@@ -49,7 +49,7 @@ export class PicovoiceTranscriptor {
     }
 
 
-    private processInFrames(audioBuffer: Int16Array) {
+    transcribe(audioBuffer: Int16Array) {
         const transcriptionResults: any[] = [];
 
         // Chhetah process audio per 512 frames. When we are not using its own recorder, we have to manually set the frame size.
@@ -67,8 +67,11 @@ export class PicovoiceTranscriptor {
             }
 
             const transcript = this.cheetah.process(frame);
+            // console.log('audioBuffer ', audioBuffer);
+            // console.log('transcript ', transcript);
             const audioText = transcript[0].trim();
             if (audioText) {
+                console.log('audioText ', audioText)
                 transcriptionResults.push(audioText)
             }
         }
@@ -76,7 +79,10 @@ export class PicovoiceTranscriptor {
         const flushed = this.cheetah.flush();
         const trimmedFlushedText = flushed.trim();
 
-        const combinedTranscription = transcriptionResults.join(' ')
+        const combinedTranscription = transcriptionResults.join(' ');
+
+        console.log('combinedTranscription ', combinedTranscription)
+
 
         if (trimmedFlushedText) {
             return combinedTranscription + trimmedFlushedText;
@@ -84,7 +90,11 @@ export class PicovoiceTranscriptor {
         return combinedTranscription
     }
 
-    private release() {
+    flush() {
+        this.cheetah.flush();
+    }
+
+    release() {
         this.cheetah.release();
     }
 }
