@@ -6,4 +6,4 @@ import { OllamaService } from './services';
   controllers: [OllamaController],
   providers: [OllamaService],
 })
-export class OllamaModule { }
+export class OllamaModule {}

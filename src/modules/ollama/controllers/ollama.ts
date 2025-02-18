@@ -5,9 +5,7 @@ import { OllamaService } from '../services';
 
 @Controller('ollama')
 export class OllamaController {
-  constructor(
-    private readonly ollamaService: OllamaService,
-  ) { }
+  constructor(private readonly ollamaService: OllamaService) {}
 
   @Post('chat')
   async chat(@Body() body: ChatDto, @Res() res: Response) {
@@ -27,6 +25,4 @@ export class OllamaController {
       res.status(500).send('An error occurred while processing your request.');
     }
   }
-
-
 }

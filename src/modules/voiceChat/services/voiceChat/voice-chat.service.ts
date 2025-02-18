@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
@@ -5,22 +9,31 @@ import * as fs from 'fs';
 import mic from 'mic';
 import moment from 'moment-timezone';
 import * as path from 'path';
+import { lastValueFrom } from 'rxjs';
 import { AppConfig } from '../../../../config/configuration.interface';
+import { FFMPEGAudioCleaner } from '../audioCleaner';
 import { PicovoiceTranscriptor } from '../transcriptors/picovoiceTranscriptor';
 import { MicInstanceConfigs } from './configs';
 
 @Injectable()
 export class VoiceChatService {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private micInstance: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private micInputStream: any;
-  private file: fs.WriteStream | null = null;
   private isRecording: boolean = false;
+  private audioBuffer: Buffer = Buffer.alloc(0);
   private readonly logger = new Logger(VoiceChatService.name);
+  private readonly DEBUG = false;
 
   constructor(
-    private configService: ConfigService<AppConfig>,
-    private readonly picovoiceTranscriptor: PicovoiceTranscriptor
-  ) { }
+    private readonly configService: ConfigService<AppConfig>,
+    private readonly picovoiceTranscriptor: PicovoiceTranscriptor,
+    private readonly ffmpegAudioCleaner: FFMPEGAudioCleaner,
+    private readonly httpService: HttpService,
+  ) {
+    this.DEBUG = this.configService.get('DEBUG', false);
+  }
 
   startRecording(res: Response) {
     try {
@@ -28,25 +41,39 @@ export class VoiceChatService {
         res.status(400).send('Recording is already in progress.');
         return;
       }
+      this.resetAudioCaptureBuffer();
 
-      const { filePath, dir } = this.getFilePath();
-      this.createDirectory(dir);
-
-      this.file = this.createWriteStream(filePath);
       this.initializeMicInstance();
-      this.micInputStream.pipe(this.file);
-
       this.micInstance.start();
       this.isRecording = true;
       this.logger.log('Started recording...');
-      this.file.on('finish', () => {
-        this.logger.log('Recording completed and file written.');
-        res.status(200).send('Recording completed and file written.');
-      });
+      this.micInputStream.on(
+        'audioProcessExitComplete',
+        async () => await this.onAudioCaptureComplete(res),
+      );
     } catch (error) {
       this.logger.error('Error in startRecording:', error);
       res.status(500).send('An error occurred while starting the recording.');
     }
+  }
+
+  private async onAudioCaptureComplete(response: Response) {
+    const cleanedAudio = await this.ffmpegAudioCleaner.cleanAudio(
+      this.audioBuffer,
+    );
+    const transcript = this.transcribeBufferedAudio(cleanedAudio);
+    if (this.DEBUG) {
+      console.log('Transcript: ', transcript);
+    }
+
+    const { filePath, dir } = this.getFilePath();
+    this.createDirectory(dir);
+    fs.writeFileSync(filePath, cleanedAudio);
+    this.resetAudioCaptureBuffer();
+    console.log('transcription ', transcript);
+    const responseFromLLM = await this.sendTranscriptToLLM(transcript);
+
+    response.status(200).send(`Response: ${responseFromLLM}`);
   }
 
   stopRecording() {
@@ -67,14 +94,10 @@ export class VoiceChatService {
   }
 
   private initializeMicInstance() {
-    this.micInstance = mic(MicInstanceConfigs);
+    this.micInstance = mic({ ...MicInstanceConfigs, debug: this.DEBUG });
     this.micInputStream = this.micInstance.getAudioStream();
     this.micInputStream.on('data', (data: Buffer) => {
-      // Convert audio buffer to Int16Array
-      const audioBuffer = this.convertBufferToInt16Array(data);
-      // Process the audio with PicovoiceTranscriptor for real-time transcription
-      const transcript = this.picovoiceTranscriptor.transcribe(audioBuffer);
-      this.logger.log(`Real-time transcription: ${transcript}`);
+      this.audioBuffer = Buffer.concat([this.audioBuffer, data]);
     });
     this.micInputStream.on('error', (err: Error) => {
       this.logger.error('Error in micInputStream:', err);
@@ -88,12 +111,11 @@ export class VoiceChatService {
     this.micInputStream.on('stopComplete', () => {
       this.logger.log('Recording stopped.');
     });
+  }
 
-    this.micInputStream.on('audioProcessExitComplete', () => {
-      this.file?.end();
-      this.file = null;
-      this.logger.log('File closed...');
-    });
+  private transcribeBufferedAudio(audioBuffer: Buffer) {
+    const audioData = this.convertBufferToInt16Array(audioBuffer);
+    return this.picovoiceTranscriptor.transcribe(audioData);
   }
 
   private convertBufferToInt16Array(buffer: Buffer): Int16Array {
@@ -108,7 +130,10 @@ export class VoiceChatService {
     const now = moment();
     const date = now.format('DD-MM-YYYY');
     const time = moment().format('HH:mm:ss');
-    const recordingsDir = this.configService.get<string>('RECORDINGS_DIR', 'recordings');
+    const recordingsDir = this.configService.get<string>(
+      'RECORDINGS_DIR',
+      'recordings',
+    );
     const dir = path.join(process.cwd(), recordingsDir, date);
     const filePath = path.join(dir, `${time}.wav`);
     return { filePath, dir };
@@ -118,15 +143,22 @@ export class VoiceChatService {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
-    this.logger.log(`Directory created: ${dir}`);
   }
 
-  private createWriteStream(filePath: string) {
-    const file = fs.createWriteStream(filePath, { encoding: 'binary' });
-    this.logger.log(`Stream created: ${filePath}`);
-    file.on('error', (err) => {
-      this.logger.log(' FILE ERROR ', err);
-    });
-    return file;
+  private resetAudioCaptureBuffer() {
+    this.audioBuffer = Buffer.alloc(0);
+  }
+
+  private async sendTranscriptToLLM(transcript: string) {
+    const applicationUrl = `http://localhost:${this.configService.get('APPLICATION_PORT')}/ollama/chat`;
+    const response = await lastValueFrom(
+      this.httpService.post(applicationUrl, {
+        prompt: transcript,
+      }),
+    );
+    if (this.DEBUG) {
+      this.logger.debug('responseFromLLM ', response.data);
+    }
+    return response.data as string;
   }
 }

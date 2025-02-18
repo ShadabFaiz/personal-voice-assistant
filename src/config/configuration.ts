@@ -5,4 +5,5 @@ export default (): AppConfig => ({
   MODEL_NAME: process.env.MODEL_NAME || 'default-model',
   RECORDINGS_DIR: process.env.RECORDINGS_DIR || 'recordings',
   APPLICATION_PORT: parseInt(process.env.APPLICATION_PORT || '') || 3000,
+  DEBUG: Boolean(process.env.DEBUG === 'true') || false,
 });

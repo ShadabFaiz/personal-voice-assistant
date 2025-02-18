@@ -25,7 +25,6 @@ async function main() {
   // console.log('filePath: ', filePath)
   // const transcription = await transcriptor.transcribeAudioFile(filePath);
   // console.log('Transcription:', transcription);
-
 }
 
 // eslint-disable-next-line @typescript-eslint/no-floating-promises

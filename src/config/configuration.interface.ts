@@ -3,4 +3,5 @@ export interface AppConfig {
   MODEL_NAME: string;
   RECORDINGS_DIR: string;
   APPLICATION_PORT: number;
+  DEBUG: boolean;
 }
