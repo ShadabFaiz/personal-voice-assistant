@@ -1,5 +1,5 @@
 {
-  "CodeGPT.apiKey": "Ollama",
+  "CodeGPT.apiKey": "Anthropic",
   "editor.formatOnType": false, // required
   "editor.formatOnPaste": true, // optional
   "editor.formatOnSaveMode": "file", // required to format on save
