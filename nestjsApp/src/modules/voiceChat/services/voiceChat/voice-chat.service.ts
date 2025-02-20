@@ -12,7 +12,7 @@ import * as path from 'path';
 import { lastValueFrom } from 'rxjs';
 import { AppConfig } from '../../../../config/configuration.interface';
 import { FFMPEGAudioCleaner } from '../audioCleaner';
-import { PicovoiceTranscriptor } from '../transcriptors/picovoiceTranscriptor';
+import { FasterWhisperTranscriptor } from '../transcriptors/fasterWhisperTranscriptor';
 import { MicInstanceConfigs } from './configs';
 
 @Injectable()
@@ -28,7 +28,7 @@ export class VoiceChatService {
 
   constructor(
     private readonly configService: ConfigService<AppConfig>,
-    private readonly picovoiceTranscriptor: PicovoiceTranscriptor,
+    private readonly transcriptor: FasterWhisperTranscriptor,
     private readonly ffmpegAudioCleaner: FFMPEGAudioCleaner,
     private readonly httpService: HttpService,
   ) {
@@ -58,19 +58,20 @@ export class VoiceChatService {
   }
 
   private async onAudioCaptureComplete(response: Response) {
-    const cleanedAudio = await this.ffmpegAudioCleaner.cleanAudio(
-      this.audioBuffer,
-    );
-    const transcript = this.transcribeBufferedAudio(cleanedAudio);
-    if (this.DEBUG) {
-      console.log('Transcript: ', transcript);
-    }
-
     const { filePath, dir } = this.getFilePath();
     this.createDirectory(dir);
+    const cleanedAudio = await this.ffmpegAudioCleaner.cleanAudio(
+      this.audioBuffer,
+      filePath,
+    );
+    const transcript = await this.transcribeBufferedAudio(cleanedAudio);
+
+    if (!transcript) {
+      return response.status(200).send(`Failed to transcript audio`);
+    }
+
     fs.writeFileSync(filePath, cleanedAudio);
     this.resetAudioCaptureBuffer();
-    console.log('transcription ', transcript);
     const responseFromLLM = await this.sendTranscriptToLLM(transcript);
 
     response.status(200).send(`Response: ${responseFromLLM}`);
@@ -113,9 +114,13 @@ export class VoiceChatService {
     });
   }
 
-  private transcribeBufferedAudio(audioBuffer: Buffer) {
-    const audioData = this.convertBufferToInt16Array(audioBuffer);
-    return this.picovoiceTranscriptor.transcribe(audioData);
+  private async transcribeBufferedAudio(audioBuffer: Buffer) {
+    const [trenscription, error] =
+      await this.transcriptor.transcribe(audioBuffer);
+    if (trenscription) {
+      return trenscription;
+    }
+    this.logger.error(error);
   }
 
   private convertBufferToInt16Array(buffer: Buffer): Int16Array {

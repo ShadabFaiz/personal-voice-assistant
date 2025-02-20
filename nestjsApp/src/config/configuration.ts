@@ -6,4 +6,6 @@ export default (): AppConfig => ({
   RECORDINGS_DIR: process.env.RECORDINGS_DIR || 'recordings',
   APPLICATION_PORT: parseInt(process.env.APPLICATION_PORT || '') || 3000,
   DEBUG: Boolean(process.env.DEBUG === 'true') || false,
+  TRANSCRIPTION_SERVER_ENDPOINT:
+    process.env.TRANSCRIPTION_SERVER_ENDPOINT || '',
 });

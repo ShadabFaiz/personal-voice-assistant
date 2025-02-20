@@ -50,7 +50,7 @@ export class OllamaService {
     onToken: (token: string) => void,
   ): Promise<void> {
     try {
-      this.logger.log('Starting chatStream');
+      this.logger.log('Interacting with Ollama');
       await this.chain.stream({
         input,
         callbacks: [

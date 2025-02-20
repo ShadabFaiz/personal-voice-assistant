@@ -21,10 +21,19 @@ async function main() {
   // const transcriptor = app.get(PicovoiceTranscriptor);
 
   // const applicationRoot = path.dirname(__dirname);
-  // const filePath = `${applicationRoot}/recordings/16-02-2025/16:07:40.wav`;
-  // console.log('filePath: ', filePath)
-  // const transcription = await transcriptor.transcribeAudioFile(filePath);
-  // console.log('Transcription:', transcription);
+  // const filePath = `${applicationRoot}/input.wav`;
+  // console.log('filePath: ', filePath);
+  // const fileContent = fs.readFileSync(filePath);
+  // console.log('file read', fileContent);
+  // const httpService = app.get(HttpService);
+  // const response = await httpService.axiosRef.post(
+  //   'http://0.0.0.0:8000/transcript',
+  //   fileContent,
+  //   {
+  //     headers: { 'Content-Type': 'audio/wav' },
+  //   },
+  // );
+  // console.log('response: ', response.data);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-floating-promises

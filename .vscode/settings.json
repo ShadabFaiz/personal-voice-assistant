@@ -10,7 +10,7 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "always",
     "source.organizeImports": "always",
-    "source.removeUnused.ts": "explicit"
+    "source.removeUnused.ts": "never"
   },
   "eslint.validate": [
     "javascript",

@@ -5,6 +5,7 @@ import torch
 import torchaudio
 import logging
 import faster_whisper
+import torchaudio.transforms as T
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -13,14 +14,29 @@ logging.basicConfig(level=logging.INFO)
 app = FastAPI()
 
 # Load Faster-Whisper model
-DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+DEVICE = "cpu" if torch.cuda.is_available() else "cpu"
+logging.info('DEVICE: %s', DEVICE)
 model = faster_whisper.WhisperModel("small", device=DEVICE)
 
 def load_audio(audio_bytes: bytes):
-    """Convert raw audio bytes into a waveform tensor."""
     try:
         audio_buffer = io.BytesIO(audio_bytes)
         waveform, sample_rate = torchaudio.load(audio_buffer)
+
+        logging.info(f"Waveform shape before processing: {waveform.shape}, Sample rate: {sample_rate}")
+
+        # Convert stereo to mono if needed
+        if waveform.shape[0] > 1:
+            waveform = waveform.mean(dim=0, keepdim=True)
+
+        # Resample to 16 kHz if needed
+        if sample_rate != 16000:
+            resampler = T.Resample(orig_freq=sample_rate, new_freq=16000)
+            waveform = resampler(waveform)
+            sample_rate = 16000
+
+        logging.info(f"Final waveform shape: {waveform.shape}, Sample rate: {sample_rate}")
+
         return waveform, sample_rate
     except Exception as e:
         logging.error("Failed to load audio", exc_info=True)
@@ -28,7 +44,11 @@ def load_audio(audio_bytes: bytes):
 
 def transcribe_audio(waveform: torch.Tensor):
     """Run Faster-Whisper transcription on a waveform tensor."""
-    segments, _ = model.transcribe(waveform.numpy(), language="en")
+    waveform = waveform.numpy().flatten()  # Convert to 1D array
+
+    logging.info(f"Transcribing waveform with shape: {waveform.shape}")
+
+    segments, _ = model.transcribe(waveform, language="en")
     transcript_text = " ".join(segment.text for segment in segments)
     return transcript_text
 

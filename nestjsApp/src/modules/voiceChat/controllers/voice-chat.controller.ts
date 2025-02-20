@@ -4,10 +4,11 @@ import { VoiceChatService } from '../services/voiceChat/voice-chat.service';
 
 @Controller('voiceChat')
 export class VoiceChatController {
-  constructor(private readonly voiceChatService: VoiceChatService) { }
+  constructor(private readonly voiceChatService: VoiceChatService) {}
 
   @Get('start')
   voiceStart(@Res() res: Response) {
+    console.log('got request for listing');
     return this.voiceChatService.startRecording(res);
   }
 }

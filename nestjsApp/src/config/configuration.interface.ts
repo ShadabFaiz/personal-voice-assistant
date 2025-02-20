@@ -4,4 +4,5 @@ export interface AppConfig {
   RECORDINGS_DIR: string;
   APPLICATION_PORT: number;
   DEBUG: boolean;
+  TRANSCRIPTION_SERVER_ENDPOINT: string;
 }
