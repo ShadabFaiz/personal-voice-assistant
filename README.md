@@ -57,3 +57,11 @@
 3. Integrated the complete flow (Audio Recording => Trancription => Prompt LLM with transcript => Respond back to user)
 
 ---
+
+### v0.0.7 (Replacing PicoVoice with local STT) (TODO)
+
+PicoVoice requires an api key from pico service. This is against the idea of the self hosting. It shouldn't depend on any other 3rd party.
+1. Restructing project structure to manage all different service (app / transcription server / etc) within same repository.
+2. Replace picoVoice Cheetah with Faster-Whisper for transcription.
+
+---
