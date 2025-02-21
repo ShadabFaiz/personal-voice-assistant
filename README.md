@@ -2,6 +2,39 @@
 
 **GOAL:** Develop a Self hosted Voice Chat application with a self hosted AI in real time. Everything needs to be self hosted, and in real time.You will be interacting the LLM using voice instead of typings.
 
+
+nvcc install
+1. wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.0-1_all.deb
+2. sudo dpkg -i cuda-keyring_1.0-1_all.deb
+3. sudo apt update
+
+
+## Project Setup
+
+   ### Prerequisite
+   1. node 20+
+   2. yarn
+   3. nvcc 12.6
+
+   ### mainApp
+   1. ```cd mainApp```
+   2. ```yarn install ```
+   3. ```npm run start:dev ```
+   
+   ### transcriptionService
+   1. ``` cd transcriptionServer```
+   2. ``` python3.11 -m venv venv3.11 ```
+   3. ``` source venv3.11/bin/activate ```
+   4. ```./install```
+
+   ### voiceSyntesis
+   1. ``` cd transcriptionServer```
+   2. ``` python3.11 -m venv venv3.11 ```
+   3. ``` source venv3.11/bin/activate ```
+   4. ```./install```
+
+----
+
 ### v0.0.1 (Self host Ollama)
 
 1. Self host Ollama on windows/WSL with any model. This model will be used for interaction. It may be switched to different model later.
@@ -60,8 +93,9 @@
 
 ### v0.0.7 (Replacing PicoVoice with local STT) (TODO)
 
-PicoVoice requires an api key from pico service. This is against the idea of the self hosting. It shouldn't depend on any other 3rd party.
+PicoVoice requires an api key from picoVoice service. This is against the idea of the self hosting. It shouldn't depend on any other 3rd party.
 1. Restructing project structure to manage all different service (app / transcription server / etc) within same repository.
 2. Replace picoVoice Cheetah with Faster-Whisper for transcription.
+NOTE**: Currently transcription is processed on cpu, not on gpu. TODO: Make it work on cuda
 
 ---
