@@ -28,6 +28,7 @@ nvcc install
    4. ```./install```
 
    ### voiceSyntesis
+   1. ``` sudo apt install espeak-ng ```
    1. ``` cd transcriptionServer```
    2. ``` python3.11 -m venv venv3.11 ```
    3. ``` source venv3.11/bin/activate ```

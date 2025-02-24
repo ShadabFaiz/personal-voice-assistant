@@ -55,7 +55,7 @@ logging.info(f"Speech generation completed in {generation_end - generation_start
 saving_start = time.time()
 logging.info("Saving generated speech...")
 audio_arr = generation.cpu().numpy().squeeze()
-output_file = f"{actor}_parler_tts_out.wav"
+output_file = f"{actor}_testing_parler_tts_out.wav"
 sf.write(output_file, audio_arr, model.config.sampling_rate)
 saving_end = time.time()
 logging.info(f"Audio file saved in {saving_end - saving_start:.2f} seconds.")
