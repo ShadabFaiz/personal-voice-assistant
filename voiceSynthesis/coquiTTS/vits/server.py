@@ -18,7 +18,7 @@ print("Model initialized")
 # Ensure correct sample rate
 sample_rate = 22050  # VITS models typically use 22050Hz
 
-@app.route("/voice/vits", methods=["POST"])
+@app.route("/voice/synthesize", methods=["POST"])
 def generate_voice():
     data = request.get_json()
     text = data.get("text", "")
@@ -45,4 +45,4 @@ def generate_voice():
     return jsonify({"message": "Speech played successfully"}), 200
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=5003)

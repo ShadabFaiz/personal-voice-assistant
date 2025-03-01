@@ -22,16 +22,14 @@ export class FasterWhisperTranscriptor {
   async transcribe(audioBuffer: Buffer): Promise<Return<string>> {
     try {
       this.logger.log('Waiting for transcription...');
-      const transcription = await this.httpService.axiosRef.post<string>(
-        this.TRANSCRIPTOR_ENDPOINT,
-        audioBuffer,
-        {
-          headers: { 'Content-Type': 'audio/wav' },
-        },
-      );
-      this.logger.log('Transcription recevied');
+      const response = await this.httpService.axiosRef.post<{
+        transcript: string;
+      }>(this.TRANSCRIPTOR_ENDPOINT, audioBuffer, {
+        headers: { 'Content-Type': 'audio/wav' },
+      });
+      this.logger.log('Transcription recevied', response.data.transcript);
 
-      return [transcription.data, null];
+      return [response.data.transcript, null];
     } catch (error) {
       if (this.DEBUG) {
         this.logger.error(error);

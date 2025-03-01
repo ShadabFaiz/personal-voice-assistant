@@ -5,6 +5,7 @@ import { FFMPEGAudioCleaner } from './services/audioCleaner';
 import { FasterWhisperTranscriptor } from './services/transcriptors/fasterWhisperTranscriptor';
 import { PicovoiceTranscriptor } from './services/transcriptors/picovoiceTranscriptor';
 import { VoiceChatService } from './services/voiceChat/voice-chat.service';
+import { VoiceSynthesis } from './services/voiceSynthesis/voiceSynthesis';
 
 @Module({
   imports: [HttpModule],
@@ -14,6 +15,7 @@ import { VoiceChatService } from './services/voiceChat/voice-chat.service';
     PicovoiceTranscriptor,
     FFMPEGAudioCleaner,
     FasterWhisperTranscriptor,
+    VoiceSynthesis,
   ],
 })
 export class VoiceChatModule {}

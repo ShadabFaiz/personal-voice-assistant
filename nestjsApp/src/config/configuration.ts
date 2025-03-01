@@ -8,4 +8,6 @@ export default (): AppConfig => ({
   DEBUG: Boolean(process.env.DEBUG === 'true') || false,
   TRANSCRIPTION_SERVER_ENDPOINT:
     process.env.TRANSCRIPTION_SERVER_ENDPOINT || '',
+  VOICE_SYNTHESIS_SERVER_ENDPOINT:
+    process.env.VOICE_SYNTHESIS_SERVER_ENDPOINT || '',
 });

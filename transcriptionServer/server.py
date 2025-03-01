@@ -1,6 +1,5 @@
-from fastapi import FastAPI, Request
+from flask import Flask, request, jsonify
 import io
-import numpy as np
 import torch
 import torchaudio
 import logging
@@ -10,13 +9,13 @@ import torchaudio.transforms as T
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 
-# Initialize FastAPI app
-app = FastAPI()
+# Initialize Flask app
+app = Flask(__name__)
 
 # Load Faster-Whisper model
 DEVICE = "cpu" if torch.cuda.is_available() else "cpu"
 logging.info('DEVICE: %s', DEVICE)
-model = faster_whisper.WhisperModel("small", device=DEVICE)
+model = faster_whisper.WhisperModel("small", device=DEVICE, compute_type="float32")
 
 def load_audio(audio_bytes: bytes):
     try:
@@ -52,15 +51,15 @@ def transcribe_audio(waveform: torch.Tensor):
     transcript_text = " ".join(segment.text for segment in segments)
     return transcript_text
 
-@app.post("/transcript")
-async def transcript(request: Request):
+@app.route("/transcript", methods=["POST"])
+def transcript():
     """API endpoint to process audio and return transcription."""
     try:
         # Read and validate audio data
-        audio_data = await request.body()
+        audio_data = request.data
         if not audio_data:
             logging.warning("Received empty audio buffer")
-            return {"error": "No audio data received"}
+            return jsonify({"error": "No audio data received"}), 400
 
         logging.info(f"Processing audio buffer of size: {len(audio_data)} bytes")
 
@@ -72,10 +71,13 @@ async def transcript(request: Request):
 
         logging.info(f"Transcription completed: {transcript_text[:50]}...")
 
-        return {"transcript": transcript_text}
+        return jsonify({"transcript": transcript_text})
 
     except ValueError as e:
-        return {"error": str(e)}
+        return jsonify({"error": str(e)}), 400
     except Exception as e:
         logging.exception("Unexpected error during transcription")
-        return {"error": "Internal server error"}
+        return jsonify({"error": "Internal server error"}), 500
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5002, debug=True)

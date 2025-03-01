@@ -5,4 +5,5 @@ export interface AppConfig {
   APPLICATION_PORT: number;
   DEBUG: boolean;
   TRANSCRIPTION_SERVER_ENDPOINT: string;
+  VOICE_SYNTHESIS_SERVER_ENDPOINT: string;
 }

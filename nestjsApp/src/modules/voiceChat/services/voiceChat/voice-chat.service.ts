@@ -13,6 +13,7 @@ import { lastValueFrom } from 'rxjs';
 import { AppConfig } from '../../../../config/configuration.interface';
 import { FFMPEGAudioCleaner } from '../audioCleaner';
 import { FasterWhisperTranscriptor } from '../transcriptors/fasterWhisperTranscriptor';
+import { VoiceSynthesis } from '../voiceSynthesis/voiceSynthesis';
 import { MicInstanceConfigs } from './configs';
 
 @Injectable()
@@ -29,6 +30,7 @@ export class VoiceChatService {
   constructor(
     private readonly configService: ConfigService<AppConfig>,
     private readonly transcriptor: FasterWhisperTranscriptor,
+    private readonly voiceSynthesis: VoiceSynthesis,
     private readonly ffmpegAudioCleaner: FFMPEGAudioCleaner,
     private readonly httpService: HttpService,
   ) {
@@ -72,7 +74,9 @@ export class VoiceChatService {
 
     fs.writeFileSync(filePath, cleanedAudio);
     this.resetAudioCaptureBuffer();
+
     const responseFromLLM = await this.sendTranscriptToLLM(transcript);
+    await this.voiceSynthesis.synthesize(responseFromLLM);
 
     response.status(200).send(`Response: ${responseFromLLM}`);
   }
@@ -115,10 +119,10 @@ export class VoiceChatService {
   }
 
   private async transcribeBufferedAudio(audioBuffer: Buffer) {
-    const [trenscription, error] =
+    const [transcription, error] =
       await this.transcriptor.transcribe(audioBuffer);
-    if (trenscription) {
-      return trenscription;
+    if (transcription) {
+      return transcription;
     }
     this.logger.error(error);
   }

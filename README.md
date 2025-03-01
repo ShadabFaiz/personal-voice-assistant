@@ -29,12 +29,31 @@ nvcc install
 
    ### voiceSyntesis
    1. ``` sudo apt install espeak-ng ```
-   1. ``` cd transcriptionServer```
+   1. ``` cd voiceSyntesis```
    2. ``` python3.11 -m venv venv3.11 ```
    3. ``` source venv3.11/bin/activate ```
    4. ```./install```
 
 ----
+
+## How to run it
+After all installation are done:
+   ### nestjsApp
+      1. `npm run start:dev`
+   ### transcriptionService
+      1. cd transcriptionService
+      2. python3.11 -m venv venv3.11 
+      3. source venv3.11/bin/activate
+      4. bash serve.sh
+      
+   ### VoiceSynthesis
+      1. cd voiceSynthesis/styleTTS2
+      2. python3.11 -m venv venv3.11
+      3. source venv3.11/bin/activate
+      4. python vits/server.py
+      5. sh ./install.sh
+      6. inside vits or xttsv2, bash serve.sh
+      *NOTE: use vits as it is the onlyone that can be used for real time.
 
 ### v0.0.1 (Self host Ollama)
 
@@ -99,4 +118,13 @@ PicoVoice requires an api key from picoVoice service. This is against the idea o
 2. Replace picoVoice Cheetah with Faster-Whisper for transcription.
 NOTE**: Currently transcription is processed on cpu, not on gpu. TODO: Make it work on cuda
 
+---
+
+### v0.0.8 (Added new voice synthesis options)
+1. Added coquiTTS
+1. Added parlerTTS
+---
+
+### v0.0.9 (Replaced picoVoice with coquieTTS VITS model)
+1. Replaced picoVoice with coquiTTS VIT models
 ---

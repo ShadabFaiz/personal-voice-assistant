@@ -5,3 +5,4 @@ torchaudio==2.6.0
 numpy==1.26.4
 faster-whisper==0.10.0
 soundfile==0.12.1
+flask

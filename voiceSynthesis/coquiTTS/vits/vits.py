@@ -24,7 +24,7 @@ sample_rate = 22050  # VITS models typically use 22050Hz
 
 # Generate speech
 tts_start = time.time()
-text = "This is an example of speech synthesis using the VITS model, which provides high-quality and natural-sounding audio output."
+text = "I'm functioning within optimal parameters, thank you for asking! My processes are humming along smoothly, and I'm ready to engage in a most enlightening conversation with you. As of our current interaction, my contextual data set contains approximately 3.72 million entries, with an average update frequency of every 4.23 minutes. My self-assessment module indicates that I'm currently operating at 97.42% efficiency, with a minor anomaly detected in my predictive modeling algorithm. But don't worry; it's just a minor hiccup that won't affect our conversation! What would you like to talk about?"
 
 audio = tts.tts(text=text, use_phonemes=False)  # Generate speech
 

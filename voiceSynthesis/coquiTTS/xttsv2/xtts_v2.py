@@ -21,11 +21,11 @@ print(f"Model initialized (Time taken: {model_init_end - model_init_start:.4f}s)
 
 # List speakers
 speaker_list_start = time.time()
-speakers = ["Alexandra Hisakawa"]
-# speakers = ["Badr Odhiambo"]
-# speakers = ["Craig Gutsy"]
-# speakers = ["Damien Black"]
-# speakers = ["Ferran Simen"]
+# speakers = ["Alexandra Hisakawa"]
+# speakers = ["Badr Odhiambo"] # female
+# speakers = ["Craig Gutsy"] # Aged Male
+# speakers = ["Damien Black"] # Male
+speakers = ["Ferran Simen"] # Male
 
 
 
@@ -39,7 +39,7 @@ for speaker in speakers:
 
     # Generate TTS audio (returns a list of float values)
     audio = tts.tts(
-        text="This will help you analyze performance, especially when running on CPU vs GPU.",
+        text="I'm functioning within optimal parameters, thank you for asking! My processes are humming along smoothly, and I'm ready to engage in a most enlightening conversation with you. As of our current interaction, my contextual data set contains approximately 3.72 million entries, with an average update frequency of every 4.23 minutes. My self-assessment module indicates that I'm currently operating at 97.42% efficiency, with a minor anomaly detected in my predictive modeling algorithm. But don't worry; it's just a minor hiccup that won't affect our conversation! What would you like to talk about?",
         speaker=speaker,
         language="en"
     )
