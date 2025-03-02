@@ -1,3 +1,8 @@
+import {
+  ChatPromptTemplate,
+  HumanMessagePromptTemplate,
+  SystemMessagePromptTemplate,
+} from '@langchain/core/prompts';
 import { ChatOllama } from '@langchain/ollama';
 import {
   Injectable,
@@ -5,8 +10,10 @@ import {
   Logger,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import * as fs from 'fs';
 import { ConversationChain } from 'langchain/chains';
 import { BufferMemory } from 'langchain/memory';
+import path from 'path';
 
 @Injectable()
 export class OllamaService {
@@ -26,10 +33,48 @@ export class OllamaService {
 
     this.model = new ChatOllama({ baseUrl, model });
     this.memory = new BufferMemory();
+    const chatPrompt = this.initializeSystemPrompts();
+
     this.chain = new ConversationChain({
       llm: this.model,
       memory: this.memory,
+      prompt: chatPrompt,
     });
+  }
+
+  private initializeSystemPrompts() {
+    const chatPrompt = ChatPromptTemplate.fromMessages([
+      SystemMessagePromptTemplate.fromTemplate(this.loadSystemPrompt()),
+      HumanMessagePromptTemplate.fromTemplate('{input}'),
+    ]);
+    return chatPrompt;
+  }
+
+  private loadSystemPrompt() {
+    const filePath = path.join(
+      __dirname,
+      '..',
+      '..',
+      '..',
+      '..',
+      'systemPrompts',
+      'personality.txt',
+    );
+    let systemPrompt: string;
+    try {
+      console.log('filePath ', filePath);
+      systemPrompt = fs.readFileSync(filePath, 'utf-8');
+      this.logger.log(`System prompt loaded from file: ${filePath}`);
+    } catch (error) {
+      this.logger.error(
+        `Failed to load system prompt from file: ${filePath}`,
+        error,
+      );
+      systemPrompt = 'You are a helpful AI assistant. designed to help humans.';
+      this.logger.log(`Use default value: ${systemPrompt}`);
+    }
+
+    return systemPrompt;
   }
 
   async chat(input: string): Promise<string> {
@@ -50,7 +95,7 @@ export class OllamaService {
     onToken: (token: string) => void,
   ): Promise<void> {
     try {
-      this.logger.log('Interacting with Ollama');
+      this.logger.log('Interacting with Ollama.');
       await this.chain.stream({
         input,
         callbacks: [

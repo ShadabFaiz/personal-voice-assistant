@@ -15,6 +15,10 @@ app = Flask(__name__)
 # Load Faster-Whisper model
 DEVICE = "cpu" if torch.cuda.is_available() else "cpu"
 logging.info('DEVICE: %s', DEVICE)
+
+# Select model size based on device
+model_size = "large-v3" if DEVICE == "cuda" else "small"
+logging.info('Using model size: %s', model_size)
 model = faster_whisper.WhisperModel("small", device=DEVICE, compute_type="float32")
 
 def load_audio(audio_bytes: bytes):
