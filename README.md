@@ -128,3 +128,7 @@ NOTE**: Currently transcription is processed on cpu, not on gpu. TODO: Make it w
 ### v0.0.9 (Replaced picoVoice with coquieTTS VITS model)
 1. Replaced picoVoice with coquiTTS VIT models
 ---
+
+### v0.0.10 (Added Female personality)
+1. Added systemPrompt/personalities/Leena.txt
+---

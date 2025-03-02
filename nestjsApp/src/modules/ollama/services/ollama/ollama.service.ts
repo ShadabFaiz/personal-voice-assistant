@@ -58,7 +58,8 @@ export class OllamaService {
       '..',
       '..',
       'systemPrompts',
-      'personality.txt',
+      'personalities',
+      'Leena.txt',
     );
     let systemPrompt: string;
     try {
