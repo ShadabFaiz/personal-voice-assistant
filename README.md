@@ -132,3 +132,7 @@ NOTE**: Currently transcription is processed on cpu, not on gpu. TODO: Make it w
 ### v0.0.10 (Added Female personality)
 1. Added systemPrompt/personalities/Leena.txt
 ---
+
+### v0.0.11 (Testing other TTS)
+1. Testing piperTTS (very fast. Highly viable for real-time)
+---

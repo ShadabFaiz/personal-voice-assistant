@@ -22,10 +22,10 @@ print(f"Model initialized (Time taken: {model_init_end - model_init_start:.4f}s)
 # List speakers
 speaker_list_start = time.time()
 # speakers = ["Alexandra Hisakawa"]
-# speakers = ["Badr Odhiambo"] # female
+speakers = ["Badr Odhiambo"] # female
 # speakers = ["Craig Gutsy"] # Aged Male
 # speakers = ["Damien Black"] # Male
-speakers = ["Ferran Simen"] # Male
+# speakers = ["Ferran Simen"] # Male
 
 
 
