@@ -1,7 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Response } from 'express';
 import * as fs from 'fs';
 import mic from 'mic';
 import moment from 'moment-timezone';
@@ -15,12 +14,12 @@ import { VoiceSynthesis } from '../voiceSynthesis/voiceSynthesis';
 import { MicInstanceConfigs } from './configs';
 
 @Injectable()
-export class VoiceChatService {
+export class VoiceChatServiceV2 {
   private micInstance: ReturnType<typeof mic>;
   private micInputStream: Readable;
   private isRecording: boolean = false;
   private audioBuffer: Buffer = Buffer.alloc(0);
-  private readonly logger = new Logger(VoiceChatService.name);
+  private readonly logger = new Logger(VoiceChatServiceV2.name);
   private readonly DEBUG = false;
 
   constructor(
@@ -33,10 +32,10 @@ export class VoiceChatService {
     this.DEBUG = this.configService.get('DEBUG', false);
   }
 
-  startRecording(res: Response) {
+  startRecording() {
     try {
       if (this.isRecording) {
-        res.status(400).send('Recording is already in progress.');
+        this.logger.log('Recording is already in progress.');
         return;
       }
       this.resetAudioCaptureBuffer();
@@ -47,15 +46,15 @@ export class VoiceChatService {
       this.logger.log('Started recording...');
       this.micInputStream.on(
         'audioProcessExitComplete',
-        async () => await this.onAudioCaptureComplete(res),
+        async () => await this.onAudioCaptureComplete(),
       );
     } catch (error) {
       this.logger.error('Error in startRecording:', error);
-      res.status(500).send('An error occurred while starting the recording.');
+      this.logger.error('Error stack:', error.stack);
     }
   }
 
-  private async onAudioCaptureComplete(response: Response) {
+  private async onAudioCaptureComplete() {
     const { filePath, dir } = this.getFilePath();
     this.createDirectory(dir);
     const cleanedAudio = await this.ffmpegAudioCleaner.cleanAudio(
@@ -65,16 +64,19 @@ export class VoiceChatService {
     const transcript = await this.transcribeBufferedAudio(cleanedAudio);
 
     if (!transcript) {
-      return response.status(200).send(`Failed to transcript audio`);
+      this.logger.error('Failed to transcribe audio');
+      return;
     }
 
     fs.writeFileSync(filePath, cleanedAudio);
     this.resetAudioCaptureBuffer();
 
     const responseFromLLM = await this.sendTranscriptToLLM(transcript);
-    await this.voiceSynthesis.synthesize(responseFromLLM);
+    // await this.voiceSynthesis.synthesize(responseFromLLM);
 
-    response.status(200).send(`Response: ${responseFromLLM}`);
+    this.logger.log('Transcription:', transcript);
+    this.logger.log('Audio saved to:', filePath);
+    this.logger.log('Response from LLM:', responseFromLLM);
   }
 
   stopRecording() {
@@ -88,7 +90,8 @@ export class VoiceChatService {
         this.micInstance.stop();
       }
 
-      this.isRecording = false;
+      this.logger.log('Old  this.isRecording = false;');
+      // this.isRecording = false;
     } catch (error) {
       this.logger.error('Error in stopRecording:', error);
     }
@@ -121,6 +124,14 @@ export class VoiceChatService {
       return transcription;
     }
     this.logger.error(error);
+  }
+
+  private convertBufferToInt16Array(buffer: Buffer): Int16Array {
+    const pcmData = new Int16Array(buffer.length / 2);
+    for (let i = 0; i < buffer.length; i += 2) {
+      pcmData[i / 2] = buffer.readInt16LE(i);
+    }
+    return pcmData;
   }
 
   private getFilePath() {

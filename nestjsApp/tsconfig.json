@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "typeRoots": ["./node_modules/@types", "./typings/*"],
+    "typeRoots": ["./node_modules/@types", "./typings"],
     "module": "commonjs",
     "declaration": true,
     "removeComments": true,
@@ -18,6 +18,6 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
-    "esModuleInterop":true
+    "esModuleInterop": true
   }
 }
