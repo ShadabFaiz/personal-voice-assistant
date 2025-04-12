@@ -15,6 +15,7 @@ nvcc install
    1. node 20+
    2. yarn
    3. nvcc 12.6
+   4. python v3.11
 
    ### mainApp
    1. ```cd mainApp```

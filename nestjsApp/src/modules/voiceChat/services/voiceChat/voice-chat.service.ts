@@ -10,6 +10,7 @@ import mic from 'mic';
 import moment from 'moment-timezone';
 import * as path from 'path';
 import { lastValueFrom } from 'rxjs';
+import { Readable } from 'stream';
 import { AppConfig } from '../../../../config/configuration.interface';
 import { FFMPEGAudioCleaner } from '../audioCleaner';
 import { FasterWhisperTranscriptor } from '../transcriptors/fasterWhisperTranscriptor';
@@ -18,10 +19,8 @@ import { MicInstanceConfigs } from './configs';
 
 @Injectable()
 export class VoiceChatService {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private micInstance: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private micInputStream: any;
+  private micInstance: ReturnType<typeof mic>;
+  private micInputStream: Readable;
   private isRecording: boolean = false;
   private audioBuffer: Buffer = Buffer.alloc(0);
   private readonly logger = new Logger(VoiceChatService.name);
