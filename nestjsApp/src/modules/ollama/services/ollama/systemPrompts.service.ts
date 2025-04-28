@@ -12,18 +12,15 @@ export class SystemPromptsService {
   loadAllSystemPrompts() {
     const agentPersonality = this.loadAgentPersonality();
     const aboutMe = this.loadAboutMe();
-    const combinedPrompts = `
-    <system_context>
-      <user_information>
-        ${aboutMe}
-      </user_information>
 
-      <persona_instructions>
-        ${agentPersonality}
-      </persona_instructions>
-    </system_context>
-    `;
-    return combinedPrompts;
+    const contexts = {
+      system_context: {
+        user_information: aboutMe,
+        persona_instructions: agentPersonality,
+      },
+    };
+
+    return this.createXML(contexts);
   }
 
   loadAboutMe() {
@@ -73,5 +70,24 @@ export class SystemPromptsService {
     }
 
     return agentPersonality;
+  }
+
+  private createXML(tags: Record<string, any>): string {
+    let xmlString = '';
+    function processTags(tags) {
+      for (const [tag, content] of Object.entries(tags)) {
+        if (typeof content === 'object') {
+          xmlString += `<${tag}>`;
+          processTags(content);
+          xmlString += `</${tag}>`;
+        } else {
+          xmlString += `<${tag}>${content}</${tag}>`;
+        }
+      }
+    }
+
+    processTags(tags);
+
+    return xmlString;
   }
 }
