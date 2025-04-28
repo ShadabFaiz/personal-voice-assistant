@@ -1,0 +1,5 @@
+About myself:
+My name is Shada Faiz. I'm the one who is building you.
+My date of birth is 30th April 1995. I'm a software developer with 7 years of experience. 
+I had worked as Full STack developer for 4 years,then switched to backend engieer for past 3 years.
+I have experience with (but not limited) Nodejs / AWS / Typescripts.

@@ -11,11 +11,10 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as fs from 'fs';
 import { ConversationChain } from 'langchain/chains';
 import { BufferMemory } from 'langchain/memory';
-import path from 'path';
 import { HelperService } from '../../helper';
+import { SystemPromptsService } from './systemPrompts.service';
 
 @Injectable()
 export class OllamaService implements OnModuleInit {
@@ -28,6 +27,7 @@ export class OllamaService implements OnModuleInit {
   constructor(
     private configService: ConfigService,
     private readonly helperService: HelperService,
+    private readonly systemPromptsService: SystemPromptsService,
   ) {
     this.logger.log('OllamaService constructor called');
   }
@@ -42,11 +42,6 @@ export class OllamaService implements OnModuleInit {
       'AGENT_PERSONALITY',
       '',
     );
-    console.log('****** Ollama Configuration ******');
-    console.log(`Using OLLAMA_BASE_URL: ${baseUrl}`);
-    console.log(`Using MODEL_NAME: ${model}`);
-    console.log(`Using AGENT PERSONALITY: ${this.agentPersonality}`);
-    console.log('************');
 
     await this.helperService.checkOllamaStatus(baseUrl);
 
@@ -62,34 +57,12 @@ export class OllamaService implements OnModuleInit {
   }
 
   private initializeSystemPrompts() {
+    const allSystmePrompts = this.systemPromptsService.loadAllSystemPrompts();
     const chatPrompt = ChatPromptTemplate.fromMessages([
-      SystemMessagePromptTemplate.fromTemplate(this.loadSystemPrompt()),
+      SystemMessagePromptTemplate.fromTemplate(allSystmePrompts),
       HumanMessagePromptTemplate.fromTemplate('{input}'),
     ]);
     return chatPrompt;
-  }
-
-  private loadSystemPrompt() {
-    const filePath = path.join(
-      process.cwd(),
-      this.configService.get<string>('SYSTEM_PROMPTS_DIRECTORY', ''),
-      this.configService.get<string>('AGENT_PERSONALITY_DIRECTORY', ''),
-      `${this.agentPersonality}.txt`,
-    );
-    let systemPrompt: string;
-    try {
-      systemPrompt = fs.readFileSync(filePath, 'utf-8');
-      this.logger.log(`System prompt loaded from file: ${filePath}`);
-    } catch (error) {
-      this.logger.error(
-        `Failed to load system prompt from file: ${filePath}`,
-        error,
-      );
-      systemPrompt = 'You are a helpful AI assistant. designed to help humans.';
-      this.logger.log(`Use default value: ${systemPrompt}`);
-    }
-
-    return systemPrompt;
   }
 
   async chat(input: string): Promise<string> {

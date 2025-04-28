@@ -15,4 +15,5 @@ export default (): AppConfig => ({
     process.env.SYSTEM_PROMPTS_DIRECTORY || 'systemPrompts',
   AGENT_PERSONALITIES_DIRECTORY:
     process.env.AGENT_PERSONALITY_DIRECTORY || 'personalities',
+  ABOUT_ME_FILE_NAME: process.env.ABOUT_ME_FILE_NAME || 'aboutMe.txt',
 });

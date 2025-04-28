@@ -9,4 +9,5 @@ export interface AppConfig {
   AGENT_PERSONALITY: string;
   SYSTEM_PROMPTS_DIRECTORY: string;
   AGENT_PERSONALITIES_DIRECTORY: string;
+  ABOUT_ME_FILE_NAME: string;
 }
