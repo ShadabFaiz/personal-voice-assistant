@@ -48,12 +48,12 @@ After all installation are done:
       4. bash serve.sh
       
    ### VoiceSynthesis
-      1. cd voiceSynthesis/styleTTS2
+      1. cd voiceSynthesis/coquiTTS
       2. python3.11 -m venv venv3.11
       3. source venv3.11/bin/activate
-      4. python vits/server.py
-      5. sh ./install.sh
-      6. inside vits or xttsv2, bash serve.sh
+      4. sh ./install.sh
+      5. python vits/server.py
+
       *NOTE: use vits as it is the onlyone that can be used for real time.
 
 ### v0.0.1 (Self host Ollama)
