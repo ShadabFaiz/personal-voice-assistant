@@ -2,8 +2,21 @@ import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import * as dotenv from 'dotenv';
 import { AppModule } from './app.module';
+import configuration from './config/configuration';
 import { HttpExceptionFilter } from './expectionFilters/httpExceptionFilter';
 dotenv.config();
+
+function printEnvVariables() {
+  console.log('****** Ollama Configuration ******');
+
+  const config = configuration();
+  for (const key in config) {
+    if (config.hasOwnProperty(key)) {
+      console.log(`${key}: ${config[key]}`);
+    }
+  }
+  console.log('************');
+}
 
 async function main() {
   const app = await NestFactory.create(AppModule);
@@ -34,6 +47,7 @@ async function main() {
   //   },
   // );
   // console.log('response: ', response.data);
+  printEnvVariables();
 }
 
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
