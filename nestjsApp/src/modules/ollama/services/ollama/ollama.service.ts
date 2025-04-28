@@ -8,28 +8,41 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
+  OnModuleInit,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as fs from 'fs';
 import { ConversationChain } from 'langchain/chains';
 import { BufferMemory } from 'langchain/memory';
 import path from 'path';
+import { HelperService } from '../../helper';
 
 @Injectable()
-export class OllamaService {
-  private readonly model: ChatOllama;
-  private readonly memory: BufferMemory;
-  private readonly chain: ConversationChain;
+export class OllamaService implements OnModuleInit {
+  private model: ChatOllama;
+  private memory: BufferMemory;
+  private chain: ConversationChain;
   private readonly logger = new Logger(OllamaService.name);
 
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+    private readonly helperService: HelperService,
+  ) {
+    this.logger.log('OllamaService constructor called');
+  }
+
+  async onModuleInit(): Promise<void> {
     const baseUrl = this.configService.get<string>(
       'OLLAMA_BASE_URL',
       'http://localhost:11434',
     );
     const model = this.configService.get<string>('MODEL_NAME');
-    this.logger.log(`OLLAMA_BASE_URL: ${baseUrl}`);
-    this.logger.log(`MODEL_NAME: ${model}`);
+    console.log('****** Ollama Configuration ******');
+    console.log(`Using OLLAMA_BASE_URL: ${baseUrl}`);
+    console.log(`Using MODEL_NAME: ${model}`);
+    console.log('************');
+
+    await this.helperService.checkOllamaStatus(baseUrl);
 
     this.model = new ChatOllama({ baseUrl, model });
     this.memory = new BufferMemory();
@@ -63,7 +76,6 @@ export class OllamaService {
     );
     let systemPrompt: string;
     try {
-      console.log('filePath ', filePath);
       systemPrompt = fs.readFileSync(filePath, 'utf-8');
       this.logger.log(`System prompt loaded from file: ${filePath}`);
     } catch (error) {
