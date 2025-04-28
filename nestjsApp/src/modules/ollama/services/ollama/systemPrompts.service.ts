@@ -6,14 +6,24 @@ import path from 'path';
 @Injectable()
 export class SystemPromptsService {
   private readonly logger = new Logger(SystemPromptsService.name);
-  private;
 
   constructor(private configService: ConfigService) {}
 
   loadAllSystemPrompts() {
     const agentPersonality = this.loadAgentPersonality();
     const aboutMe = this.loadAboutMe();
-    return agentPersonality + aboutMe;
+    const combinedPrompts = `
+    <system_context>
+      <user_information>
+        ${aboutMe}
+      </user_information>
+
+      <persona_instructions>
+        ${agentPersonality}
+      </persona_instructions>
+    </system_context>
+    `;
+    return combinedPrompts;
   }
 
   loadAboutMe() {
