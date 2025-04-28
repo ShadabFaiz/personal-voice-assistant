@@ -23,6 +23,7 @@ export class OllamaService implements OnModuleInit {
   private memory: BufferMemory;
   private chain: ConversationChain;
   private readonly logger = new Logger(OllamaService.name);
+  private agentPersonality: string;
 
   constructor(
     private configService: ConfigService,
@@ -37,9 +38,14 @@ export class OllamaService implements OnModuleInit {
       'http://localhost:11434',
     );
     const model = this.configService.get<string>('MODEL_NAME');
+    this.agentPersonality = this.configService.get<string>(
+      'AGENT_PERSONALITY',
+      '',
+    );
     console.log('****** Ollama Configuration ******');
     console.log(`Using OLLAMA_BASE_URL: ${baseUrl}`);
     console.log(`Using MODEL_NAME: ${model}`);
+    console.log(`Using AGENT PERSONALITY: ${this.agentPersonality}`);
     console.log('************');
 
     await this.helperService.checkOllamaStatus(baseUrl);
@@ -65,14 +71,10 @@ export class OllamaService implements OnModuleInit {
 
   private loadSystemPrompt() {
     const filePath = path.join(
-      __dirname,
-      '..',
-      '..',
-      '..',
-      '..',
-      'systemPrompts',
-      'personalities',
-      'Leena.txt',
+      process.cwd(),
+      this.configService.get<string>('SYSTEM_PROMPTS_DIRECTORY', ''),
+      this.configService.get<string>('AGENT_PERSONALITY_DIRECTORY', ''),
+      `${this.agentPersonality}.txt`,
     );
     let systemPrompt: string;
     try {

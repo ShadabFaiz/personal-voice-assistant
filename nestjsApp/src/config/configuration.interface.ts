@@ -6,4 +6,7 @@ export interface AppConfig {
   DEBUG: boolean;
   TRANSCRIPTION_SERVER_ENDPOINT: string;
   VOICE_SYNTHESIS_SERVER_ENDPOINT: string;
+  AGENT_PERSONALITY: string;
+  SYSTEM_PROMPTS_DIRECTORY: string;
+  AGENT_PERSONALITIES_DIRECTORY: string;
 }

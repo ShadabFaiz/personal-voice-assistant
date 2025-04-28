@@ -10,4 +10,9 @@ export default (): AppConfig => ({
     process.env.TRANSCRIPTION_SERVER_ENDPOINT || '',
   VOICE_SYNTHESIS_SERVER_ENDPOINT:
     process.env.VOICE_SYNTHESIS_SERVER_ENDPOINT || '',
+  AGENT_PERSONALITY: process.env.AGENT_PERSONALITY || 'LEENA',
+  SYSTEM_PROMPTS_DIRECTORY:
+    process.env.SYSTEM_PROMPTS_DIRECTORY || 'systemPrompts',
+  AGENT_PERSONALITIES_DIRECTORY:
+    process.env.AGENT_PERSONALITY_DIRECTORY || 'personalities',
 });
