@@ -26,14 +26,14 @@ nvcc install
    1. ``` cd transcriptionServer```
    2. ``` python3.11 -m venv venv3.11 ```
    3. ``` source venv3.11/bin/activate ```
-   4. ```./install```
+   4. ``` sh install.sh ```
 
    ### voiceSyntesis
    1. ``` sudo apt install espeak-ng ```
-   1. ``` cd voiceSyntesis```
+   1. ``` cd voiceSyntesis/coquiTTS ```
    2. ``` python3.11 -m venv venv3.11 ```
    3. ``` source venv3.11/bin/activate ```
-   4. ```./install```
+   4. ``` sh install.sh ```
 
 ----
 
@@ -50,11 +50,21 @@ After all installation are done:
    ### VoiceSynthesis
       1. cd voiceSynthesis/coquiTTS
       2. python3.11 -m venv venv3.11
-      3. source venv3.11/bin/activate
-      4. sh ./install.sh
-      5. python vits/server.py
+      3. `cd vits`
+      4. `bash serve.sh`
 
       *NOTE: use vits as it is the onlyone that can be used for real time.
+
+### FAQ
+   1. How do i talk to LLM?
+      Ans: 
+      1. Start all 3 apps: nestjsApp, transcriptionServer and voiceSynthesis app.
+      2. From cli, make a curl request
+         `curl -X GET http://localhost:3000/voiceChat/start`
+         This will start voice recording. It will stop if there is silence for 5 sec.
+         Then audio will be transcripted and send to llm, then send to voice synthesis and response from llm
+         will be converted to audio and played.
+
 
 ### v0.0.1 (Self host Ollama)
 
@@ -135,5 +145,5 @@ NOTE**: Currently transcription is processed on cpu, not on gpu. TODO: Make it w
 ---
 
 ### v0.0.11 (Testing other TTS)
-1. Testing piperTTS (very fast. Highly viable for real-time)
+1. TODO: Testing piperTTS (very fast. Highly viable for real-time)
 ---
