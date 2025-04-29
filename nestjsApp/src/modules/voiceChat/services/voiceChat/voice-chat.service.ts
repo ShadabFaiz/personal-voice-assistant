@@ -71,7 +71,10 @@ export class VoiceChatService {
     fs.writeFileSync(filePath, cleanedAudio);
     this.resetAudioCaptureBuffer();
 
+    console.log(`user: ${transcript}`);
     const responseFromLLM = await this.sendTranscriptToLLM(transcript);
+    console.log(`LLM: ${responseFromLLM}`);
+
     await this.voiceSynthesis.synthesize(responseFromLLM);
 
     response.status(200).send(`Response: ${responseFromLLM}`);
