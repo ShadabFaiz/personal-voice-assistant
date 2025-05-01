@@ -16,6 +16,9 @@ nvcc install
    2. yarn
    3. nvcc 12.6
    4. python v3.11
+   5. libcudnn9-cuda-12 (if you are going to use cuda)
+
+
 
    ### mainApp
    1. ```cd mainApp```
@@ -64,7 +67,7 @@ After all installation are done:
          This will start voice recording. It will stop if there is silence for 5 sec.
          Then audio will be transcripted and send to llm, then send to voice synthesis and response from llm
          will be converted to audio and played.
-
+   2. `sudo apt-get install libcudnn9-cuda-12`
 
 ### v0.0.1 (Self host Ollama)
 
