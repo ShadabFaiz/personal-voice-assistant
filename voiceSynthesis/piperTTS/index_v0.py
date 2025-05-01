@@ -7,7 +7,7 @@ from piper import PiperVoice
 
 # Load Piper voice model
 start_time = time.time()
-speaker="kristin"
+speaker="lessac"
 voice = PiperVoice.load(f"testing/piper_voices/{speaker}/voice.onnx")
 print(f"Model loaded in {time.time() - start_time:.2f} seconds")
 
