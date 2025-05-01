@@ -61,17 +61,13 @@ export class VoiceChatServiceV2 {
 
   private async onAudioCaptureComplete() {
     const { filePath } = this.getFilePath();
-    const cleanedAudio = await this.ffmpegAudioCleaner.cleanAudio(
-      this.audioBuffer,
-      filePath,
-    );
+    const cleanedAudio = this.audioBuffer;
     const transcript = await this.transcribeBufferedAudio(cleanedAudio);
 
     if (!transcript) {
       this.logger.verbose('No transcription available.');
       return;
     }
-
     fs.writeFileSync(filePath, cleanedAudio);
     this.resetAudioCaptureBuffer();
 

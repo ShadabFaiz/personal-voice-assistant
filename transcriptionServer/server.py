@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO)
 app = Flask(__name__)
 
 # Load Faster-Whisper model
-DEVICE = "cpu" if torch.cuda.is_available() else "cpu"
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 logging.info('DEVICE: %s', DEVICE)
 
 # Select model size based on device

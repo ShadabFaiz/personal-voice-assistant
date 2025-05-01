@@ -32,7 +32,7 @@ export class FasterWhisperTranscriptor {
       return [response.data.transcript, null];
     } catch (error) {
       if (this.DEBUG) {
-        this.logger.error(error);
+        this.logger.error(error.message);
       }
       return [
         null,
