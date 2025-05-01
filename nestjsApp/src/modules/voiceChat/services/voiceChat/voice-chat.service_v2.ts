@@ -17,7 +17,6 @@ import { MicInstanceConfigs } from './configs';
 export class VoiceChatServiceV2 {
   private micInstance: ReturnType<typeof mic>;
   private micInputStream: Readable;
-  private isRecording: boolean = false;
   private audioBuffer: Buffer = Buffer.alloc(0);
   private readonly logger = new Logger(VoiceChatServiceV2.name);
   private readonly DEBUG = false;
@@ -30,33 +29,38 @@ export class VoiceChatServiceV2 {
     private readonly httpService: HttpService,
   ) {
     this.DEBUG = this.configService.get('DEBUG', false);
+    const { dir } = this.getFilePath();
+
+    this.createDirectory(dir);
+  }
+
+  private wait(waitInMilliSeconds: number) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(true);
+      }, waitInMilliSeconds);
+    });
   }
 
   startRecording() {
     try {
-      if (this.isRecording) {
-        this.logger.log('Recording is already in progress.');
-        return;
-      }
       this.resetAudioCaptureBuffer();
-
       this.initializeMicInstance();
-      this.micInstance.start();
-      this.isRecording = true;
       this.logger.log('Started recording...');
-      this.micInputStream.on(
-        'audioProcessExitComplete',
-        async () => await this.onAudioCaptureComplete(),
-      );
+      this.micInstance.start();
+      this.micInputStream.on('audioProcessExitComplete', async () => {
+        await this.onAudioCaptureComplete();
+        this.logger.verbose('Recording completed. Starting next recording...');
+        await this.wait(2000);
+        return this.startRecording();
+      });
     } catch (error) {
       this.logger.error('Error in startRecording:', error);
-      this.logger.error('Error stack:', error.stack);
     }
   }
 
   private async onAudioCaptureComplete() {
-    const { filePath, dir } = this.getFilePath();
-    this.createDirectory(dir);
+    const { filePath } = this.getFilePath();
     const cleanedAudio = await this.ffmpegAudioCleaner.cleanAudio(
       this.audioBuffer,
       filePath,
@@ -64,34 +68,25 @@ export class VoiceChatServiceV2 {
     const transcript = await this.transcribeBufferedAudio(cleanedAudio);
 
     if (!transcript) {
-      this.logger.error('Failed to transcribe audio');
+      this.logger.verbose('No transcription available.');
       return;
     }
 
     fs.writeFileSync(filePath, cleanedAudio);
     this.resetAudioCaptureBuffer();
 
+    console.log(`user: ${transcript}`);
     const responseFromLLM = await this.sendTranscriptToLLM(transcript);
-    // await this.voiceSynthesis.synthesize(responseFromLLM);
+    console.log(`LLM: ${responseFromLLM}`);
 
-    this.logger.log('Transcription:', transcript);
-    this.logger.log('Audio saved to:', filePath);
-    this.logger.log('Response from LLM:', responseFromLLM);
+    // await this.voiceSynthesis.synthesize(responseFromLLM);
   }
 
   stopRecording() {
     try {
-      if (!this.isRecording) {
-        this.logger.log('No recording in progress.');
-        return;
-      }
-
       if (this.micInstance) {
         this.micInstance.stop();
       }
-
-      this.logger.log('Old  this.isRecording = false;');
-      // this.isRecording = false;
     } catch (error) {
       this.logger.error('Error in stopRecording:', error);
     }
@@ -126,14 +121,6 @@ export class VoiceChatServiceV2 {
     this.logger.error(error);
   }
 
-  private convertBufferToInt16Array(buffer: Buffer): Int16Array {
-    const pcmData = new Int16Array(buffer.length / 2);
-    for (let i = 0; i < buffer.length; i += 2) {
-      pcmData[i / 2] = buffer.readInt16LE(i);
-    }
-    return pcmData;
-  }
-
   private getFilePath() {
     const now = moment();
     const date = now.format('DD-MM-YYYY');
@@ -148,9 +135,12 @@ export class VoiceChatServiceV2 {
   }
 
   private createDirectory(dir: string) {
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
+    if (fs.existsSync(dir)) {
+      this.logger.log(`Directory already exists: ${dir}`);
+      return;
     }
+    this.logger.log(`Creating directory: ${dir}`);
+    return fs.mkdirSync(dir, { recursive: true });
   }
 
   private resetAudioCaptureBuffer() {

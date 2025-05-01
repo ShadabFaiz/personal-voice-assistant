@@ -30,7 +30,7 @@ async function main() {
   await app.listen(PORT);
   logger.log(`Application is running on http://localhost:${PORT}`);
 
-  const voiceChatService = app.get<VoiceChatServiceV2>('VoiceChatServiceV2');
+  const voiceChatService = app.get(VoiceChatServiceV2);
   const micInstance = voiceChatService.startRecording();
 
   // const app = await NestFactory.createApplicnationContext(AppModule);

@@ -51,7 +51,7 @@ def transcribe_audio(waveform: torch.Tensor):
 
     logging.info(f"Transcribing waveform with shape: {waveform.shape}")
 
-    segments, _ = model.transcribe(waveform, language="en")
+    segments, _ = model.transcribe(waveform, language="en", vad_filter=True)
     transcript_text = " ".join(segment.text for segment in segments)
     return transcript_text
 
