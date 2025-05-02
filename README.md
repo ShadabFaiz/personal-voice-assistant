@@ -150,3 +150,19 @@ NOTE**: Currently transcription is processed on cpu, not on gpu. TODO: Make it w
 ### v0.0.11 (Testing other TTS)
 1. TODO: Testing piperTTS (very fast. Highly viable for real-time)
 ---
+
+### v0.0.12 (Testing other TTS)
+1. TODO: Add Kokoro TTS. Need more testing.
+2. Removed voice models in vits.
+3. Added additional logs in main server.
+4. Shifted system Prompts from src/systemPrompts to systemPrompts.
+5. Added aboutMe.txt in systemPrompts to write about user. LLM will get information about user from this file.
+6. Added SystemPromptsService. This service will load the system prompts, structure them in xml format, and the n feed it to LLM.
+
+---
+
+### v0.0.13 (Testing other TTS)
+1. Implemented hand free audio recording. Now audio recording will start as soon as main server start. 
+   No need to hit endpoint to start the conversation.
+2. Shift transcription process from cpu to GPU with large-v3 faster-whisper model.
+---
