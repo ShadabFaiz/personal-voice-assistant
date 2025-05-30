@@ -12,7 +12,7 @@ export class HelperService {
     try {
       const tagsUrl = `${baseUrl}/api/tags`;
       this.logger.log(`Checking if Ollama is running at ${tagsUrl}`);
-      const response = await lastValueFrom(this.httpService.get(tagsUrl));
+      const response = await lastValueFrom(this.httpService.get(tagsUrl, { 'timeout': 5000 }));
       if (response.status === 200) {
         this.logger.log('Ollama is live.');
         return true;

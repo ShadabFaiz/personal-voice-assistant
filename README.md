@@ -42,7 +42,7 @@ nvcc install
 
 ## How to run it
 After all installation are done:
-   ### nestjsApp
+   ### mainServer
       1. `npm run start:dev`
    ### transcriptionService
       1. cd transcriptionService
@@ -61,7 +61,7 @@ After all installation are done:
 ### FAQ
    1. How do i talk to LLM?
       Ans: 
-      1. Start all 3 apps: nestjsApp, transcriptionServer and voiceSynthesis app.
+      1. Start all 3 apps: mainServer, transcriptionServer and voiceSynthesis app.
       2. From cli, make a curl request
          `curl -X GET http://localhost:3000/voiceChat/start`
          This will start voice recording. It will stop if there is silence for 5 sec.
