@@ -43,7 +43,12 @@ export class OllamaService implements OnModuleInit {
       '',
     );
 
-    await this.helperService.checkOllamaStatus(baseUrl);
+    const isOllamaRunning = await this.helperService.checkOllamaStatus(baseUrl);
+    if (!isOllamaRunning) {
+      throw Error(
+        `Ollama is not running at ${baseUrl}. Please start Ollama server.`,
+      );
+    }
 
     this.model = new ChatOllama({ baseUrl, model });
     this.memory = new BufferMemory();
