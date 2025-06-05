@@ -4,6 +4,7 @@ import * as dotenv from 'dotenv';
 import { AppModule } from './app.module';
 import configuration from './config/configuration';
 import { HttpExceptionFilter } from './expectionFilters/httpExceptionFilter';
+import { DateTimeTool } from './modules/tools/dateTimeTools/dateTime.tool';
 import { VoiceChatServiceV2 } from './modules/voiceChat/services/voiceChat/voice-chat.service_v2';
 dotenv.config();
 
@@ -31,7 +32,9 @@ async function main() {
   logger.log(`Application is running on http://localhost:${PORT}`);
 
   const voiceChatService = app.get(VoiceChatServiceV2);
-  const micInstance = voiceChatService.startRecording();
+  const dateTimeTool = app.get(DateTimeTool);
+  console.log('dateTimeTool: ', dateTimeTool.executeCommand());
+  // const micInstance = voiceChatService.startRecording();
 
   // const app = await NestFactory.createApplicnationContext(AppModule);
 

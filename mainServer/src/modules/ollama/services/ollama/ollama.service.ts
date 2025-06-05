@@ -22,7 +22,6 @@ export class OllamaService implements OnModuleInit {
   private memory: BufferMemory;
   private chain: ConversationChain;
   private readonly logger = new Logger(OllamaService.name);
-  private agentPersonality: string;
 
   constructor(
     private configService: ConfigService,
@@ -38,10 +37,6 @@ export class OllamaService implements OnModuleInit {
       'http://localhost:11434',
     );
     const model = this.configService.get<string>('MODEL_NAME');
-    this.agentPersonality = this.configService.get<string>(
-      'AGENT_PERSONALITY',
-      '',
-    );
 
     const isOllamaRunning = await this.helperService.checkOllamaStatus(baseUrl);
     if (!isOllamaRunning) {
