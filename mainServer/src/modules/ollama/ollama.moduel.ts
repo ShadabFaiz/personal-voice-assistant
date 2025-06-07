@@ -4,10 +4,12 @@ import { OllamaController } from './controllers/ollama';
 import { HelperService } from './helper';
 import { OllamaService } from './services';
 import { SystemPromptsService } from './services/ollama/systemPrompts.service';
+import { OllamaServiceV2 } from './services/ollama/ollama.service.v2';
+import { LLMWorkflowService } from './services/llm/llmWorkflow.service';
 
 @Module({
   imports: [HttpModule],
   controllers: [OllamaController],
-  providers: [OllamaService, HelperService, SystemPromptsService],
+  providers: [OllamaService, HelperService, SystemPromptsService, OllamaServiceV2, LLMWorkflowService],
 })
 export class OllamaModule {}

@@ -1,9 +1,11 @@
+import { Injectable } from '@nestjs/common';
 import { BaseTool } from '../base.tool';
 import { GetDateFunctionResponse } from './interfaces/getDateFunction';
 import { GetDateTimeFunctionResponse } from './interfaces/getDateTimeFunction';
 import { DAYS, GetDayFunctionResponse } from './interfaces/getDayFunction';
 import { GetTimeFunctionResponse } from './interfaces/getTimeFunction';
 
+@Injectable()
 export class DateTimeTool extends BaseTool {
   public executeCommand() {
     console.log('hello world.');
@@ -27,7 +29,7 @@ export class DateTimeTool extends BaseTool {
     const month = now.getMonth() + 1;
     const day = now.getDate();
     return {
-      date: `${year}-${month}-${day}`,
+      date: `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`,
       format: 'YYYY-MM-DD',
     };
   }

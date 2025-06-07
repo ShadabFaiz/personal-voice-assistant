@@ -1,11 +1,11 @@
 import { Body, Controller, Post, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { ChatDto } from '../dtos';
-import { OllamaService } from '../services';
+import { OllamaServiceV2 } from '../services/ollama/ollama.service.v2';
 
 @Controller('ollama')
 export class OllamaController {
-  constructor(private readonly ollamaService: OllamaService) {}
+  constructor(private readonly ollamaService: OllamaServiceV2) {}
 
   @Post('chat')
   async chat(@Body() body: ChatDto, @Res() res: Response) {
@@ -15,11 +15,9 @@ export class OllamaController {
 
       const { prompt } = body;
 
-      await this.ollamaService.chatStream(prompt, (token) => {
-        res.write(token);
-      });
+      const response = await this.ollamaService.chat(prompt);
+      res.send(response);
 
-      res.end();
     } catch (error) {
       console.error('Error in chat:', error);
       res.status(500).send('An error occurred while processing your request.');

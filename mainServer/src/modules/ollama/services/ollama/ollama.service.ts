@@ -1,9 +1,12 @@
+import { BaseLanguageModelInput } from '@langchain/core/language_models/base';
+import { AIMessageChunk } from '@langchain/core/messages';
 import {
   ChatPromptTemplate,
   HumanMessagePromptTemplate,
   SystemMessagePromptTemplate,
 } from '@langchain/core/prompts';
-import { ChatOllama } from '@langchain/ollama';
+import { Runnable, RunnableSequence } from '@langchain/core/runnables';
+import { ChatOllama, ChatOllamaCallOptions } from '@langchain/ollama';
 import {
   Injectable,
   InternalServerErrorException,
@@ -15,18 +18,27 @@ import { ConversationChain } from 'langchain/chains';
 import { BufferMemory } from 'langchain/memory';
 import { HelperService } from '../../helper';
 import { SystemPromptsService } from './systemPrompts.service';
+import { ToolsService } from '../../../tools/tools.service';
 
 @Injectable()
 export class OllamaService implements OnModuleInit {
   private model: ChatOllama;
+  private llm: any;
   private memory: BufferMemory;
   private chain: ConversationChain;
+  private runnableSequence: RunnableSequence;
+  private llmWithTools: Runnable<
+    BaseLanguageModelInput,
+    AIMessageChunk,
+    ChatOllamaCallOptions
+  >;
   private readonly logger = new Logger(OllamaService.name);
 
   constructor(
     private configService: ConfigService,
     private readonly helperService: HelperService,
     private readonly systemPromptsService: SystemPromptsService,
+    private readonly toolService: ToolsService,
   ) {
     this.logger.log('OllamaService constructor called');
   }
@@ -36,40 +48,44 @@ export class OllamaService implements OnModuleInit {
       'OLLAMA_BASE_URL',
       'http://localhost:11434',
     );
-    const model = this.configService.get<string>('MODEL_NAME');
-
     const isOllamaRunning = await this.helperService.checkOllamaStatus(baseUrl);
     if (!isOllamaRunning) {
       throw Error(
         `Ollama is not running at ${baseUrl}. Please start Ollama server.`,
       );
     }
+    const modelName = this.configService.get<string>('MODEL_NAME');
+   this.llm = new ChatOllama({ baseUrl, model: modelName, verbose: true });
 
-    this.model = new ChatOllama({ baseUrl, model });
-    this.memory = new BufferMemory();
-    const chatPrompt = this.initializeSystemPrompts();
+    const tools = [this.toolService.dateToolRunnable];
+    this.llmWithTools = this.llm.bindTools(tools);
 
-    this.chain = new ConversationChain({
-      llm: this.model,
-      memory: this.memory,
-      prompt: chatPrompt,
-    });
+    // const chatPrompt = this.initializeSystemPrompts();
+    // const chatPromptValue = await chatPrompt.invoke({
+    //   input: 'hi. How are you ?',
+    // });
+
+    // const response = await this.llm.invoke(chatPromptValue);
+    // console.log(`Response:`, response.content);
   }
 
   private initializeSystemPrompts() {
     const allSystmePrompts = this.systemPromptsService.loadAllSystemPrompts();
-    const chatPrompt = ChatPromptTemplate.fromMessages([
-      SystemMessagePromptTemplate.fromTemplate(allSystmePrompts),
-      HumanMessagePromptTemplate.fromTemplate('{input}'),
-    ]);
+    const chatPrompt = ChatPromptTemplate.fromMessages(
+      [
+        SystemMessagePromptTemplate.fromTemplate(allSystmePrompts),
+        HumanMessagePromptTemplate.fromTemplate('{input}'),
+      ],
+      { validateTemplate: true },
+    );
     return chatPrompt;
   }
 
-  async chat(input: string): Promise<string> {
+  async chat(userPrompt: string): Promise<string> {
     try {
-      const response: Record<string, string> = await this.chain.call({ input });
-      this.logger.log(`Response: ${response.response}`);
-      return response.response;
+      const response = await this.llm.invoke(userPrompt);
+      console.log(`Response:`, response);
+      return response.content;
     } catch (error) {
       this.logger.error('Failed to get response', error);
       throw new InternalServerErrorException(
@@ -83,7 +99,7 @@ export class OllamaService implements OnModuleInit {
     onToken: (token: string) => void,
   ): Promise<void> {
     try {
-      this.logger.log('Interacting with Ollama.');
+      this.logger.log('Chat stream with Ollama.');
       await this.chain.stream({
         input,
         callbacks: [

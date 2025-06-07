@@ -1,8 +1,10 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { CliTool } from './cliTool/cli.tool';
 import { DateTimeTool } from './dateTimeTools/dateTime.tool';
 import { WeatherTool } from './weatherTool/weather.tool';
+import { ToolsService } from './tools.service';
 
+@Global()
 @Module({
   imports: [],
   controllers: [],
@@ -19,7 +21,11 @@ import { WeatherTool } from './weatherTool/weather.tool';
       provide: CliTool,
       useClass: CliTool,
     },
+    {
+      provide: ToolsService,
+      useClass: ToolsService,
+    },
   ],
-  exports: [DateTimeTool, WeatherTool, CliTool],
+  exports: [DateTimeTool, WeatherTool, CliTool, ToolsService],
 })
 export class ToolsModule {}

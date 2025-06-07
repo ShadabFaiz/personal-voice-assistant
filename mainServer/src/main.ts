@@ -4,8 +4,6 @@ import * as dotenv from 'dotenv';
 import { AppModule } from './app.module';
 import configuration from './config/configuration';
 import { HttpExceptionFilter } from './expectionFilters/httpExceptionFilter';
-import { DateTimeTool } from './modules/tools/dateTimeTools/dateTime.tool';
-import { VoiceChatServiceV2 } from './modules/voiceChat/services/voiceChat/voice-chat.service_v2';
 dotenv.config();
 
 function printEnvVariables() {
@@ -31,30 +29,10 @@ async function main() {
   await app.listen(PORT);
   logger.log(`Application is running on http://localhost:${PORT}`);
 
-  const voiceChatService = app.get(VoiceChatServiceV2);
-  const dateTimeTool = app.get(DateTimeTool);
-  console.log('dateTimeTool: ', dateTimeTool.executeCommand());
+  // const voiceChatService = app.get(VoiceChatServiceV2);
   // const micInstance = voiceChatService.startRecording();
 
-  // const app = await NestFactory.createApplicnationContext(AppModule);
-
-  // const transcriptor = app.get(PicovoiceTranscriptor);
-
-  // const applicationRoot = path.dirname(__dirname);
-  // const filePath = `${applicationRoot}/input.wav`;
-  // console.log('filePath: ', filePath);
-  // const fileContent = fs.readFileSync(filePath);
-  // console.log('file read', fileContent);
-  // const httpService = app.get(HttpService);
-  // const response = await httpService.axiosRef.post(
-  //   'http://0.0.0.0:8000/transcript',
-  //   fileContent,
-  //   {
-  //     headers: { 'Content-Type': 'audio/wav' },
-  //   },
-  // );
-  // console.log('response: ', response.data);
-  printEnvVariables();
+  printEnvVariables(); 
 }
 
 // eslint-disable-next-line @typescript-eslint/no-floating-promises

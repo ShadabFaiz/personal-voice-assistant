@@ -5,7 +5,7 @@ import { ToolsModule } from './modules/tools/tools.module';
 import { VoiceChatModule } from './modules/voiceChat/voice-chat.moduel';
 
 @Module({
-  imports: [OllamaModule, VoiceChatModule, GlobalModule, ToolsModule],
+  imports: [ToolsModule, OllamaModule, VoiceChatModule, GlobalModule],
   controllers: [],
 })
 export class AppModule {}
