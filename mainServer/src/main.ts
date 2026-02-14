@@ -7,12 +7,12 @@ import { HttpExceptionFilter } from './expectionFilters/httpExceptionFilter';
 dotenv.config();
 
 function printEnvVariables() {
-  console.log('****** Ollama Configuration ******');
+  console.log('****** Configurations ******');
 
   const config = configuration();
   for (const key in config) {
     if (config.hasOwnProperty(key)) {
-      console.log(`${key}: ${config[key]}`);
+      
     }
   }
   console.log('************');
