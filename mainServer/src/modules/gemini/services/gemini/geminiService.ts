@@ -35,29 +35,19 @@ export class GeminiService implements OnModuleInit {
     private readonly llmWorkflowService: LLMWorkflowService,
   ) {}
 
-  async onModuleInit(): Promise<void> {
-    const geminiApiKey = this.configService.get<string>(
+  onModuleInit() {
+    const apiKey = this.configService.get<string>(
       'GOOGLE_GEMINI_API_KEY',
     ) as string;
     const model = this.configService.get<string>('GEMINI_MODEL') as string;
 
     this.model = new ChatGoogleGenerativeAI({
       model,
-      apiKey: geminiApiKey,
+      apiKey,
       temperature: 0.6,
       streaming: true,
       disableStreaming: false,
     });
-
-    try {
-      const response = await this.model.invoke(
-        'Heello Say something 10 time lines long.',
-      );
-
-      console.log('response ', response);
-    } catch (error) {
-      this.logger.error(error);
-    }
 
     const tools = this.toolService.getAllTools();
     const modelWithTools = this.model.bindTools(tools);
@@ -77,18 +67,16 @@ export class GeminiService implements OnModuleInit {
     this.llmWorkflowService.setToolNode(toolNode);
     this.llmWorkflowService.setChatPromptTemplate(chatPromptTemplate);
     this.llmWorkflowService.setThreadId(this.threadId);
-
-    this.logger.log('OllamaServiceV2 initialized');
   }
 
   async chat(userPrompt: string): Promise<string> {
     try {
+      this.logger.log(`User: ${userPrompt}`);
       const input = [{ role: 'user', content: userPrompt }];
-      const response = await this.model.invoke(input);
-      console.log('response ', response);
-      // const output = await this.llmWorkflowService.invokeChat(input);
-      // const llmResponse: string = output.messages.pop()!.content as string;
-      return 'llmResponse';
+      const output = await this.llmWorkflowService.invokeChat(input);
+      const modelResponse = output.messages.at(-1)!.content as string;
+      this.logger.log(`Model: ${modelResponse}`);
+      return modelResponse;
     } catch (error) {
       this.logger.error('Failed to get response', error);
       throw new InternalServerErrorException(
