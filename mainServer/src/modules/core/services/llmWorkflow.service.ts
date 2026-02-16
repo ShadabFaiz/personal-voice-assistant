@@ -1,6 +1,4 @@
-import { ChatPromptTemplateType } from '@core/services/interface';
-import { AIMessage, AIMessageChunk } from '@langchain/core/messages';
-import { Runnable } from '@langchain/core/runnables';
+import { AIMessage } from '@langchain/core/messages';
 import {
   END,
   MemorySaver,
@@ -10,13 +8,15 @@ import {
 } from '@langchain/langgraph';
 import { ToolNode } from '@langchain/langgraph/prebuilt';
 import { Injectable, Logger } from '@nestjs/common';
+import { ChatPromptTemplateType } from './interface';
+import { ModelWithTools } from './interface/modelWithTools';
 
 @Injectable()
 export class LLMWorkflowService {
   private readonly logger = new Logger(LLMWorkflowService.name);
 
   private chatPromptTemplate!: ChatPromptTemplateType;
-  private modelWithTools!: Runnable<any, AIMessageChunk, any>;
+  private modelWithTools!: ModelWithTools;
   private toolNode!: ToolNode;
   private readonly memory = new MemorySaver();
 
@@ -35,7 +35,7 @@ export class LLMWorkflowService {
 
   private readonly app = this.workflow.compile({ checkpointer: this.memory });
 
-  setModelWithTools(modelWithTools: Runnable<any, AIMessageChunk, any>) {
+  setModelWithTools(modelWithTools: ModelWithTools) {
     this.modelWithTools = modelWithTools;
   }
 
@@ -51,17 +51,24 @@ export class LLMWorkflowService {
     this.config.configurable.thread_id = threadId;
   }
 
-  private async callTools(state: typeof MessagesAnnotation.State) {
+  private async callTools(
+    state: typeof MessagesAnnotation.State,
+  ): Promise<{ messages: AIMessage[] }> {
     const { messages } = state;
-    const lastMessage = messages.at(-1) as AIMessage;
-    const toolResponse = await this.toolNode.invoke({
-      messages: [lastMessage],
-    });
+    const lastMessage = messages.at(-1);
+
+    if (!lastMessage) {
+      throw new Error('No message found in state');
+    }
+
+    const toolResponse = (await this.toolNode.invoke({
+      messages: [lastMessage as AIMessage],
+    })) as { messages: AIMessage[] };
     this.logger.log('Tool Response: ' + JSON.stringify(toolResponse));
     return { messages: toolResponse.messages };
   }
 
-  private async llmResponseHandler(state: typeof MessagesAnnotation.State) {
+  private llmResponseHandler(state: typeof MessagesAnnotation.State): string {
     const lastMessage = state.messages.at(-1) as AIMessage;
     if (lastMessage.tool_calls?.length) {
       return 'tools';
@@ -69,7 +76,9 @@ export class LLMWorkflowService {
     return END;
   }
 
-  private async callModel(state: typeof MessagesAnnotation.State) {
+  private async callModel(
+    state: typeof MessagesAnnotation.State,
+  ): Promise<{ messages: AIMessage }> {
     const prompt = await this.chatPromptTemplate.invoke(state);
     const response: AIMessage = await this.modelWithTools.invoke(prompt);
     return { messages: response };

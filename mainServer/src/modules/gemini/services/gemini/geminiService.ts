@@ -1,3 +1,4 @@
+import { LLMWorkflowService } from '@core/services';
 import {
   ChatPromptTemplate,
   HumanMessagePromptTemplate,
@@ -15,8 +16,8 @@ import { ConfigService } from '@nestjs/config';
 import { v4 as uuidv4 } from 'uuid';
 import { ToolsService } from '../../../tools/tools.service';
 import { HelperService } from '../../helper';
-import { LLMWorkflowService } from '../llm/llmWorkflow.service';
 
+import { AppConfig } from '@core/config';
 import { SystemPromptsService } from './systemPrompts.service';
 
 @Injectable()
@@ -27,7 +28,7 @@ export class GeminiService implements OnModuleInit {
   private readonly threadId = uuidv4();
 
   constructor(
-    private readonly configService: ConfigService,
+    private readonly configService: ConfigService<AppConfig>,
     private readonly helperService: HelperService,
     private readonly systemPromptsService: SystemPromptsService,
     private readonly toolService: ToolsService,
@@ -35,23 +36,30 @@ export class GeminiService implements OnModuleInit {
   ) {}
 
   async onModuleInit(): Promise<void> {
-    const modelName = this.configService.get<string>('MODEL_NAME');
+    const geminiApiKey = this.configService.get<string>(
+      'GOOGLE_GEMINI_API_KEY',
+    ) as string;
+    const model = this.configService.get<string>('GEMINI_MODEL') as string;
+
     this.model = new ChatGoogleGenerativeAI({
-      model: 'gemini-3-flash-preview',
-      apiKey: process.env.GOOGLE_GEMINI_API_KEY,
+      model,
+      apiKey: geminiApiKey,
       temperature: 0.6,
       streaming: true,
       disableStreaming: false,
     });
 
-    const response = await this.model.invoke(
-      'Heello Say something 10 time lines long.',
-    );
+    try {
+      const response = await this.model.invoke(
+        'Heello Say something 10 time lines long.',
+      );
 
-    console.log('response ', response);
+      console.log('response ', response);
+    } catch (error) {
+      this.logger.error(error);
+    }
 
     const tools = this.toolService.getAllTools();
-    this.logger.log('Binding tools to model');
     const modelWithTools = this.model.bindTools(tools);
 
     const allSystemPrompts = this.systemPromptsService.loadAllSystemPrompts();
@@ -65,7 +73,6 @@ export class GeminiService implements OnModuleInit {
 
     const toolNode = new ToolNode(tools);
 
-    // Inject dependencies into workflow service
     this.llmWorkflowService.setModelWithTools(modelWithTools);
     this.llmWorkflowService.setToolNode(toolNode);
     this.llmWorkflowService.setChatPromptTemplate(chatPromptTemplate);

@@ -1,6 +1,7 @@
+import { CoreModule } from '@core/core.module';
+import { GeminiModule } from '@gemini/gemini.module';
+
 import { Module } from '@nestjs/common';
-import { GlobalModule } from './global.module';
-import { GeminiModule } from './modules/gemini/gemini.moduel';
 import { ToolsModule } from './modules/tools/tools.module';
 import { VoiceChatModule } from './modules/voiceChat/voice-chat.moduel';
 
@@ -9,8 +10,8 @@ import { VoiceChatModule } from './modules/voiceChat/voice-chat.moduel';
     ToolsModule,
     // OllamaModule,
     VoiceChatModule,
-    GlobalModule,
     GeminiModule,
+    CoreModule,
   ],
   controllers: [],
 })
