@@ -2,14 +2,14 @@ import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import * as dotenv from 'dotenv';
 import { AppModule } from './app.module';
-import configuration from './config/configuration';
 import { HttpExceptionFilter } from './expectionFilters/httpExceptionFilter';
+import { AppConfigFunction } from './modules/core/config/configuration';
 dotenv.config();
 
 function printEnvVariables() {
   console.log('****** Configurations ******');
 
-  const config = configuration();
+  const config = AppConfigFunction();
   for (const key in config) {
     console.log(`  ${key}: ${config[key]}`);
   }

@@ -1,3 +1,4 @@
+import { AppConfig } from '@core/config';
 import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -8,7 +9,6 @@ import moment from 'moment-timezone';
 import * as path from 'path';
 import { lastValueFrom } from 'rxjs';
 import { Readable } from 'stream';
-import { AppConfig } from '../../../../config/configuration.interface';
 import { FFMPEGAudioCleaner } from '../audioCleaner';
 import { FasterWhisperTranscriptor } from '../transcriptors/fasterWhisperTranscriptor';
 import { VoiceSynthesis } from '../voiceSynthesis/voiceSynthesis';
