@@ -3,7 +3,7 @@ import { Response } from 'express';
 import { ChatDto } from '../dtos';
 import { CloudLLMServiceV2 } from '../services/ollama/cloudLLM.service.v2';
 
-@Controller('cloudLLM')
+@Controller('gemini')
 export class BaseController {
   constructor(private readonly cloudllmService: CloudLLMServiceV2) {}
 

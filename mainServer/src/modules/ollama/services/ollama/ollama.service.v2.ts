@@ -16,7 +16,7 @@ import { ConfigService } from '@nestjs/config';
 import { v4 as uuidv4 } from 'uuid';
 import { ToolsService } from '../../../tools/tools.service';
 import { HelperService } from '../../helper';
-import { LLMWorkflowService } from '../llm/llmWorkflow.service';
+import { LLMWorkflowService } from '../workflows/llmWorkflow.service';
 import { SystemPromptsService } from './systemPrompts.service';
 
 @Injectable()
