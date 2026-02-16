@@ -1,12 +1,9 @@
-import { BaseLanguageModelInput } from '@langchain/core/language_models/base';
-import { AIMessageChunk } from '@langchain/core/messages';
 import {
   ChatPromptTemplate,
   HumanMessagePromptTemplate,
   SystemMessagePromptTemplate,
 } from '@langchain/core/prompts';
-import { Runnable, RunnableSequence } from '@langchain/core/runnables';
-import { ChatOllama, ChatOllamaCallOptions } from '@langchain/ollama';
+import { ChatOllama } from '@langchain/ollama';
 import {
   Injectable,
   InternalServerErrorException,
@@ -14,24 +11,16 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ConversationChain } from 'langchain/chains';
-import { BufferMemory } from 'langchain/memory';
+import { ToolsService } from '../../../tools/tools.service';
 import { HelperService } from '../../helper';
 import { SystemPromptsService } from './systemPrompts.service';
-import { ToolsService } from '../../../tools/tools.service';
 
 @Injectable()
 export class OllamaService implements OnModuleInit {
-  private model: ChatOllama;
+  private readonly model!: ChatOllama;
   private llm: any;
-  private memory: BufferMemory;
-  private chain: ConversationChain;
-  private runnableSequence: RunnableSequence;
-  private llmWithTools: Runnable<
-    BaseLanguageModelInput,
-    AIMessageChunk,
-    ChatOllamaCallOptions
-  >;
+  private llmWithTools;
+
   private readonly logger = new Logger(OllamaService.name);
 
   constructor(
@@ -48,14 +37,14 @@ export class OllamaService implements OnModuleInit {
       'OLLAMA_BASE_URL',
       'http://localhost:11434',
     );
-    const isOllamaRunning = await this.helperService.checkOllamaStatus(baseUrl);
-    if (!isOllamaRunning) {
-      throw Error(
-        `Ollama is not running at ${baseUrl}. Please start Ollama server.`,
-      );
-    }
+    // const isOllamaRunning = await this.helperService.checkOllamaStatus(baseUrl);
+    // if (!isOllamaRunning) {
+    //   throw Error(
+    //     `Ollama is not running at ${baseUrl}. Please start Ollama server.`,
+    //   );
+    // }
     const modelName = this.configService.get<string>('MODEL_NAME');
-   this.llm = new ChatOllama({ baseUrl, model: modelName, verbose: true });
+    this.llm = new ChatOllama({ baseUrl, model: modelName, verbose: true });
 
     const tools = [this.toolService.dateToolRunnable];
     this.llmWithTools = this.llm.bindTools(tools);
@@ -100,16 +89,16 @@ export class OllamaService implements OnModuleInit {
   ): Promise<void> {
     try {
       this.logger.log('Chat stream with Ollama.');
-      await this.chain.stream({
-        input,
-        callbacks: [
-          {
-            handleLLMNewToken: (token: string) => {
-              onToken(token);
-            },
-          },
-        ],
-      });
+      // await this.chain.stream({
+      //   input,
+      //   callbacks: [
+      //     {
+      //       handleLLMNewToken: (token: string) => {
+      //         onToken(token);
+      //       },
+      //     },
+      //   ],
+      // });
     } catch (error) {
       this.logger.error('Failed to stream response', error);
       onToken(`Got error while trying to connect to Ollama.\n Error: ${error}`);

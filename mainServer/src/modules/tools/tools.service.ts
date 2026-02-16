@@ -1,11 +1,11 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { DynamicTool, tool } from '@langchain/core/tools';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { DateTimeTool } from './dateTimeTools/dateTime.tool';
 
 @Injectable()
 export class ToolsService implements OnModuleInit {
   private readonly logger = new Logger(ToolsService.name);
-  public dateToolRunnable: DynamicTool;
+  public dateToolRunnable!: DynamicTool;
 
   constructor(private readonly dateTimeTool: DateTimeTool) {}
 
@@ -28,8 +28,7 @@ export class ToolsService implements OnModuleInit {
     );
   }
 
-
-   getAllTools(): DynamicTool[] {
+  getAllTools(): DynamicTool[] {
     this.logger.log('Fetching all tools');
     return [this.dateToolRunnable];
   }
