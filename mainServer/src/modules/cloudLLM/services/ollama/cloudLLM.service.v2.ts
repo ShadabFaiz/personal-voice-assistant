@@ -1,11 +1,10 @@
-// ollama.service.v2.ts
 import {
   ChatPromptTemplate,
   HumanMessagePromptTemplate,
   SystemMessagePromptTemplate,
 } from '@langchain/core/prompts';
+import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { ToolNode } from '@langchain/langgraph/prebuilt';
-import { ChatOllama } from '@langchain/ollama';
 import {
   Injectable,
   InternalServerErrorException,
@@ -17,17 +16,18 @@ import { v4 as uuidv4 } from 'uuid';
 import { ToolsService } from '../../../tools/tools.service';
 import { HelperService } from '../../helper';
 import { LLMWorkflowService } from '../llm/llmWorkflow.service';
+
 import { SystemPromptsService } from './systemPrompts.service';
 
 @Injectable()
-export class OllamaServiceV2 implements OnModuleInit {
-  private readonly logger = new Logger(OllamaServiceV2.name);
+export class CloudLLMServiceV2 implements OnModuleInit {
+  private readonly logger = new Logger(CloudLLMServiceV2.name);
 
-  private model!: ChatOllama;
-  private threadId = uuidv4();
+  private model!: ChatGoogleGenerativeAI;
+  private readonly threadId = uuidv4();
 
   constructor(
-    private configService: ConfigService,
+    private readonly configService: ConfigService,
     private readonly helperService: HelperService,
     private readonly systemPromptsService: SystemPromptsService,
     private readonly toolService: ToolsService,
@@ -35,17 +35,20 @@ export class OllamaServiceV2 implements OnModuleInit {
   ) {}
 
   async onModuleInit(): Promise<void> {
-    const baseUrl = this.configService.get<string>(
-      'OLLAMA_BASE_URL',
-      'http://localhost:11434',
-    );
-    // const isOllamaRunning = await this.helperService.checkOllamaStatus(baseUrl);
-    // if (!isOllamaRunning) {
-    //   throw new Error(`Ollama is not running at ${baseUrl}. Please start Ollama server.`);
-    // }
-
     const modelName = this.configService.get<string>('MODEL_NAME');
-    this.model = new ChatOllama({ baseUrl, model: modelName, verbose: true });
+    this.model = new ChatGoogleGenerativeAI({
+      model: 'gemini-3-flash-preview',
+      apiKey: process.env.GOOGLE_GEMINI_API_KEY,
+      temperature: 0.6,
+      streaming: true,
+      disableStreaming: false,
+    });
+
+    const response = await this.model.invoke(
+      'Heello Say something 10 time lines long.',
+    );
+
+    console.log('response ', response);
 
     const tools = this.toolService.getAllTools();
     this.logger.log('Binding tools to model');
@@ -71,21 +74,18 @@ export class OllamaServiceV2 implements OnModuleInit {
     this.logger.log('OllamaServiceV2 initialized');
   }
 
-  /**
-   * @description Chat method to interact with the LLM
-   * @param userPrompt
-   * @returns response string
-   */
   async chat(userPrompt: string): Promise<string> {
     try {
       const input = [{ role: 'user', content: userPrompt }];
-      const output = await this.llmWorkflowService.invokeChat(input);
-      const llmResponse: string = output.messages.pop()!.content as string;
-      return llmResponse;
+      const response = await this.model.invoke(input);
+      console.log('response ', response);
+      // const output = await this.llmWorkflowService.invokeChat(input);
+      // const llmResponse: string = output.messages.pop()!.content as string;
+      return 'llmResponse';
     } catch (error) {
       this.logger.error('Failed to get response', error);
       throw new InternalServerErrorException(
-        'Failed to get response from Ollama',
+        'Failed to get response from CloudLLM',
       );
     }
   }

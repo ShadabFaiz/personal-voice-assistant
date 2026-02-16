@@ -11,9 +11,7 @@ function printEnvVariables() {
 
   const config = configuration();
   for (const key in config) {
-    if (config.hasOwnProperty(key)) {
-      
-    }
+    console.log(`  ${key}: ${config[key]}`);
   }
   console.log('************');
 }
@@ -32,7 +30,7 @@ async function main() {
   // const voiceChatService = app.get(VoiceChatServiceV2);
   // const micInstance = voiceChatService.startRecording();
 
-  printEnvVariables(); 
+  printEnvVariables();
 }
 
 // eslint-disable-next-line @typescript-eslint/no-floating-promises

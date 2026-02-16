@@ -1,21 +1,19 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
-import { OllamaController } from './controllers/ollama';
+import { BaseController } from './controllers/baseController';
 import { HelperService } from './helper';
-import { OllamaService } from './services';
 import { LLMWorkflowService } from './services/llm/llmWorkflow.service';
-import { OllamaServiceV2 } from './services/ollama/ollama.service.v2';
+import { CloudLLMServiceV2 } from './services/ollama/cloudLLM.service.v2';
 import { SystemPromptsService } from './services/ollama/systemPrompts.service';
 
 @Module({
   imports: [HttpModule],
-  controllers: [OllamaController],
+  controllers: [BaseController],
   providers: [
-    OllamaService,
     HelperService,
     SystemPromptsService,
-    OllamaServiceV2,
+    CloudLLMServiceV2,
     LLMWorkflowService,
   ],
 })
-export class OllamaModule {}
+export class CloudLLMModule {}

@@ -11,7 +11,7 @@ export class HelperService {
   async checkOllamaStatus(baseUrl: string): Promise<boolean> {
     const spinner = ['\\', '|', '/', '-'];
     let i = 0;
-    let interval: NodeJS.Timeout | null = null;
+    const interval: NodeJS.Timeout | null = null;
     try {
       const tagsUrl = `${baseUrl}/api/tags`;
       this.logger.log(`Checking if Ollama is running at ${tagsUrl}`);
@@ -40,7 +40,10 @@ export class HelperService {
         clearInterval(interval);
       }
       process.stdout.write('\r'); // Clear the spinner
-      this.logger.error('Ollama service is not live.', error.message);
+      this.logger.error(
+        'Ollama service is not live.',
+        (error as Error).message,
+      );
       return false;
     }
   }

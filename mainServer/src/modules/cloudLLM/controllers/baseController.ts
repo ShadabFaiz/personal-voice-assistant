@@ -1,11 +1,11 @@
 import { Body, Controller, Post, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { ChatDto } from '../dtos';
-import { OllamaServiceV2 } from '../services/ollama/ollama.service.v2';
+import { CloudLLMServiceV2 } from '../services/ollama/cloudLLM.service.v2';
 
-@Controller('ollama')
-export class OllamaController {
-  constructor(private readonly ollamaService: OllamaServiceV2) {}
+@Controller('cloudLLM')
+export class BaseController {
+  constructor(private readonly cloudllmService: CloudLLMServiceV2) {}
 
   @Post('chat')
   async chat(@Body() body: ChatDto, @Res() res: Response) {
@@ -15,7 +15,7 @@ export class OllamaController {
 
       const { prompt } = body;
 
-      const response = await this.ollamaService.chat(prompt);
+      const response = await this.cloudllmService.chat(prompt);
       res.send(response);
     } catch (error) {
       console.error('Error in chat:', error);
