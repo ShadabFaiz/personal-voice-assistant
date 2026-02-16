@@ -74,7 +74,7 @@ export class OllamaService implements OnModuleInit {
     try {
       const response = await this.llm.invoke(userPrompt);
       console.log(`Response:`, response);
-      return response.content;
+      return response.content as unknown as string;
     } catch (error) {
       this.logger.error('Failed to get response', error);
       throw new InternalServerErrorException(

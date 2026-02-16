@@ -20,8 +20,8 @@ import { LLMWorkflowService } from '../llm/llmWorkflow.service';
 import { SystemPromptsService } from './systemPrompts.service';
 
 @Injectable()
-export class CloudLLMServiceV2 implements OnModuleInit {
-  private readonly logger = new Logger(CloudLLMServiceV2.name);
+export class GeminiService implements OnModuleInit {
+  private readonly logger = new Logger(GeminiService.name);
 
   private model!: ChatGoogleGenerativeAI;
   private readonly threadId = uuidv4();

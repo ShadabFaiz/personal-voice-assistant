@@ -1,11 +1,11 @@
 import { Body, Controller, Post, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { ChatDto } from '../dtos';
-import { CloudLLMServiceV2 } from '../services/ollama/cloudLLM.service.v2';
+import { GeminiService } from '../services/gemini/geminiService';
 
 @Controller('gemini')
 export class BaseController {
-  constructor(private readonly cloudllmService: CloudLLMServiceV2) {}
+  constructor(private readonly cloudllmService: GeminiService) {}
 
   @Post('chat')
   async chat(@Body() body: ChatDto, @Res() res: Response) {
