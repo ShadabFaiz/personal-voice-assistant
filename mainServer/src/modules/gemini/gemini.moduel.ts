@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { BaseController } from './controllers/baseController';
 import { HelperService } from './helper';
 import { LLMWorkflowService } from './services/llm/llmWorkflow.service';
-import { CloudLLMServiceV2 } from './services/ollama/cloudLLM.service.v2';
+import { CloudLLMServiceV2 as GeminiService } from './services/ollama/cloudLLM.service.v2';
 import { SystemPromptsService } from './services/ollama/systemPrompts.service';
 
 @Module({
@@ -12,8 +12,8 @@ import { SystemPromptsService } from './services/ollama/systemPrompts.service';
   providers: [
     HelperService,
     SystemPromptsService,
-    CloudLLMServiceV2,
+    GeminiService,
     LLMWorkflowService,
   ],
 })
-export class CloudLLMModule {}
+export class GeminiModule {}

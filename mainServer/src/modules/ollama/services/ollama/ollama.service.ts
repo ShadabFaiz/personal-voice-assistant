@@ -18,8 +18,8 @@ import { SystemPromptsService } from './systemPrompts.service';
 @Injectable()
 export class OllamaService implements OnModuleInit {
   private readonly model!: ChatOllama;
-  private llm: any;
-  private llmWithTools;
+  private llm!: ChatOllama;
+  private llmWithTools!: ReturnType<ChatOllama['bindTools']>;
 
   private readonly logger = new Logger(OllamaService.name);
 
@@ -37,12 +37,12 @@ export class OllamaService implements OnModuleInit {
       'OLLAMA_BASE_URL',
       'http://localhost:11434',
     );
-    // const isOllamaRunning = await this.helperService.checkOllamaStatus(baseUrl);
-    // if (!isOllamaRunning) {
-    //   throw Error(
-    //     `Ollama is not running at ${baseUrl}. Please start Ollama server.`,
-    //   );
-    // }
+    const isOllamaRunning = await this.helperService.checkOllamaStatus(baseUrl);
+    if (!isOllamaRunning) {
+      return console.log(
+        `Ollama is not running at ${baseUrl}. Please start Ollama server.`,
+      );
+    }
     const modelName = this.configService.get<string>('MODEL_NAME');
     this.llm = new ChatOllama({ baseUrl, model: modelName, verbose: true });
 

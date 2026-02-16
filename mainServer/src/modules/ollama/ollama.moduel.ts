@@ -3,9 +3,9 @@ import { Module } from '@nestjs/common';
 import { OllamaController } from './controllers/ollama';
 import { HelperService } from './helper';
 import { OllamaService } from './services';
-import { LLMWorkflowService } from './services/llm/llmWorkflow.service';
 import { OllamaServiceV2 } from './services/ollama/ollama.service.v2';
 import { SystemPromptsService } from './services/ollama/systemPrompts.service';
+import { LLMWorkflowService } from './services/workflows/llmWorkflow.service';
 
 @Module({
   imports: [HttpModule],
