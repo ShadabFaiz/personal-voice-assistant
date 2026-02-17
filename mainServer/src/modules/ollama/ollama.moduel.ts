@@ -4,7 +4,6 @@ import { OllamaController } from './controllers/ollama';
 import { HelperService } from './helper';
 import { OllamaService } from './services';
 import { OllamaServiceV2 } from './services/ollama/ollama.service.v2';
-import { SystemPromptsService } from './services/ollama/systemPrompts.service';
 import { LLMWorkflowService } from './services/workflows/llmWorkflow.service';
 
 @Module({
@@ -13,7 +12,6 @@ import { LLMWorkflowService } from './services/workflows/llmWorkflow.service';
   providers: [
     OllamaService,
     HelperService,
-    SystemPromptsService,
     OllamaServiceV2,
     LLMWorkflowService,
   ],
