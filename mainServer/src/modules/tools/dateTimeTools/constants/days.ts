@@ -7,7 +7,3 @@ export enum DAYS {
   FRIDAY = 'Friday',
   SATURDAY = 'Saturday',
 }
-
-export interface GetDayFunctionResponse {
-  day: DAYS;
-}

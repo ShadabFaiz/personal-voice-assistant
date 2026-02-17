@@ -1,4 +1,4 @@
-import { DynamicTool, tool } from '@langchain/core/tools';
+import { DynamicTool } from '@langchain/core/tools';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { DateTimeTool } from './dateTimeTools/dateTime.tool';
 
@@ -11,25 +11,10 @@ export class ToolsService implements OnModuleInit {
 
   onModuleInit() {
     this.logger.log('ToolsService module init');
-    this.initializeDateTool();
   }
 
-  private initializeDateTool() {
-    this.dateToolRunnable = tool(
-      async () => {
-        const response = this.dateTimeTool.getDate();
-        return response;
-      },
-      {
-        name: 'getDate',
-        description: 'Get current date',
-        responseFormat: 'content',
-      },
-    );
-  }
-
-  getAllTools(): DynamicTool[] {
+  getAllTools() {
     this.logger.log('Fetching all tools');
-    return [this.dateToolRunnable];
+    return [...this.dateTimeTool.getAllTools()];
   }
 }
