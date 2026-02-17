@@ -1,8 +1,8 @@
 import { Global, Module } from '@nestjs/common';
 import { CliTool } from './cliTool/cli.tool';
 import { DateTimeTool } from './dateTimeTools/dateTime.tool';
-import { WeatherTool } from './weatherTool/weather.tool';
 import { ToolsService } from './tools.service';
+import { WeatherTool } from './weatherTool/weather.tool';
 
 @Global()
 @Module({

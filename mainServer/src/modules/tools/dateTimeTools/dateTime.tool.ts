@@ -1,18 +1,11 @@
+import { tool } from '@langchain/core/tools';
 import { Injectable } from '@nestjs/common';
-import { BaseTool } from '../base.tool';
-import { GetDateFunctionResponse } from './interfaces/getDateFunction';
-import { GetDateTimeFunctionResponse } from './interfaces/getDateTimeFunction';
-import { DAYS, GetDayFunctionResponse } from './interfaces/getDayFunction';
-import { GetTimeFunctionResponse } from './interfaces/getTimeFunction';
+import { z } from 'zod';
+import { DAYS } from './constants/days';
 
 @Injectable()
-export class DateTimeTool extends BaseTool {
-  public executeCommand() {
-    console.log('hello world.');
-    return new Date();
-  }
-
-  public getTime(): GetTimeFunctionResponse {
+export class DateTimeTool {
+  private getTime() {
     const now = new Date();
     const hours = now.getHours();
     const minutes = now.getMinutes();
@@ -23,7 +16,7 @@ export class DateTimeTool extends BaseTool {
     };
   }
 
-  public getDate(): GetDateFunctionResponse {
+  private getDate() {
     const now = new Date();
     const year = now.getFullYear();
     const month = now.getMonth() + 1;
@@ -34,31 +27,65 @@ export class DateTimeTool extends BaseTool {
     };
   }
 
-  public getDateTime(): GetDateTimeFunctionResponse {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth() + 1;
-    const day = now.getDate();
-    const hours = now.getHours();
-    const minutes = now.getMinutes();
-    const seconds = now.getSeconds();
+  private getDateTime() {
+    const date = this.getDate();
+    const time = this.getTime();
     return {
-      date: {
-        date: `${year}-${month}-${day}`,
-        format: 'YYYY-MM-DD',
-      },
-      time: {
-        time: `${hours}:${minutes}:${seconds}`,
-        format: 'HH:mm:ss',
-      },
+      date,
+      time,
     };
   }
 
-  public getDay(): GetDayFunctionResponse {
+  private getDay() {
     const now = new Date();
     const day = now.getDay();
     return {
-      day: DAYS[day],
+      day: DAYS[day] as DAYS,
     };
+  }
+
+  getDateTimeTool() {
+    return tool(() => this.getDateTime(), {
+      name: 'getDateTime',
+      description:
+        'Get current day in format YYYY-MM-DD and time in format hh:mm:ss',
+      responseFormat: 'content',
+      schema: z.object({}),
+    });
+  }
+
+  getDayTool() {
+    return tool(() => this.getDay(), {
+      name: 'getDay',
+      description: 'Get current day like Monday / Tuesaday / Wednesday',
+      responseFormat: 'content',
+      schema: z.object({}),
+    });
+  }
+
+  getDateTool() {
+    return tool(() => this.getDate(), {
+      name: 'getDate',
+      description: 'Get current date in format YYYY-MM-DD',
+      responseFormat: 'content',
+      schema: z.object({}),
+    });
+  }
+
+  getTimeTool() {
+    return tool(() => this.getTime(), {
+      name: 'getTime',
+      description: 'Get current time in format HH:mm:ss',
+      responseFormat: 'content',
+      schema: z.object({}),
+    });
+  }
+
+  getAllTools() {
+    const dayTool = this.getDayTool();
+    const timeTool = this.getTimeTool();
+    const dateTool = this.getDateTool();
+    const dateTime = this.getDateTimeTool();
+    return [dayTool, timeTool, dateTime, dateTool] as const;
   }
 }
