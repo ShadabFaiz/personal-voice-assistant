@@ -1,17 +1,19 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as fs from 'fs';
-import path from 'path';
+import * as fs from 'node:fs';
+import path from 'node:path';
 
 @Injectable()
 export class SystemPromptsService {
   private readonly logger = new Logger(SystemPromptsService.name);
 
-  constructor(private configService: ConfigService) {}
+  constructor(private readonly configService: ConfigService) {}
 
   loadAllSystemPrompts() {
     const agentPersonality = this.loadAgentPersonality();
     const aboutMe = this.loadAboutMe();
+
+    this.logger.log(` ***** Loading system prompts ***** `);
 
     const contexts = {
       system_context: {
@@ -19,6 +21,8 @@ export class SystemPromptsService {
         persona_instructions: agentPersonality,
       },
     };
+
+    this.logger.log(` ***** System prompts loaded ***** `);
 
     return this.createXML(contexts);
   }
@@ -72,7 +76,7 @@ export class SystemPromptsService {
     return agentPersonality;
   }
 
-  private createXML(tags: Record<string, any>): string {
+  private createXML(tags: Record<string, unknown>): string {
     let xmlString = '';
     function processTags(tags) {
       for (const [tag, content] of Object.entries(tags)) {
@@ -81,7 +85,7 @@ export class SystemPromptsService {
           processTags(content);
           xmlString += `</${tag}>`;
         } else {
-          xmlString += `<${tag}>${content}</${tag}>`;
+          xmlString += `<${tag}>${content as string}</${tag}>`;
         }
       }
     }

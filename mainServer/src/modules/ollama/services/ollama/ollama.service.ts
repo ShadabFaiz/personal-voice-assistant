@@ -1,3 +1,5 @@
+import { SystemPromptsService } from '@core/services';
+import { ToolsService } from '@core/tools/tools.service';
 import {
   ChatPromptTemplate,
   HumanMessagePromptTemplate,
@@ -11,9 +13,7 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ToolsService } from '../../../tools/tools.service';
 import { HelperService } from '../../helper';
-import { SystemPromptsService } from './systemPrompts.service';
 
 @Injectable()
 export class OllamaService implements OnModuleInit {

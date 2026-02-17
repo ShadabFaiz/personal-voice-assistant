@@ -1,4 +1,5 @@
-import { LLMWorkflowService } from '@core/services';
+import { LLMWorkflowService, SystemPromptsService } from '@core/services';
+import { ToolsService } from '@core/tools/tools.service';
 import {
   ChatPromptTemplate,
   HumanMessagePromptTemplate,
@@ -14,11 +15,9 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { v4 as uuidv4 } from 'uuid';
-import { ToolsService } from '../../../tools/tools.service';
 import { HelperService } from '../../helper';
 
 import { AppConfig } from '@core/config';
-import { SystemPromptsService } from './systemPrompts.service';
 
 @Injectable()
 export class GeminiService implements OnModuleInit {
