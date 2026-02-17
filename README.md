@@ -1,6 +1,6 @@
-# AI-VoiceChat (Self Hosted everything)
+# AI-Voice Assistant (Self Hosted everything)
 
-**GOAL:** Develop a Self hosted Voice Chat application with a self hosted AI in real time. Everything needs to be self hosted, and in real time.You will be interacting the LLM using voice instead of typings.
+**GOAL:** Develop a Self hosted Voice Assistant application with a self hosted AI in real time. Everything needs to be self hosted, and in real time.You will be interacting the LLM using voice instead of typings.
 
 
 nvcc install
