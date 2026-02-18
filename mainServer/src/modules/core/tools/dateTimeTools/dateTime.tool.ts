@@ -44,7 +44,7 @@ export class DateTimeTool {
     };
   }
 
-  getDateTimeTool() {
+  private getDateTimeTool() {
     return tool(() => this.getDateTime(), {
       name: 'getDateTime',
       description:
@@ -54,7 +54,7 @@ export class DateTimeTool {
     });
   }
 
-  getDayTool() {
+  private getDayTool() {
     return tool(() => this.getDay(), {
       name: 'getDay',
       description: 'Get current day like Monday / Tuesaday / Wednesday',
@@ -63,7 +63,7 @@ export class DateTimeTool {
     });
   }
 
-  getDateTool() {
+  private getDateTool() {
     return tool(() => this.getDate(), {
       name: 'getDate',
       description: 'Get current date in format YYYY-MM-DD',
@@ -72,7 +72,7 @@ export class DateTimeTool {
     });
   }
 
-  getTimeTool() {
+  private getTimeTool() {
     return tool(() => this.getTime(), {
       name: 'getTime',
       description: 'Get current time in format HH:mm:ss',
