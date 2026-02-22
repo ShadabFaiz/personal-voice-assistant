@@ -64,7 +64,9 @@ export class LLMWorkflowService {
     const toolResponse = (await this.toolNode.invoke({
       messages: [lastMessage as AIMessage],
     })) as { messages: AIMessage[] };
-    this.logger.log('Tool Response: ' + JSON.stringify(toolResponse));
+    this.logger.log(
+      'Tool Response: ' + JSON.stringify(toolResponse.messages, null, 2),
+    );
     return { messages: toolResponse.messages };
   }
 
