@@ -48,9 +48,6 @@ export class GeminiService implements OnModuleInit {
       disableStreaming: false,
     });
 
-    const tools = this.toolService.getAllTools();
-    const modelWithTools = this.model.bindTools(tools);
-
     const allSystemPrompts = this.systemPromptsService.loadAllSystemPrompts();
     const chatPromptTemplate = ChatPromptTemplate.fromMessages(
       [
@@ -60,6 +57,8 @@ export class GeminiService implements OnModuleInit {
       { validateTemplate: true },
     );
 
+    const tools = this.toolService.getAllTools();
+    const modelWithTools = this.model.bindTools(tools);
     const toolNode = new ToolNode(tools);
 
     this.llmWorkflowService.setModelWithTools(modelWithTools);
