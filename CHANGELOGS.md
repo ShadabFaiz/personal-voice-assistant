@@ -101,3 +101,40 @@ NOTE**: Currently transcription is processed on cpu, not on gpu. TODO: Make it w
 2. Integrated Date tools.
 3. Disabled audio conversation for the time being.
 ---
+
+### v0.0.15 (Cloud LLM integration)
+1. Implemented Gemini service to interact with cloud LLMs instead of local LLMs.
+2. Added GOOGLE_GEMINI_API_KEY to .env.example.
+3. Renamed cloudLLM module to Gemini.
+4. Updated system prompts for better interaction.
+
+---
+
+### v0.0.16 (Module restructuring)
+1. Re-wrote modules to have better isolation as per their use-cases.
+2. Renamed from voice chat to voice assistant.
+3. Renamed gemini related files.
+4. Commented out Ollama module as it is not being used.
+5. Updated tool implementation.
+
+---
+
+### v0.0.17 (Core tools implementation)
+1. Moved tools to core module.
+2. Added location tool.
+3. Added web search tools.
+4. Added README.md for tools.
+5. Made methods private in dateTimeTool.
+6. Added more comments in .env.example to give better clarity.
+7. Updated LEENA personality.
+
+---
+
+### v0.0.18 (Advanced tools and search integration)
+1. Implemented BraveWebSearchTool.
+2. Implemented GoogleWebSearchTool (renamed to DuckDuckGoWebSearchTool later).
+3. Implemented WebPageFetcherTool.
+4. Renamed GoogleWebSearchTool to DuckDuckGoWebSearchTool because we are using google search API through duckduckgo.
+5. Replaced some logger.log with logger.debug for better logging practices.
+6. Added custom CA certificate use case.
+---
