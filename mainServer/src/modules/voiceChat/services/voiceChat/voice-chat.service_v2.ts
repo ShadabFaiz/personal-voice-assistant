@@ -132,7 +132,7 @@ export class VoiceChatServiceV2 {
 
   private createDirectory(dir: string) {
     if (fs.existsSync(dir)) {
-      this.logger.log(`Directory already exists: ${dir}`);
+      this.logger.debug(`Directory already exists: ${dir}`);
       return;
     }
     this.logger.log(`Creating directory: ${dir}`);

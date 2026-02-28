@@ -5,7 +5,7 @@ import { AppConfig } from '../config/configuration';
 import { BraveSearchTool } from './braveSearchTool/brave-search.tool';
 import { DateTimeTool } from './dateTimeTools/dateTime.tool';
 import { LocationTool } from './locationTool/location.tool';
-import { GoogleWebSearchTool } from './googleSearchTool/google-web-search.tool';
+import { DuckDuckGoWebSearchTool } from './duckDuckGoSearchTool/duck-duck-go-search.tool';
 import { WebPageFetcherTool } from './webPageFetcherTool/web-page-fetcher.tool';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class ToolsService implements OnModuleInit {
     private readonly configService: ConfigService<AppConfig>,
     private readonly dateTimeTool: DateTimeTool,
     private readonly braveSearchTool: BraveSearchTool,
-    private readonly googleWebSearchTool: GoogleWebSearchTool,
+    private readonly duckDuckGoWebSearchTool: DuckDuckGoWebSearchTool,
     private readonly locationTool: LocationTool,
     private readonly webPageFetcherTool: WebPageFetcherTool,
   ) {}
@@ -30,12 +30,14 @@ export class ToolsService implements OnModuleInit {
     const searchEngine = this.configService.get('SEARCH_ENGINE', {
       infer: true,
     });
-    this.logger.log(`Fetching all tools. Using search engine: ${searchEngine}`);
+    this.logger.debug(
+      `Fetching all tools. Using search engine: ${searchEngine}`,
+    );
 
     const searchTools =
       searchEngine === 'brave'
         ? this.braveSearchTool.getAllTools()
-        : this.googleWebSearchTool.getAllTools();
+        : this.duckDuckGoWebSearchTool.getAllTools();
 
     return [
       ...this.dateTimeTool.getAllTools(),

@@ -1,6 +1,5 @@
 import { tool } from '@langchain/core/tools';
 import { Injectable, Logger } from '@nestjs/common';
-import axios, { AxiosError } from 'axios';
 import { z } from 'zod';
 import { WebPageFetcherOptions, WebPageFetcherResponse } from './interface';
 import { buildRequestHeaders } from './utils';
@@ -9,17 +8,21 @@ import {
   DEFAULT_REQUEST_TIMEOUT,
 } from './constants/defaultHeaders';
 
+import { isAxiosError } from 'axios';
+import { HttpService } from '@nestjs/axios';
+import { lastValueFrom } from 'rxjs';
+
 @Injectable()
 export class WebPageFetcherTool {
   private readonly logger = new Logger(WebPageFetcherTool.name);
 
-  constructor() {}
+  constructor(private readonly httpService: HttpService) {}
 
   private async fetchWebPage(
     options: WebPageFetcherOptions,
   ): Promise<WebPageFetcherResponse> {
     const { url, headers = {} } = options;
-    this.logger.log(`Fetching webpage from URL: ${url}`);
+    this.logger.debug(`Fetching webpage from URL: ${url}`);
 
     try {
       const response = await this.makeRequest(url, headers);
@@ -35,11 +38,13 @@ export class WebPageFetcherTool {
   ) {
     const headers = buildRequestHeaders(customHeaders);
 
-    return axios.get(url, {
-      headers,
-      maxRedirects: DEFAULT_MAX_REDIRECTS,
-      timeout: DEFAULT_REQUEST_TIMEOUT,
-    });
+    return lastValueFrom(
+      this.httpService.get(url, {
+        headers,
+        maxRedirects: DEFAULT_MAX_REDIRECTS,
+        timeout: DEFAULT_REQUEST_TIMEOUT,
+      }),
+    );
   }
 
   private buildWebResponse(
@@ -54,7 +59,7 @@ export class WebPageFetcherTool {
   }
 
   private handleError(error: unknown, url: string): never {
-    if (error instanceof AxiosError) {
+    if (isAxiosError(error)) {
       this.logger.error(
         `Error fetching webpage: ${error.message}`,
         error.stack,
