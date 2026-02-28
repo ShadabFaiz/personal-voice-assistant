@@ -1,27 +1,52 @@
+import { MOCK_API_KEY } from "@core/tools/braveSearchTool/constants";
+import {
+  DEFAULT_ABOUT_ME_FILE_NAME,
+  DEFAULT_AGENT_PERSONALITIES_DIRECTORY,
+  DEFAULT_AGENT_PERSONALITY,
+  DEFAULT_APPLICATION_PORT,
+  DEFAULT_BRAVE_SEARCH_API_KEY,
+  DEFAULT_BRAVE_SEARCH_API_URL,
+  DEFAULT_GEMINI_MODEL,
+  DEFAULT_GOOGLE_GEMINI_API_KEY,
+  DEFAULT_MODEL_NAME,
+  DEFAULT_OLLAMA_BASE_URL,
+  DEFAULT_RECORDINGS_DIR,
+  DEFAULT_SEARCH_ENGINE,
+  DEFAULT_SYSTEM_PROMPTS_DIRECTORY,
+  SearchEngine,
+} from './constants';
+
 export const AppConfigFunction = () =>
   ({
-    OLLAMA_BASE_URL: process.env.OLLAMA_BASE_URL || 'http://localhost:11434',
-    MODEL_NAME: process.env.MODEL_NAME || 'default-model',
-    RECORDINGS_DIR: process.env.RECORDINGS_DIR || 'recordings',
+    OLLAMA_BASE_URL:
+      process.env.OLLAMA_BASE_URL || DEFAULT_OLLAMA_BASE_URL,
+    MODEL_NAME: process.env.MODEL_NAME || DEFAULT_MODEL_NAME,
+    RECORDINGS_DIR: process.env.RECORDINGS_DIR || DEFAULT_RECORDINGS_DIR,
     APPLICATION_PORT:
-      Number.parseInt(process.env.APPLICATION_PORT || '') || 3000,
+      Number.parseInt(process.env.APPLICATION_PORT || '') ||
+      DEFAULT_APPLICATION_PORT,
     DEBUG: Boolean(process.env.DEBUG === 'true') || false,
     TRANSCRIPTION_SERVER_ENDPOINT:
       process.env.TRANSCRIPTION_SERVER_ENDPOINT || '',
     VOICE_SYNTHESIS_SERVER_ENDPOINT:
       process.env.VOICE_SYNTHESIS_SERVER_ENDPOINT || '',
-    AGENT_PERSONALITY: process.env.AGENT_PERSONALITY || 'LEENA',
+    AGENT_PERSONALITY:
+      process.env.AGENT_PERSONALITY || DEFAULT_AGENT_PERSONALITY,
     SYSTEM_PROMPTS_DIRECTORY:
-      process.env.SYSTEM_PROMPTS_DIRECTORY || 'systemPrompts',
+      process.env.SYSTEM_PROMPTS_DIRECTORY || DEFAULT_SYSTEM_PROMPTS_DIRECTORY,
     AGENT_PERSONALITIES_DIRECTORY:
-      process.env.AGENT_PERSONALITY_DIRECTORY || 'personalities',
-    ABOUT_ME_FILE_NAME: process.env.ABOUT_ME_FILE_NAME || 'aboutMe.txt',
-    GOOGLE_GEMINI_API_KEY: process.env.GOOGLE_GEMINI_API_KEY || 'dummy',
-    GEMINI_MODEL: process.env.GEMINI_MODEL || 'dummy',
-    BRAVE_SEARCH_API_KEY: process.env.BRAVE_SEARCH_API_KEY || 'mock-api-key',
+      process.env.AGENT_PERSONALITY_DIRECTORY ||
+      DEFAULT_AGENT_PERSONALITIES_DIRECTORY,
+    ABOUT_ME_FILE_NAME:
+      process.env.ABOUT_ME_FILE_NAME || DEFAULT_ABOUT_ME_FILE_NAME,
+    GOOGLE_GEMINI_API_KEY:
+      process.env.GOOGLE_GEMINI_API_KEY || DEFAULT_GOOGLE_GEMINI_API_KEY,
+    GEMINI_MODEL: process.env.GEMINI_MODEL || DEFAULT_GEMINI_MODEL,
+    BRAVE_SEARCH_API_KEY:
+      process.env.BRAVE_SEARCH_API_KEY || DEFAULT_BRAVE_SEARCH_API_KEY,
     BRAVE_SEARCH_API_URL:
-      process.env.BRAVE_SEARCH_API_URL ||
-      'https://api.search.brave.com/res/v1/web/search',
+      process.env.BRAVE_SEARCH_API_URL || DEFAULT_BRAVE_SEARCH_API_URL,
+    SERPAPI_API_KEY: process.env.SERPAPI_API_KEY || MOCK_API_KEY,
     LOCATION_CITY: process.env.LOCATION_CITY,
     LOCATION_REGION: process.env.LOCATION_REGION,
     LOCATION_REGION_CODE: process.env.LOCATION_REGION_CODE,
@@ -54,6 +79,8 @@ export const AppConfigFunction = () =>
       : 0,
     LOCATION_ASN: process.env.LOCATION_ASN,
     LOCATION_ORG: process.env.LOCATION_ORG,
+    SEARCH_ENGINE: (process.env.SEARCH_ENGINE ||
+      DEFAULT_SEARCH_ENGINE) as SearchEngine,
   }) as const;
 
 export type AppConfig = ReturnType<typeof AppConfigFunction>;

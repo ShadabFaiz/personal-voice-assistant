@@ -17,6 +17,8 @@ import {
   BraveSearchResult,
   BraveWebResponse,
 } from './interface';
+import { AppConfig } from '@core/config';
+import { getMockBraveSearchResults } from './brave-search.mock';
 
 @Injectable()
 export class BraveSearchTool {
@@ -24,7 +26,7 @@ export class BraveSearchTool {
   private readonly apiKey: string;
   private readonly apiUrl: string;
 
-  constructor(private readonly configService: ConfigService) {
+  constructor(private readonly configService: ConfigService<AppConfig>) {
     this.apiKey =
       this.configService.get<string>('BRAVE_SEARCH_API_KEY') || MOCK_API_KEY;
     this.apiUrl =
@@ -51,7 +53,7 @@ export class BraveSearchTool {
     try {
       if (this.apiKey === MOCK_API_KEY) {
         this.logger.warn('Using mock data for Brave Search');
-        return this.getMockSearchResults(query);
+        return getMockBraveSearchResults(query, this.logger);
       }
 
       const params: Record<string, string> = {
@@ -96,31 +98,10 @@ export class BraveSearchTool {
           error instanceof Error ? error.stack : undefined,
         );
       }
-      return this.getMockSearchResults(query);
+      return getMockBraveSearchResults(query, this.logger);
     }
   }
 
-  private getMockSearchResults(query: string): BraveSearchResult[] {
-    this.logger.log(`Returning mock results for query: ${query}`);
-    return [
-      {
-        title: `Mock Result 1 for "${query}"`,
-        url: 'https://example.com/mock1',
-        snippet: `This is a mock search result for the query: ${query}. Replace with actual API integration.`,
-        publishedDate: new Date().toISOString(),
-      },
-      {
-        title: `Mock Result 2 for "${query}"`,
-        url: 'https://example.com/mock2',
-        snippet: `Another mock result demonstrating the tool structure for: ${query}`,
-      },
-      {
-        title: `Mock Result 3 for "${query}"`,
-        url: 'https://example.com/mock3',
-        snippet: `Third mock result showing how the tool can be extended with real API calls`,
-      },
-    ];
-  }
 
   private formatSearchResults(
     results: BraveSearchResult[],

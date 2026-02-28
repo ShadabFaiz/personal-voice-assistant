@@ -1,8 +1,12 @@
 import { DynamicTool } from '@langchain/core/tools';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { AppConfig } from '../config/configuration';
 import { BraveSearchTool } from './braveSearchTool/brave-search.tool';
 import { DateTimeTool } from './dateTimeTools/dateTime.tool';
 import { LocationTool } from './locationTool/location.tool';
+import { GoogleWebSearchTool } from './googleSearchTool/google-web-search.tool';
+import { WebPageFetcherTool } from './webPageFetcherTool/web-page-fetcher.tool';
 
 @Injectable()
 export class ToolsService implements OnModuleInit {
@@ -10,9 +14,12 @@ export class ToolsService implements OnModuleInit {
   public dateToolRunnable!: DynamicTool;
 
   constructor(
+    private readonly configService: ConfigService<AppConfig>,
     private readonly dateTimeTool: DateTimeTool,
     private readonly braveSearchTool: BraveSearchTool,
+    private readonly googleWebSearchTool: GoogleWebSearchTool,
     private readonly locationTool: LocationTool,
+    private readonly webPageFetcherTool: WebPageFetcherTool,
   ) {}
 
   onModuleInit() {
@@ -20,11 +27,21 @@ export class ToolsService implements OnModuleInit {
   }
 
   getAllTools() {
-    this.logger.log('Fetching all tools');
+    const searchEngine = this.configService.get('SEARCH_ENGINE', {
+      infer: true,
+    });
+    this.logger.log(`Fetching all tools. Using search engine: ${searchEngine}`);
+
+    const searchTools =
+      searchEngine === 'brave'
+        ? this.braveSearchTool.getAllTools()
+        : this.googleWebSearchTool.getAllTools();
+
     return [
       ...this.dateTimeTool.getAllTools(),
-      ...this.braveSearchTool.getAllTools(),
+      ...searchTools,
       ...this.locationTool.getAllTools(),
+      ...this.webPageFetcherTool.getAllTools(),
     ];
   }
 }
