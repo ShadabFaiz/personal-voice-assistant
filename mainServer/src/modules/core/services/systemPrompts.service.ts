@@ -13,7 +13,7 @@ export class SystemPromptsService {
     const agentPersonality = this.loadAgentPersonality();
     const aboutMe = this.loadAboutMe();
 
-    this.logger.log(` ***** Loading system prompts ***** `);
+    this.logger.debug(` ***** Loading system prompts ***** `);
 
     const contexts = {
       system_context: {
@@ -22,7 +22,7 @@ export class SystemPromptsService {
       },
     };
 
-    this.logger.log(` ***** System prompts loaded ***** `);
+    this.logger.debug(` ***** System prompts loaded ***** `);
 
     return this.createXML(contexts);
   }
@@ -36,7 +36,7 @@ export class SystemPromptsService {
     let abountMePrompt: string;
     try {
       abountMePrompt = fs.readFileSync(aboutMePromptFilePath, 'utf-8');
-      this.logger.log(`AboutMe loaded from file: ${aboutMePromptFilePath}`);
+      this.logger.debug(`AboutMe loaded from file: ${aboutMePromptFilePath}`);
     } catch (error) {
       this.logger.error(
         `Failed to load agent Personality from file: ${aboutMePromptFilePath}`,
@@ -58,7 +58,7 @@ export class SystemPromptsService {
     let agentPersonality: string;
     try {
       agentPersonality = fs.readFileSync(agentPersonalityFilePath, 'utf-8');
-      this.logger.log(
+      this.logger.debug(
         `Agent Personality loaded from file: ${agentPersonalityFilePath}`,
       );
     } catch (error) {

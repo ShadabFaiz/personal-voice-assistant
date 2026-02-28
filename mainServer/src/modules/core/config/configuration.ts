@@ -1,4 +1,4 @@
-import { MOCK_API_KEY } from "@core/tools/braveSearchTool/constants";
+import { MOCK_API_KEY } from '@core/tools/braveSearchTool/constants';
 import {
   DEFAULT_ABOUT_ME_FILE_NAME,
   DEFAULT_AGENT_PERSONALITIES_DIRECTORY,
@@ -18,8 +18,8 @@ import {
 
 export const AppConfigFunction = () =>
   ({
-    OLLAMA_BASE_URL:
-      process.env.OLLAMA_BASE_URL || DEFAULT_OLLAMA_BASE_URL,
+    CUSTOM_CA_CERT_PATH: process.env.CUSTOM_CA_CERT_PATH,
+    OLLAMA_BASE_URL: process.env.OLLAMA_BASE_URL || DEFAULT_OLLAMA_BASE_URL,
     MODEL_NAME: process.env.MODEL_NAME || DEFAULT_MODEL_NAME,
     RECORDINGS_DIR: process.env.RECORDINGS_DIR || DEFAULT_RECORDINGS_DIR,
     APPLICATION_PORT:

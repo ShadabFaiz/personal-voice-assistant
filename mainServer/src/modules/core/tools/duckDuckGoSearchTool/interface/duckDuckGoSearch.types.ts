@@ -1,4 +1,4 @@
-export interface GoogleSearchResult {
+export interface DuckDuckGoSearchResult {
   title: string;
   link: string;
   snippet: string;
@@ -6,14 +6,14 @@ export interface GoogleSearchResult {
 }
 
 export interface SerpApiDDGResponse {
-  organic_results?: GoogleSearchResult[];
+  organic_results?: DuckDuckGoSearchResult[];
   search_metadata?: {
     id: string;
     status: string;
   };
 }
 
-export interface GoogleSearchOptions {
+export interface DuckDuckGoSearchOptions {
   query: string;
   count?: number;
   offset?: number;

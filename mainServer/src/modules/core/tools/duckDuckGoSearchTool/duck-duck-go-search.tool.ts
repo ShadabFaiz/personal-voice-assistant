@@ -12,16 +12,16 @@ import {
   MOCK_API_KEY,
 } from './constants';
 import {
-  GoogleSearchOptions,
-  GoogleSearchResult,
+  DuckDuckGoSearchOptions,
+  DuckDuckGoSearchResult,
   SerpApiDDGResponse,
 } from './interface';
 import { AppConfig } from '@core/config';
-import { getMockGoogleSearchResults } from './google-web-search.mock';
+import { getMockDuckDuckGoSearchResults } from './duck-duck-go-search.mock';
 
 @Injectable()
-export class GoogleWebSearchTool {
-  private readonly logger = new Logger(GoogleWebSearchTool.name);
+export class DuckDuckGoWebSearchTool {
+  private readonly logger = new Logger(DuckDuckGoWebSearchTool.name);
   private readonly apiKey: string;
   private readonly apiUrl: string;
 
@@ -29,17 +29,17 @@ export class GoogleWebSearchTool {
     this.apiKey = this.configService.get('SERPAPI_API_KEY') || MOCK_API_KEY;
     this.apiUrl = DEFAULT_API_URL;
     if (this.apiKey !== MOCK_API_KEY) {
-      this.logger.log(
-        `GoogleWebSearchTool initialized with API key: ${this.apiKey.substring(0, 4)}...`,
+      this.logger.debug(
+        `DuckDuckGoWebSearchTool initialized with API key: ${this.apiKey.substring(0, 4)}...`,
       );
     } else {
-      this.logger.warn('GoogleWebSearchTool initialized with MOCK API key');
+      this.logger.warn('DuckDuckGoWebSearchTool initialized with MOCK API key');
     }
   }
 
   private async performSearch(
-    options: GoogleSearchOptions,
-  ): Promise<GoogleSearchResult[]> {
+    options: DuckDuckGoSearchOptions,
+  ): Promise<DuckDuckGoSearchResult[]> {
     const {
       query,
       count = DEFAULT_SEARCH_COUNT,
@@ -49,12 +49,12 @@ export class GoogleWebSearchTool {
     } = options;
 
     this.logger.log(
-      `Performing Google (via SerpApi DDG) search with query: ${query}, region: ${region}, timePeriod: ${timePeriod}`,
+      `Performing DuckDuckGo (via SerpApi DDG) search with query: ${query}, region: ${region}, timePeriod: ${timePeriod}`,
     );
     try {
       if (this.apiKey === MOCK_API_KEY) {
-        this.logger.warn('Using mock data for Google Search (SerpApi)');
-        return getMockGoogleSearchResults(query, this.logger);
+        this.logger.warn('Using mock data for DuckDuckGo Search (SerpApi)');
+        return getMockDuckDuckGoSearchResults(query, this.logger);
       }
 
       const params: Record<string, string> = {
@@ -67,9 +67,6 @@ export class GoogleWebSearchTool {
       if (timePeriod) {
         params.df = timePeriod;
       }
-
-      // Note: SerpApi DDG might not support exact count/offset the same way as Brave,
-      // but we can slice the results if needed. DDG usually returns a batch.
 
       const response = await axios.get<SerpApiDDGResponse>(this.apiUrl, {
         params,
@@ -98,12 +95,12 @@ export class GoogleWebSearchTool {
           error instanceof Error ? error.stack : undefined,
         );
       }
-      return getMockGoogleSearchResults(query, this.logger);
+      return getMockDuckDuckGoSearchResults(query, this.logger);
     }
   }
 
   private formatSearchResults(
-    results: GoogleSearchResult[],
+    results: DuckDuckGoSearchResult[],
     query: string,
   ): string {
     if (results.length === 0) {
@@ -142,9 +139,9 @@ ${result.date ? `Date: ${result.date}` : ''}
         return this.formatSearchResults(results, input.query);
       },
       {
-        name: 'google_web_search',
+        name: 'duck_duck_go_web_search',
         description:
-          'Search the web using Google (via SerpApi DuckDuckGo engine). Useful for getting up-to-date information. Supported time periods: d (past day), w (past week), m (past month), y (past year).',
+          'Search the web using DuckDuckGo (via SerpApi DuckDuckGo engine). Useful for getting up-to-date information. Supported time periods: d (past day), w (past week), m (past month), y (past year).',
         responseFormat: 'content',
         schema: z.object({
           query: z
