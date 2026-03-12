@@ -1,20 +1,18 @@
+import { HttpModule } from '@nestjs/axios';
 import { Global, Logger, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import https from 'node:https';
+import tls from 'node:tls';
 import { AppConfig, AppConfigFunction } from './config/configuration';
+import { loadCertificate } from './loadCertificate';
 import { LLMWorkflowService } from './services/llmWorkflow.service';
 import { SystemPromptsService } from './services/systemPrompts.service';
 import { BraveSearchTool } from './tools/braveSearchTool/brave-search.tool';
-import { DuckDuckGoWebSearchTool } from './tools/duckDuckGoSearchTool/duck-duck-go-search.tool';
-import { CliTool } from './tools/cliTool/cli.tool';
 import { DateTimeTool } from './tools/dateTimeTools/dateTime.tool';
+import { DuckDuckGoWebSearchTool } from './tools/duckDuckGoSearchTool/duck-duck-go-search.tool';
 import { LocationTool } from './tools/locationTool/location.tool';
 import { ToolsService } from './tools/tools.service';
-import { WeatherTool } from './tools/weatherTool/weather.tool';
 import { WebPageFetcherTool } from './tools/webPageFetcherTool/web-page-fetcher.tool';
-import { HttpModule } from '@nestjs/axios';
-import https from 'node:https';
-import { loadCertificate } from './loadCertificate';
-import tls from 'node:tls';
 
 @Global()
 @Module({
@@ -61,14 +59,6 @@ import tls from 'node:tls';
       useClass: DateTimeTool,
     },
     {
-      provide: WeatherTool,
-      useClass: WeatherTool,
-    },
-    {
-      provide: CliTool,
-      useClass: CliTool,
-    },
-    {
       provide: BraveSearchTool,
       useClass: BraveSearchTool,
     },
@@ -93,8 +83,6 @@ import tls from 'node:tls';
     LLMWorkflowService,
     SystemPromptsService,
     DateTimeTool,
-    WeatherTool,
-    CliTool,
     BraveSearchTool,
     DuckDuckGoWebSearchTool,
     LocationTool,
