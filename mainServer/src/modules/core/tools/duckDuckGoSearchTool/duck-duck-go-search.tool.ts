@@ -1,3 +1,4 @@
+import { AppConfig } from '@core/config';
 import { tool } from '@langchain/core/tools';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -11,13 +12,12 @@ import {
   DEFAULT_SEARCH_OFFSET,
   MOCK_API_KEY,
 } from './constants';
+import { getMockDuckDuckGoSearchResults } from './duck-duck-go-search.mock';
 import {
   DuckDuckGoSearchOptions,
   DuckDuckGoSearchResult,
   SerpApiDDGResponse,
 } from './interface';
-import { AppConfig } from '@core/config';
-import { getMockDuckDuckGoSearchResults } from './duck-duck-go-search.mock';
 
 @Injectable()
 export class DuckDuckGoWebSearchTool {
@@ -82,6 +82,7 @@ export class DuckDuckGoWebSearchTool {
         results = results.slice(0, count);
       }
 
+      console.log('result: \n ', results);
       return results;
     } catch (error) {
       if (error instanceof AxiosError) {
