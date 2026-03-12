@@ -17,6 +17,7 @@
 -   [x] Tool registry
 -   [x] Domain-based tool grouping
 -   [x] Date / Time tools
+-   [x] Online Search (DuckDuckGo Web search)
 -   [x] WebPageFetcherTool
 -   [ ] PDFReaderTool
 -   [ ] RAGProcessor
