@@ -1,0 +1,3 @@
+coqui-tts
+sounddevice
+flask
