@@ -1,6 +1,9 @@
 # AI-Voice Assistant (Self Hosted everything)
 
-**GOAL:** Develop a Self hosted Voice Assistant application with a self hosted AI in real time. Everything needs to be self hosted, and in real time.You will be interacting the LLM using voice instead of typings.
+**GOAL:** Develop a Self hosted Voice Assistant application with a self hosted AI or any cloud LLM in real time. Everything needs to be self hosted, and in real time.You will be interacting the LLM using voice instead of typings.
+
+### [Roadmap](Roadmap.md)  
+### [Changelogs](CHANGELOGS.md)  
 
 
 nvcc install
@@ -57,6 +60,11 @@ After all installation are done:
       4. `bash serve.sh`
 
       *NOTE: use vits as it is the onlyone that can be used for real time.
+
+# APIs
+1. For voice chat: http://localhost:3000/voiceChat/start (not working)
+2. For gemini normal chat: http://localhost:3000/gemini/chat
+
 
 ### FAQ
    1. How do i talk to LLM?
