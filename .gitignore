@@ -9,3 +9,5 @@ venv
 
 ./**/venv*
 venv*
+
+agent_workspace

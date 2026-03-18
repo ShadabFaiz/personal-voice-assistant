@@ -10,6 +10,7 @@ import { SystemPromptsService } from './services/systemPrompts.service';
 import { BraveSearchTool } from './tools/braveSearchTool/brave-search.tool';
 import { DateTimeTool } from './tools/dateTimeTools/dateTime.tool';
 import { DuckDuckGoWebSearchTool } from './tools/duckDuckGoSearchTool/duck-duck-go-search.tool';
+import { FileTool } from './tools/fileTool/file.tool';
 import { LocationTool } from './tools/locationTool/location.tool';
 import { ToolsService } from './tools/tools.service';
 import { WebPageFetcherTool } from './tools/webPageFetcherTool/web-page-fetcher.tool';
@@ -78,6 +79,7 @@ import { WebPageFetcherTool } from './tools/webPageFetcherTool/web-page-fetcher.
       provide: WebPageFetcherTool,
       useClass: WebPageFetcherTool,
     },
+    FileTool,
   ],
   exports: [
     LLMWorkflowService,
@@ -88,6 +90,7 @@ import { WebPageFetcherTool } from './tools/webPageFetcherTool/web-page-fetcher.
     LocationTool,
     ToolsService,
     WebPageFetcherTool,
+    FileTool,
   ],
 })
 export class CoreModule {}

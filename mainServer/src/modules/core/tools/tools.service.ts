@@ -4,8 +4,9 @@ import { ConfigService } from '@nestjs/config';
 import { AppConfig } from '../config/configuration';
 import { BraveSearchTool } from './braveSearchTool/brave-search.tool';
 import { DateTimeTool } from './dateTimeTools/dateTime.tool';
-import { LocationTool } from './locationTool/location.tool';
 import { DuckDuckGoWebSearchTool } from './duckDuckGoSearchTool/duck-duck-go-search.tool';
+import { FileTool } from './fileTool/file.tool';
+import { LocationTool } from './locationTool/location.tool';
 import { WebPageFetcherTool } from './webPageFetcherTool/web-page-fetcher.tool';
 
 @Injectable()
@@ -20,6 +21,7 @@ export class ToolsService implements OnModuleInit {
     private readonly duckDuckGoWebSearchTool: DuckDuckGoWebSearchTool,
     private readonly locationTool: LocationTool,
     private readonly webPageFetcherTool: WebPageFetcherTool,
+    private readonly fileTool: FileTool,
   ) {}
 
   onModuleInit() {
@@ -44,6 +46,7 @@ export class ToolsService implements OnModuleInit {
       ...searchTools,
       ...this.locationTool.getAllTools(),
       ...this.webPageFetcherTool.getAllTools(),
+      ...this.fileTool.getAllTools(),
     ];
   }
 }

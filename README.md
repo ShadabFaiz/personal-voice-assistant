@@ -5,14 +5,32 @@
 ### [Roadmap](Roadmap.md)  
 ### [Changelogs](CHANGELOGS.md)  
 
+## Supported Tools
+1. [FileTool](mainServer/src/modules/core/tools/fileTool/specification.md)
+2. [LocationTool](mainServer/src/modules/core/tools/locationTool/specification.md)
+3. [DateTimeTool](mainServer/src/modules/core/tools/dateTimeTools/specification.md)
 
+
+## NVCC required for voice interaction
 nvcc install
 1. wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.0-1_all.deb
 2. sudo dpkg -i cuda-keyring_1.0-1_all.deb
 3. sudo apt update
 
 
-## Project Setup
+# Project Setup
+This project is divded into 3 sub project.
+### 1. mainServer
+   This is the main server. All the core logic / tools calling / lllm interaction resides here.
+
+### 2. transcriptServer
+This is where STT operation is performed.
+
+### 3. voiceSynthesis
+This is where TTS operation is performed.  
+
+
+----
 
    ### Prerequisite
    1. node 20+

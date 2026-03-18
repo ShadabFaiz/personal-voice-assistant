@@ -11,5 +11,7 @@ export const DEFAULT_ABOUT_ME_FILE_NAME = 'aboutMe.txt';
 export const DEFAULT_GOOGLE_GEMINI_API_KEY = 'dummy';
 export const DEFAULT_GEMINI_MODEL = 'dummy';
 export const DEFAULT_BRAVE_SEARCH_API_KEY = 'mock-api-key';
-export const DEFAULT_BRAVE_SEARCH_API_URL = 'https://api.search.brave.com/res/v1/web/search';
+export const DEFAULT_BRAVE_SEARCH_API_URL =
+  'https://api.search.brave.com/res/v1/web/search';
 export const DEFAULT_SEARCH_ENGINE: SearchEngine = 'google';
+export const DEFAULT_AGENT_WORKSPACE_DIRECTORY_NAME = 'agent_workspace';

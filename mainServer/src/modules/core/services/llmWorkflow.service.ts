@@ -61,10 +61,13 @@ export class LLMWorkflowService {
       throw new Error('No message found in state');
     }
 
+    const toolParams = (lastMessage as AIMessage).tool_calls?.[0].args;
     const toolNames =
       (lastMessage as AIMessage).tool_calls?.map((tc) => tc.name).join(', ') ??
       'unknown';
-    this.logger.log(`Tool invoked: ${toolNames}`);
+    this.logger.log(
+      `Tool invoked: ${toolNames}, with params: ${JSON.stringify(toolParams, null, 2)}`,
+    );
 
     const toolResponse = (await this.toolNode.invoke({
       messages: [lastMessage as AIMessage],

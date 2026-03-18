@@ -19,7 +19,7 @@
 1. Start a nestjs project on WSL 2.
 2. Create a module **Ollama**.
 3. Create controller / services for it.
-4. Connect with ollama running on windows 10. (NOTE: the endpoint needs to be of the windows machine, not `localhost:11434`.)
+4. Connect with ollama running on windows 10. (NOTE: endpoint needs to be of the windows machine, not `localhost:11434`.)
 5. Create an endpoint POST `/ollama/chat` with body `{ prompt: 'Howdy!! }`.
 6. Pass the prompt to ollama.
 7. Stream ollama response back to client instead of waiting for complete response.
@@ -37,7 +37,7 @@
 
 ### v0.0.5 (Implementing audio recording)
 
-1. Create a new module **VoiceChat**. All the voice chat related code (audio recording / streaming / processing / STT etc ) will be done here.
+1. Create a new module **VoiceChat**. All voice chat related code (audio recording / streaming / processing / STT etc ) will be done here.
 2. Create an endpoint GET `/voice/chat`.
 3. Integrated npm package **Mic** here to capture audio, and stream it to a file.
 4. Test it.
@@ -46,7 +46,7 @@
 
 ### v0.0.6 (Integrating any STT)
 
-1. Integrate real-time Speech to Text. (can be within same application or host a sperate server for it.)
+1. Integrate real-time Speech to Text. (can be within same application or host a separate server for it.)
    1. Using cloud service (Not a option since it has to be self hosted)
    2. Using Pre-existing solution that convert audio to text in real time. Host them locally on a server.
 2. Integrated STT using PicoVoice Cheetah. ( TODO: replace it with Faster Whisper)
@@ -56,7 +56,7 @@
 
 ### v0.0.7 (Replacing PicoVoice with local STT) (TODO)
 
-PicoVoice requires an api key from picoVoice service. This is against the idea of the self hosting. It shouldn't depend on any other 3rd party.
+PicoVoice requires an api key from picoVoice service. This is against the idea of self hosting. It shouldn't depend on any other 3rd party.
 1. Restructing project structure to manage all different service (app / transcription server / etc) within same repository.
 2. Replace picoVoice Cheetah with Faster-Whisper for transcription.
 NOTE**: Currently transcription is processed on cpu, not on gpu. TODO: Make it work on cuda
@@ -86,7 +86,7 @@ NOTE**: Currently transcription is processed on cpu, not on gpu. TODO: Make it w
 3. Added additional logs in main server.
 4. Shifted system Prompts from src/systemPrompts to systemPrompts.
 5. Added aboutMe.txt in systemPrompts to write about user. LLM will get information about user from this file.
-6. Added SystemPromptsService. This service will load the system prompts, structure them in xml format, and the n feed it to LLM.
+6. Added SystemPromptsService. This service will load system prompts, structure them in xml format, and then feed it to LLM.
 
 ---
 
@@ -137,4 +137,16 @@ NOTE**: Currently transcription is processed on cpu, not on gpu. TODO: Make it w
 4. Renamed GoogleWebSearchTool to DuckDuckGoWebSearchTool because we are using google search API through duckduckgo.
 5. Replaced some logger.log with logger.debug for better logging practices.
 6. Added custom CA certificate use case.
+
+---
+
+### v0.0.19 (FileTool implementation and tool specifications)
+1. Implemented complete FileTool with support for create, read, update, delete, list, search, copy, and move operations.
+2. Added workspace management with agent_workspace directory.
+3. Implemented security features including path traversal prevention, hidden file rejection, and extension validation.
+4. Added file size limit of 200 KB and support for .txt, .md, .csv, .json file types.
+5. Updated ToolResponse interface to object format with content and artifact fields.
+7. Created comprehensive specification documentation for FileTool at `mainServer/src/modules/core/tools/fileTool/specification.md`.
+8. Created specification documentation for dateTimeTool at `mainServer/src/modules/core/tools/dateTimeTools/specification.md`.
+9. Created specification documentation for locationTool at `mainServer/src/modules/core/tools/locationTool/specification.md`.
 ---
