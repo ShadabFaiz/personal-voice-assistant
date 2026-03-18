@@ -1,15 +1,16 @@
 import { tool } from '@langchain/core/tools';
 import { Injectable, Logger } from '@nestjs/common';
 import { z } from 'zod';
-import { WebPageFetcherOptions, WebPageFetcherResponse } from './interface';
-import { buildRequestHeaders } from './utils';
 import {
   DEFAULT_MAX_REDIRECTS,
   DEFAULT_REQUEST_TIMEOUT,
 } from './constants/defaultHeaders';
+import { WebPageFetcherOptions, WebPageFetcherResponse } from './interface';
+import { buildRequestHeaders } from './utils';
 
-import { isAxiosError } from 'axios';
 import { HttpService } from '@nestjs/axios';
+import { isAxiosError } from 'axios';
+import * as cheerio from 'cheerio';
 import { lastValueFrom } from 'rxjs';
 
 @Injectable()
@@ -77,18 +78,21 @@ export class WebPageFetcherTool {
   }
 
   private formatWebResponse(response: WebPageFetcherResponse): string {
-    const maxContentLength = 10000;
-    const truncatedContent =
-      response.data.length > maxContentLength
-        ? response.data.substring(0, maxContentLength) +
-          '... (content truncated due to length)'
-        : response.data;
+    const $ = cheerio.load(response.data);
+
+    // remove noise
+    $('script, style, noscript, iframe').remove();
+    $('header, footer, nav, aside').remove();
+
+    // extract text
+    const text = $('body').text().replace(/\s+/g, ' ').trim();
+
+    this.logger.debug(`\n\nText Extracted from WebPage: ${text}`);
 
     return JSON.stringify({
       url: response.url,
       status: response.status,
-      contentLength: response.data.length,
-      content: truncatedContent,
+      content: text,
     });
   }
 

@@ -82,7 +82,7 @@ export class DuckDuckGoWebSearchTool {
         results = results.slice(0, count);
       }
 
-      console.log('result: \n ', results);
+      this.logger.debug(`\n\nRESULTS: ${JSON.stringify(results, null, 2)}`);
       return results;
     } catch (error) {
       if (error instanceof AxiosError) {
