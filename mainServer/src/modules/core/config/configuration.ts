@@ -10,10 +10,12 @@ import {
   DEFAULT_GEMINI_MODEL,
   DEFAULT_GOOGLE_GEMINI_API_KEY,
   DEFAULT_MODEL_NAME,
+  DEFAULT_MODEL_TYPE,
   DEFAULT_OLLAMA_BASE_URL,
   DEFAULT_RECORDINGS_DIR,
   DEFAULT_SEARCH_ENGINE,
   DEFAULT_SYSTEM_PROMPTS_DIRECTORY,
+  ModelType,
   SearchEngine,
 } from './constants';
 
@@ -80,6 +82,7 @@ export const AppConfigFunction = () =>
       : 0,
     LOCATION_ASN: process.env.LOCATION_ASN,
     LOCATION_ORG: process.env.LOCATION_ORG,
+    MODEL_TYPE: (process.env.MODEL_TYPE || DEFAULT_MODEL_TYPE) as ModelType,
     SEARCH_ENGINE: (process.env.SEARCH_ENGINE ||
       DEFAULT_SEARCH_ENGINE) as SearchEngine,
     AGENT_WORKSPACE_DIRECTORY_NAME:

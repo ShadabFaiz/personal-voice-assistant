@@ -1,16 +1,10 @@
 import { CoreModule } from '@core/core.module';
-import { GeminiModule } from '@gemini/gemini.module';
-
 import { Module } from '@nestjs/common';
+import { LLMModule } from './modules/llm/llm.module';
 import { VoiceChatModule } from './modules/voiceChat/voice-chat.moduel';
 
 @Module({
-  imports: [
-    // OllamaModule,
-    VoiceChatModule,
-    GeminiModule,
-    CoreModule,
-  ],
+  imports: [VoiceChatModule, LLMModule, CoreModule],
   controllers: [],
 })
 export class AppModule {}

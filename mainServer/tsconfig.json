@@ -24,7 +24,7 @@
     "paths": {
       "@core/*": ["src/modules/core/*"],
       "@tools/*": ["src/tools/*"],
-      "@gemini/*": ["src/modules/gemini/*"]
+      "@llm/*": ["src/modules/llm/*"]
     }
   }
 }

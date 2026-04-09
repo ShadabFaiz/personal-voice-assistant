@@ -1,4 +1,5 @@
 export type SearchEngine = 'brave' | 'google';
+export type ModelType = 'gemini' | 'ollama';
 
 export const DEFAULT_OLLAMA_BASE_URL = 'http://localhost:11434';
 export const DEFAULT_MODEL_NAME = 'default-model';
@@ -15,3 +16,4 @@ export const DEFAULT_BRAVE_SEARCH_API_URL =
   'https://api.search.brave.com/res/v1/web/search';
 export const DEFAULT_SEARCH_ENGINE: SearchEngine = 'google';
 export const DEFAULT_AGENT_WORKSPACE_DIRECTORY_NAME = 'agent_workspace';
+export const DEFAULT_MODEL_TYPE: ModelType = 'gemini';
