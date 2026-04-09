@@ -9,6 +9,7 @@
 1. [FileTool](mainServer/src/modules/core/tools/fileTool/specification.md)
 2. [LocationTool](mainServer/src/modules/core/tools/locationTool/specification.md)
 3. [DateTimeTool](mainServer/src/modules/core/tools/dateTimeTools/specification.md)
+3. [Apis](mainServer/APIs.md)
 
 
 ## NVCC required for voice interaction
@@ -81,7 +82,7 @@ After all installation are done:
 
 # APIs
 1. For voice chat: http://localhost:3000/voiceChat/start (not working)
-2. For gemini normal chat: http://localhost:3000/gemini/chat
+2. For text chat: http://localhost:3000/llm/chat
 
 
 ### FAQ
