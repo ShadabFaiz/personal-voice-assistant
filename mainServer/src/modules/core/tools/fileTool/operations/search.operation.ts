@@ -2,9 +2,9 @@ import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 import { FileOperation, SearchType, ToolResponse } from '../file-tool.types';
 import {
-  FileOperationContext,
-  FileOperationParams,
-  IFileOperation,
+    FileOperationContext,
+    FileOperationParams,
+    IFileOperation,
 } from './base.operation';
 
 export class SearchOperation implements IFileOperation {
@@ -13,20 +13,17 @@ export class SearchOperation implements IFileOperation {
   async execute(params: FileOperationParams): Promise<ToolResponse> {
     const { path: inputPath, query, search_type } = params;
     if (!search_type) {
-      return {
-        content: 'search_type is required for search',
-      };
+      return [{ message: 'search_type is required for search' }, null];
     }
     if (!query) {
-      return {
-        content: 'query is required for search',
-      };
+      return [{ message: 'query is required for search' }, null];
     }
 
     if (search_type === SearchType.CONTENT) {
-      return {
-        content: 'Operation: search search_type: content is not implemented',
-      };
+      return [
+        { message: 'Operation: search search_type: content is not implemented' },
+        null,
+      ];
     }
 
     try {
@@ -64,18 +61,19 @@ export class SearchOperation implements IFileOperation {
 
       await scan(startPath);
 
-      return {
-        content: `Found ${results.length} results for query "${query}"`,
-        artifact: {
+      return [
+        null,
+        {
           status: 'success',
           operation: FileOperation.SEARCH,
           results: results.slice(0, 20),
         },
-      };
+      ];
     } catch (error: unknown) {
-      return {
-        content: error instanceof Error ? error.message : String(error),
-      };
+      return [
+        { message: error instanceof Error ? error.message : String(error) },
+        null,
+      ];
     }
   }
 }

@@ -1,9 +1,9 @@
 import * as fs from 'node:fs/promises';
 import { FileOperation, ToolResponse } from '../file-tool.types';
 import {
-  FileOperationContext,
-  FileOperationParams,
-  IFileOperation,
+    FileOperationContext,
+    FileOperationParams,
+    IFileOperation,
 } from './base.operation';
 
 export class ReadOperation implements IFileOperation {
@@ -12,9 +12,7 @@ export class ReadOperation implements IFileOperation {
   async execute(params: FileOperationParams): Promise<ToolResponse> {
     const { path: inputPath } = params;
     if (!inputPath) {
-      return {
-        content: 'Path is required for read',
-      };
+      return [{ message: 'Path is required for read' }, null];
     }
 
     try {
@@ -22,24 +20,23 @@ export class ReadOperation implements IFileOperation {
       try {
         const data = await fs.readFile(absolutePath, 'utf8');
 
-        return {
-          content: `File read from ${inputPath}`,
-          artifact: {
+        return [
+          null,
+          {
             status: 'success',
             operation: FileOperation.READ,
             path: inputPath,
             content: data,
           },
-        };
+        ];
       } catch {
-        return {
-          content: `File does not exist at ${inputPath}`,
-        };
+        return [{ message: `File does not exist at ${inputPath}` }, null];
       }
     } catch (error: unknown) {
-      return {
-        content: error instanceof Error ? error.message : String(error),
-      };
+      return [
+        { message: error instanceof Error ? error.message : String(error) },
+        null,
+      ];
     }
   }
 }

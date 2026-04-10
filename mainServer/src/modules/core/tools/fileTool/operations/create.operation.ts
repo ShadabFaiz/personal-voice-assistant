@@ -1,9 +1,9 @@
 import * as fs from 'node:fs/promises';
 import { FileOperation, ToolResponse } from '../file-tool.types';
 import {
-  FileOperationContext,
-  FileOperationParams,
-  IFileOperation,
+    FileOperationContext,
+    FileOperationParams,
+    IFileOperation,
 } from './base.operation';
 
 export class CreateOperation implements IFileOperation {
@@ -12,14 +12,10 @@ export class CreateOperation implements IFileOperation {
   async execute(params: FileOperationParams): Promise<ToolResponse> {
     const { path: inputPath, content } = params;
     if (!inputPath) {
-      return {
-        content: 'Path is required for create',
-      };
+      return [{ message: 'Path is required for create' }, null];
     }
     if (!content) {
-      return {
-        content: 'Content is required for create',
-      };
+      return [{ message: 'Content is required for create' }, null];
     }
 
     try {
@@ -27,16 +23,12 @@ export class CreateOperation implements IFileOperation {
       const absolutePath = await this.context.validatePath(inputPath);
 
       if (content.length > this.context.maxFileSize) {
-        return {
-          content: 'File size exceeds limit of 200 KB',
-        };
+        return [{ message: 'File size exceeds limit of 200 KB' }, null];
       }
 
       try {
         await fs.access(absolutePath);
-        return {
-          content: `File already exists at ${inputPath}`,
-        };
+        return [{ message: `File already exists at ${inputPath}` }, null];
       } catch {
         // File does not exist, proceed
       }
@@ -44,19 +36,17 @@ export class CreateOperation implements IFileOperation {
       await this.context.ensureDirectory(absolutePath);
       await fs.writeFile(absolutePath, content, 'utf8');
 
-      return {
-        content: `File created at ${inputPath}`,
-        artifact: {
+      return [
+        null,
+        {
           status: 'success',
           operation: FileOperation.CREATE,
           path: inputPath,
         },
-      };
+      ];
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      return {
-        content: (error as Error).message,
-      };
+      return [{ message: (error as Error).message }, null];
     }
   }
 }

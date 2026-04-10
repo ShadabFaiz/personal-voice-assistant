@@ -25,7 +25,4 @@ export interface Artifact {
   results?: any[];
 }
 
-export interface ToolResponse {
-  content: string;
-  artifact?: Artifact;
-}
+export type ToolResponse = [{ message: string } | null, (Artifact | null)?];

@@ -1,10 +1,11 @@
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import * as fs from 'fs/promises';
-import * as path from 'path';
+import * as fs from 'node:fs/promises';
+import * as path from 'node:path';
 import { FileOperation, SearchType } from './file-tool.types';
 import { FileTool } from './file.tool';
 
-jest.mock('fs/promises');
+jest.mock('node:fs/promises');
 
 describe('FileTool', () => {
   let service: FileTool;
@@ -12,7 +13,18 @@ describe('FileTool', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [FileTool],
+      providers: [
+        FileTool,
+        {
+          provide: ConfigService,
+          useValue: {
+            get: jest.fn((key: string) => {
+              if (key === 'AGENT_WORKSPACE_DIRECTORY_NAME') return 'agent_workspace';
+              return null;
+            }),
+          },
+        },
+      ],
     }).compile();
 
     service = module.get<FileTool>(FileTool);

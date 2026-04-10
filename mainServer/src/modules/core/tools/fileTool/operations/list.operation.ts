@@ -2,9 +2,9 @@ import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 import { FileOperation, ToolResponse } from '../file-tool.types';
 import {
-  FileOperationContext,
-  FileOperationParams,
-  IFileOperation,
+    FileOperationContext,
+    FileOperationParams,
+    IFileOperation,
 } from './base.operation';
 
 export class ListOperation implements IFileOperation {
@@ -13,14 +13,10 @@ export class ListOperation implements IFileOperation {
   async execute(params: FileOperationParams): Promise<ToolResponse> {
     const { path: inputPath } = params;
     if (!inputPath) {
-      return {
-        content: 'Path is required for list',
-      };
+      return [{ message: 'Path is required for list' }, null];
     }
     if (!inputPath.endsWith('/')) {
-      return {
-        content: 'Path MUST end with "/" for list operation',
-      };
+      return [{ message: 'Path MUST end with "/" for list operation' }, null];
     }
 
     try {
@@ -34,23 +30,22 @@ export class ListOperation implements IFileOperation {
             return f.isDirectory() ? (p.endsWith('/') ? p : p + '/') : p;
           });
 
-        return {
-          content: `Listed ${paths.length} items in ${inputPath}`,
-          artifact: {
+        return [
+          null,
+          {
             status: 'success',
             operation: FileOperation.LIST,
             paths,
           },
-        };
+        ];
       } catch {
-        return {
-          content: `Directory does not exist at ${inputPath}`,
-        };
+        return [{ message: `Directory does not exist at ${inputPath}` }, null];
       }
     } catch (error: unknown) {
-      return {
-        content: error instanceof Error ? error.message : String(error),
-      };
+      return [
+        { message: error instanceof Error ? error.message : String(error) },
+        null,
+      ];
     }
   }
 }

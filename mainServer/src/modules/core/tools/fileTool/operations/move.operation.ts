@@ -1,9 +1,9 @@
 import * as fs from 'node:fs/promises';
 import { FileOperation, ToolResponse } from '../file-tool.types';
 import {
-  FileOperationContext,
-  FileOperationParams,
-  IFileOperation,
+    FileOperationContext,
+    FileOperationParams,
+    IFileOperation,
 } from './base.operation';
 
 export class MoveOperation implements IFileOperation {
@@ -12,9 +12,7 @@ export class MoveOperation implements IFileOperation {
   async execute(params: FileOperationParams): Promise<ToolResponse> {
     const { path: inputPath, destination } = params;
     if (!inputPath || !destination) {
-      return {
-        content: 'Path and destination are required for move',
-      };
+      return [{ message: 'Path and destination are required for move' }, null];
     }
 
     try {
@@ -25,16 +23,12 @@ export class MoveOperation implements IFileOperation {
       try {
         await fs.access(absolutePath);
       } catch {
-        return {
-          content: `Source file does not exist at ${inputPath}`,
-        };
+        return [{ message: `Source file does not exist at ${inputPath}` }, null];
       }
 
       try {
         await fs.access(absoluteDest);
-        return {
-          content: `Destination already exists at ${destination}`,
-        };
+        return [{ message: `Destination already exists at ${destination}` }, null];
       } catch {
         // Success
       }
@@ -42,18 +36,19 @@ export class MoveOperation implements IFileOperation {
       await this.context.ensureDirectory(absoluteDest);
       await fs.rename(absolutePath, absoluteDest);
 
-      return {
-        content: `File moved from ${inputPath} to ${destination}`,
-        artifact: {
+      return [
+        null,
+        {
           status: 'success',
           operation: FileOperation.MOVE,
           path: destination,
         },
-      };
+      ];
     } catch (error: unknown) {
-      return {
-        content: error instanceof Error ? error.message : String(error),
-      };
+      return [
+        { message: error instanceof Error ? error.message : String(error) },
+        null,
+      ];
     }
   }
 }

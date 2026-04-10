@@ -147,9 +147,7 @@ export class FileTool implements OnModuleInit {
   }): Promise<ToolResponse> {
     const operation = this.operations.get(params.operation);
     if (!operation) {
-      return {
-        content: `Unknown operation: ${params.operation}`,
-      };
+      return [{ message: `Unknown operation: ${params.operation}` }];
     }
     return operation.execute(params);
   }
