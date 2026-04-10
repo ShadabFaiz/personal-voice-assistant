@@ -62,6 +62,8 @@ The following file types are allowed:
 .md
 .csv
 .json
+.html
+.js
 ```
 
 Any other extension must be rejected.
@@ -229,6 +231,8 @@ content (required for create and update)
 
 destination (required for copy and move)
 
+new_name (required for rename)
+
 query (required for search)
 
 search_type (required for search)
@@ -247,6 +251,7 @@ list
 search
 copy
 move
+rename
 ```
 
 ---
@@ -290,6 +295,8 @@ content: Buy milk
 
 ```
 [null, {
+  status: "success",
+  operation: "create",
   path: "/notes/todo.md"
 }]
 ```
@@ -321,6 +328,8 @@ path: /notes/todo.md
 
 ```
 [null, {
+  status: "success",
+  operation: "read",
   path: "/notes/todo.md",
   content: "Buy milk"
 }]
@@ -355,6 +364,8 @@ content: Buy milk and eggs
 
 ```
 [null, {
+  status: "success",
+  operation: "update",
   path: "/notes/todo.md"
 }]
 ```
@@ -381,6 +392,8 @@ path: /notes/todo.md
 
 ```
 [null, {
+  status: "success",
+  operation: "delete",
   path: "/notes/todo.md"
 }]
 ```
@@ -417,6 +430,8 @@ path: /diary/54/anb.md
 
 ```
 [null, {
+  status: "success",
+  operation: "list",
   paths: [
     "/diary/54/anb.md",
     "/diary/54/notes.md",
@@ -454,7 +469,7 @@ path
 
 ## CONTENT SEARCH
 
-Search inside file contents.
+Search inside file contents. (Note: Currently not implemented)
 
 Supported file types:
 
@@ -476,17 +491,15 @@ search_type: content
 
 ```
 [null, {
+  status: "success",
+  operation: "search",
   results: [
     {
       path: "/notes/langgraph.md",
       line: 42,
       snippet: "LangGraph allows building structured LLM workflows"
     },
-    {
-      path: "/docs/agent-architecture.md",
-      line: 12,
-      snippet: "LangGraph enables tool-driven agent workflows"
-    }
+    ...
   ]
 }]
 ```
@@ -499,6 +512,8 @@ search_type: content
 
 ```
 [null, {
+  status: "success",
+  operation: "search",
   results: [
     { path: "/docs/roadmap.md" },
     { path: "/docs/project-roadmap.md" }
@@ -514,6 +529,8 @@ search_type: content
 
 ```
 [null, {
+  status: "success",
+  operation: "search",
   results: [
     { path: "/notes/" },
     { path: "/notes/archive/" }
@@ -555,6 +572,8 @@ destination: /notes/todo_backup.md
 
 ```
 [null, {
+  status: "success",
+  operation: "copy",
   path: "/notes/todo_backup.md"
 }]
 ```
@@ -583,13 +602,46 @@ destination: /archive/todo.md
 
 ```
 [null, {
+  status: "success",
+  operation: "move",
   path: "/archive/todo.md"
 }]
 ```
 
 ---
 
-# 14. RESPONSE FORMAT
+## 14. RENAME
+
+Renames a file within its current directory.
+
+Validation rules:
+
+- Source file MUST exist
+- Destination MUST NOT exist
+- New name MUST NOT contain path separators
+- Destination must be a valid file name with allowed extension
+
+Example:
+
+```
+operation: rename
+path: /notes/todo.md
+new_name: tasks.md
+```
+
+### Success Response
+
+```
+[null, {
+  status: "success",
+  operation: "rename",
+  path: "/notes/tasks.md"
+}]
+```
+
+---
+
+# 15. RESPONSE FORMAT
 
 All file paths returned by the tool must be **absolute paths relative to the LLM root**.
 
@@ -610,7 +662,7 @@ agent_workspace/notes/todo.md
 
 ---
 
-# 15. ERROR HANDLING
+# 16. ERROR HANDLING
 
 All operations MUST return errors using the tuple format:
 
@@ -632,7 +684,7 @@ All operations MUST return errors using the tuple format:
 
 ---
 
-# 16. FUTURE EXTENSIONS
+# 17. FUTURE EXTENSIONS
 
 Possible future operations:
 

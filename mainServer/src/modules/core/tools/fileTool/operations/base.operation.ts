@@ -4,6 +4,7 @@ export interface FileOperationParams {
   path?: string;
   content?: string;
   destination?: string;
+  new_name?: string;
   query?: string;
   search_type?: SearchType;
 }

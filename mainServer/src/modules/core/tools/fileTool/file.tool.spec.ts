@@ -19,7 +19,8 @@ describe('FileTool', () => {
           provide: ConfigService,
           useValue: {
             get: jest.fn((key: string) => {
-              if (key === 'AGENT_WORKSPACE_DIRECTORY_NAME') return 'agent_workspace';
+              if (key === 'AGENT_WORKSPACE_DIRECTORY_NAME')
+                return 'agent_workspace';
               return null;
             }),
           },
@@ -70,7 +71,9 @@ describe('FileTool', () => {
         operation: FileOperation.READ,
         path: '/.hidden.txt',
       });
-      expect(error?.message).toBe('Hidden files or directories are not allowed');
+      expect(error?.message).toBe(
+        'Hidden files or directories are not allowed',
+      );
     });
   });
 
@@ -91,7 +94,7 @@ describe('FileTool', () => {
       expect(fs.writeFile).toHaveBeenCalledWith(
         path.join(workspaceRoot, 'test.md'),
         'hello world',
-        'utf8'
+        'utf8',
       );
     });
 
@@ -197,7 +200,81 @@ describe('FileTool', () => {
         search_type: SearchType.CONTENT,
       });
 
-      expect(error?.message).toBe('Operation: search search_type: content is not implemented');
+      expect(error?.message).toBe(
+        'Operation: search search_type: content is not implemented',
+      );
+    });
+
+    describe('rename', () => {
+      it('should rename a file', async () => {
+        (fs.access as jest.Mock)
+          .mockResolvedValueOnce(undefined) // source access
+          .mockRejectedValueOnce(new Error('not found')); // dest access
+        (fs.rename as jest.Mock).mockResolvedValue(undefined);
+
+        const [error, data] = await service.execute({
+          operation: FileOperation.RENAME,
+          path: '/test.md',
+          new_name: 'new.md',
+        });
+
+        expect(error).toBeNull();
+        expect(data?.path).toBe('/new.md');
+        expect(fs.rename).toHaveBeenCalledWith(
+          path.join(workspaceRoot, 'test.md'),
+          path.join(workspaceRoot, 'new.md'),
+        );
+      });
+
+      it('should fail if source does not exist', async () => {
+        (fs.access as jest.Mock).mockRejectedValue(new Error('not found'));
+
+        const [error] = await service.execute({
+          operation: FileOperation.RENAME,
+          path: '/missing.md',
+          new_name: 'new.md',
+        });
+
+        expect(error?.message).toContain('Source file does not exist');
+      });
+
+      it('should fail if destination already exists', async () => {
+        (fs.access as jest.Mock).mockResolvedValue(undefined); // both exist
+
+        const [error] = await service.execute({
+          operation: FileOperation.RENAME,
+          path: '/test.md',
+          new_name: 'exists.md',
+        });
+
+        expect(error?.message).toContain('Destination already exists');
+      });
+
+      it('should fail if new_name contains path separator', async () => {
+        const [error] = await service.execute({
+          operation: FileOperation.RENAME,
+          path: '/test.md',
+          new_name: 'subdir/new.md',
+        });
+
+        expect(error?.message).toBe(
+          'new_name must be a filename only, not a path',
+        );
+      });
+
+      it('should fail if new_name has invalid extension', async () => {
+        (fs.access as jest.Mock)
+          .mockResolvedValueOnce(undefined) // source access
+          .mockRejectedValueOnce(new Error('not found')); // dest access
+
+        const [error] = await service.execute({
+          operation: FileOperation.RENAME,
+          path: '/test.md',
+          new_name: 'new.exe',
+        });
+
+        expect(error?.message).toContain('Invalid file extension');
+      });
     });
   });
 });

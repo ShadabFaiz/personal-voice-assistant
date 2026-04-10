@@ -7,6 +7,7 @@ export enum FileOperation {
   SEARCH = 'search',
   COPY = 'copy',
   MOVE = 'move',
+  RENAME = 'rename',
 }
 
 export enum SearchType {
@@ -17,7 +18,7 @@ export enum SearchType {
 
 export interface Artifact {
   status: string;
-  operation: string;
+  operation: FileOperation;
   path?: string;
   content?: string;
   paths?: string[];

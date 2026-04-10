@@ -18,6 +18,7 @@ import { DeleteOperation } from './operations/delete.operation';
 import { ListOperation } from './operations/list.operation';
 import { MoveOperation } from './operations/move.operation';
 import { ReadOperation } from './operations/read.operation';
+import { RenameOperation } from './operations/rename.operation';
 import { SearchOperation } from './operations/search.operation';
 import { UpdateOperation } from './operations/update.operation';
 
@@ -25,7 +26,14 @@ import { UpdateOperation } from './operations/update.operation';
 export class FileTool implements OnModuleInit {
   private readonly logger = new Logger(FileTool.name);
   private readonly workspaceRoot: string;
-  private readonly allowedExtensions = ['.txt', '.md', '.csv', '.json'];
+  private readonly allowedExtensions = [
+    '.txt',
+    '.md',
+    '.csv',
+    '.json',
+    '.html',
+    '.js',
+  ];
   private readonly maxFileSize = 200 * 1024; // 200 KB
   private readonly operations: Map<FileOperation, IFileOperation>;
 
@@ -57,6 +65,7 @@ export class FileTool implements OnModuleInit {
       [FileOperation.SEARCH, new SearchOperation(context)],
       [FileOperation.COPY, new CopyOperation(context)],
       [FileOperation.MOVE, new MoveOperation(context)],
+      [FileOperation.RENAME, new RenameOperation(context)],
     ]);
   }
 
@@ -142,6 +151,7 @@ export class FileTool implements OnModuleInit {
     path?: string;
     content?: string;
     destination?: string;
+    new_name?: string;
     query?: string;
     search_type?: SearchType;
   }): Promise<ToolResponse> {
@@ -161,6 +171,7 @@ export class FileTool implements OnModuleInit {
         path: z.string().optional(),
         content: z.string().optional(),
         destination: z.string().optional(),
+        new_name: z.string().optional(),
         query: z.string().optional(),
         search_type: z.enum(SearchType).optional(),
       }),

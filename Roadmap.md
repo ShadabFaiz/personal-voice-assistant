@@ -28,8 +28,8 @@
 ## 3. Web Intelligence Layer
 
 - [x] DuckDuckGo / Google search
-- [ ] HTML → readable text extraction
-- [ ] Content sanitization
+- [x] HTML → readable text extraction
+- [x] Content sanitization
 - [ ] Chunking utility
 - [ ] Embedding generation
 - [ ] Similarity scoring
@@ -54,7 +54,7 @@
 
 - [x] Gemini integration
 - [x] Ollama integration
-- [ ] Multi-provider abstraction
+- [x] Multi-provider abstraction
 - [ ] Model fallback on rate limits
 - [ ] Cost-optimized routing
 - [ ] Streaming responses
