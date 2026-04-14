@@ -2,8 +2,8 @@ import { tool } from '@langchain/core/tools';
 import { Injectable, Logger } from '@nestjs/common';
 import { z } from 'zod';
 import {
-  DEFAULT_MAX_REDIRECTS,
-  DEFAULT_REQUEST_TIMEOUT,
+    DEFAULT_MAX_REDIRECTS,
+    DEFAULT_REQUEST_TIMEOUT,
 } from './constants/defaultHeaders';
 import { WebPageFetcherOptions, WebPageFetcherResponse } from './interface';
 import { buildRequestHeaders } from './utils';
@@ -77,33 +77,43 @@ export class WebPageFetcherTool {
     throw new Error(errorMessage);
   }
 
-  private formatWebResponse(response: WebPageFetcherResponse): string {
-    const $ = cheerio.load(response.data);
+  private formatWebResponse(
+    response: WebPageFetcherResponse,
+    sanitizeResponse = true,
+  ): string {
+    let content = response.data;
 
-    // remove noise
-    $('script, style, noscript, iframe').remove();
-    $('header, footer, nav, aside').remove();
+    if (sanitizeResponse) {
+      const $ = cheerio.load(response.data);
 
-    // extract text
-    const text = $('body').text().replace(/\s+/g, ' ').trim();
+      // remove noise
+      $('script, style, noscript, iframe').remove();
+      $('header, footer, nav, aside').remove();
 
-    this.logger.debug(`\n\nText Extracted from WebPage: ${text}`);
+      // extract text
+      content = $('body').text().replace(/\s+/g, ' ').trim();
+      this.logger.debug(`\n\nText Extracted from WebPage: ${content}`);
+    }
 
     return JSON.stringify({
       url: response.url,
       status: response.status,
-      content: text,
+      content,
     });
   }
 
   private getWebPageFetcherTool() {
     return tool(
-      async (input: { url: string; headers?: Record<string, string> }) => {
+      async (input: {
+        url: string;
+        headers?: Record<string, string>;
+        sanitize_response?: boolean;
+      }) => {
         const response = await this.fetchWebPage({
           url: input.url,
           headers: input.headers,
         });
-        return this.formatWebResponse(response);
+        return this.formatWebResponse(response, input.sanitize_response);
       },
       {
         name: 'webpage_fetcher',
@@ -130,6 +140,13 @@ export class WebPageFetcherTool {
             .optional()
             .describe(
               'Optional custom headers to send with the request as a JSON object (e.g., {"Authorization": "Bearer token"}). Default headers include User-Agent and Accept.',
+            ),
+          sanitize_response: z
+            .boolean()
+            .optional()
+            .default(true)
+            .describe(
+              'Optional flag to sanitize the response body. By default it is true, returning clean text. If false, it returns the raw content.',
             ),
         }),
       },

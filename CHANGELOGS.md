@@ -149,4 +149,16 @@ NOTE**: Currently transcription is processed on cpu, not on gpu. TODO: Make it w
 7. Created comprehensive specification documentation for FileTool at `mainServer/src/modules/core/tools/fileTool/specification.md`.
 8. Created specification documentation for dateTimeTool at `mainServer/src/modules/core/tools/dateTimeTools/specification.md`.
 9. Created specification documentation for locationTool at `mainServer/src/modules/core/tools/locationTool/specification.md`.
+
+---
+
+### v0.0.20 (LLM module re-architecture and FileTool response update)
+1. Re-architected the LLM modules. Now instead of each LLM having dedicated controller/services, they will have 1 controller and services. LLM instance will only change depending upon ENV variable: MODEL_TYPE.
+2. Refactored FileTool response format to a standardized tuple [error, artifact].
+3. Added a dedicated `rename` operation to FileTool with strict filename-only validation.
+4. Expanded FileTool allowed file extensions to include .html and .js.
+5. Inlined examples and added operation effects to FileTool `description.ts` for better AI guidance.
+6. Reconciled FileTool `specification.md` with the actual implementation (status, operation fields, and search status).
+7. Updated `WebPageFetcherTool` with an optional `sanitize_response` parameter to allow retrieving raw HTML.
+8. Fixed FileTool unit tests and improved dependency injection in `file.tool.spec.ts`.
 ---
