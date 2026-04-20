@@ -27,7 +27,7 @@ export class MarkAsReadOperation implements IGmailOperation {
       null,
       {
         status: 'success',
-        operation: 'markAsRead' as any,
+        operation: 'markAsRead',
       },
     ];
   }
