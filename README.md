@@ -9,7 +9,11 @@
 1. [FileTool](mainServer/src/modules/core/tools/fileTool/specification.md)
 2. [LocationTool](mainServer/src/modules/core/tools/locationTool/specification.md)
 3. [DateTimeTool](mainServer/src/modules/core/tools/dateTimeTools/specification.md)
-3. [Apis](mainServer/APIs.md)
+4. [GmailTool](mainServer/src/modules/core/tools/gmail/specification.md)
+5. BraveSearchTool
+6. DuckDuckGoSearchTool
+7. WebPageFetcherTool
+8. [Apis](mainServer/APIs.md)
 
 
 ## NVCC required for voice interaction
