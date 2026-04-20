@@ -1,16 +1,14 @@
 import { HttpModule } from '@nestjs/axios';
-import { Global, Logger, Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import https from 'node:https';
-import tls from 'node:tls';
-import { AppConfig, AppConfigFunction } from './config/configuration';
-import { loadCertificate } from './loadCertificate';
+import { Global, Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { AppConfigFunction } from './config/configuration';
 import { LLMWorkflowService } from './services/llmWorkflow.service';
 import { SystemPromptsService } from './services/systemPrompts.service';
 import { BraveSearchTool } from './tools/braveSearchTool/brave-search.tool';
 import { DateTimeTool } from './tools/dateTimeTools/dateTime.tool';
 import { DuckDuckGoWebSearchTool } from './tools/duckDuckGoSearchTool/duck-duck-go-search.tool';
 import { FileTool } from './tools/fileTool/file.tool';
+import { GmailTool } from './tools/gmail/gmail.tool';
 import { LocationTool } from './tools/locationTool/location.tool';
 import { ToolsService } from './tools/tools.service';
 import { WebPageFetcherTool } from './tools/webPageFetcherTool/web-page-fetcher.tool';
@@ -22,34 +20,9 @@ import { WebPageFetcherTool } from './tools/webPageFetcherTool/web-page-fetcher.
       isGlobal: true,
       load: [AppConfigFunction],
     }),
-    HttpModule.registerAsync({
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService<AppConfig>) => {
-        const caPath = configService.get<string>('CUSTOM_CA_CERT_PATH');
-
-        let httpsAgent: https.Agent | undefined;
-        Logger.debug(`CUSTOM_CA_CERT_PATH:${caPath}`);
-
-        if (caPath) {
-          Logger.debug(`Using CUSTOM_CA_CERT_PATH`);
-          const [error, cert] = loadCertificate(caPath);
-          if (error) {
-            throw error;
-          }
-
-          if (cert) {
-            httpsAgent = new https.Agent({
-              ca: [...tls.rootCertificates, cert],
-            });
-          }
-        }
-
-        return {
-          httpsAgent,
-          timeout: 10000,
-          maxRedirects: 5,
-        };
-      },
+    HttpModule.register({
+      timeout: 10000,
+      maxRedirects: 5,
     }),
   ],
   providers: [
@@ -80,6 +53,7 @@ import { WebPageFetcherTool } from './tools/webPageFetcherTool/web-page-fetcher.
       useClass: WebPageFetcherTool,
     },
     FileTool,
+    GmailTool,
   ],
   exports: [
     LLMWorkflowService,
@@ -91,6 +65,7 @@ import { WebPageFetcherTool } from './tools/webPageFetcherTool/web-page-fetcher.
     ToolsService,
     WebPageFetcherTool,
     FileTool,
+    GmailTool,
   ],
 })
 export class CoreModule {}

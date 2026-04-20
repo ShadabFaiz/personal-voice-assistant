@@ -1,9 +1,9 @@
 import * as fs from 'node:fs/promises';
 import { FileOperation, ToolResponse } from '../file-tool.types';
 import {
-    FileOperationContext,
-    FileOperationParams,
-    IFileOperation,
+  FileOperationContext,
+  FileOperationParams,
+  IFileOperation,
 } from './base.operation';
 
 export class DeleteOperation implements IFileOperation {
@@ -36,7 +36,7 @@ export class DeleteOperation implements IFileOperation {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
         if (errorMessage === 'Directories cannot be deleted') {
-            return [{ message: errorMessage }, null];
+          return [{ message: errorMessage }, null];
         }
         return [{ message: `File does not exist at ${inputPath}` }, null];
       }

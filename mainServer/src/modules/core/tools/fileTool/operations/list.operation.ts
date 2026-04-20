@@ -2,9 +2,9 @@ import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 import { FileOperation, ToolResponse } from '../file-tool.types';
 import {
-    FileOperationContext,
-    FileOperationParams,
-    IFileOperation,
+  FileOperationContext,
+  FileOperationParams,
+  IFileOperation,
 } from './base.operation';
 
 export class ListOperation implements IFileOperation {

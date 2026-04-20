@@ -7,6 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { LLMProvider } from '../types/llm-provider.types';
 import { GeminiProvider } from './gemini/gemini.provider';
 import { OllamaProvider } from './ollama/ollama.provider';
+import { OpenAICompatibleProvider } from './openai-compatible/openai-compatible.provider';
 
 const logger = new Logger('LLMProviderFactory');
 
@@ -22,6 +23,12 @@ const providerRegistry: Record<
     new GeminiProvider(configService, systemPromptsService, toolService),
   ollama: (configService, systemPromptsService, toolService) =>
     new OllamaProvider(configService, systemPromptsService, toolService),
+  openai: (configService, systemPromptsService, toolService) =>
+    new OpenAICompatibleProvider(
+      configService,
+      systemPromptsService,
+      toolService,
+    ),
 };
 
 export const createLLMProvider = (

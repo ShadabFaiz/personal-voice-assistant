@@ -1,9 +1,9 @@
 import * as fs from 'node:fs/promises';
 import { FileOperation, ToolResponse } from '../file-tool.types';
 import {
-    FileOperationContext,
-    FileOperationParams,
-    IFileOperation,
+  FileOperationContext,
+  FileOperationParams,
+  IFileOperation,
 } from './base.operation';
 
 export class ReadOperation implements IFileOperation {

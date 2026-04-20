@@ -6,6 +6,7 @@ import { BraveSearchTool } from './braveSearchTool/brave-search.tool';
 import { DateTimeTool } from './dateTimeTools/dateTime.tool';
 import { DuckDuckGoWebSearchTool } from './duckDuckGoSearchTool/duck-duck-go-search.tool';
 import { FileTool } from './fileTool/file.tool';
+import { GmailTool } from './gmail/gmail.tool';
 import { LocationTool } from './locationTool/location.tool';
 import { WebPageFetcherTool } from './webPageFetcherTool/web-page-fetcher.tool';
 
@@ -22,6 +23,7 @@ export class ToolsService implements OnModuleInit {
     private readonly locationTool: LocationTool,
     private readonly webPageFetcherTool: WebPageFetcherTool,
     private readonly fileTool: FileTool,
+    private readonly gmailTool: GmailTool,
   ) {}
 
   onModuleInit() {
@@ -47,6 +49,7 @@ export class ToolsService implements OnModuleInit {
       ...this.locationTool.getAllTools(),
       ...this.webPageFetcherTool.getAllTools(),
       ...this.fileTool.getAllTools(),
+      ...this.gmailTool.getAllTools(),
     ];
   }
 }

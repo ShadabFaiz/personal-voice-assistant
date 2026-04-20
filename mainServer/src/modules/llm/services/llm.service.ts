@@ -1,12 +1,7 @@
 import { AppConfig } from '@core/config';
 import { ModelType } from '@core/config/constants';
 import { LLMWorkflowService } from '@core/services/llmWorkflow.service';
-import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-  OnModuleInit,
-} from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { v4 as uuidv4 } from 'uuid';
 import { LLMProvider } from '../types/llm-provider.types';
@@ -47,7 +42,9 @@ export class LLMService implements OnModuleInit {
       return modelResponse;
     } catch (error) {
       this.logger.error('Failed to get response', error);
-      throw new InternalServerErrorException('Failed to get response from LLM');
+      const errorMessage = (error as Error).message;
+      return errorMessage;
+      // throw new InternalServerErrorException('Failed to get response from LLM');
     }
   }
 }

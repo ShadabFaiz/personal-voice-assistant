@@ -167,13 +167,13 @@ export class FileTool implements OnModuleInit {
       name: 'file_tool',
       description: toolDescription,
       schema: z.object({
-        operation: z.enum(FileOperation),
+        operation: z.nativeEnum(FileOperation),
         path: z.string().optional(),
         content: z.string().optional(),
         destination: z.string().optional(),
         new_name: z.string().optional(),
         query: z.string().optional(),
-        search_type: z.enum(SearchType).optional(),
+        search_type: z.nativeEnum(SearchType).optional(),
       }),
       responseFormat: 'content_and_artifact',
     });

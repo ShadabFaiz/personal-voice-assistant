@@ -2,8 +2,8 @@ import { tool } from '@langchain/core/tools';
 import { Injectable, Logger } from '@nestjs/common';
 import { z } from 'zod';
 import {
-    DEFAULT_MAX_REDIRECTS,
-    DEFAULT_REQUEST_TIMEOUT,
+  DEFAULT_MAX_REDIRECTS,
+  DEFAULT_REQUEST_TIMEOUT,
 } from './constants/defaultHeaders';
 import { WebPageFetcherOptions, WebPageFetcherResponse } from './interface';
 import { buildRequestHeaders } from './utils';

@@ -8,7 +8,7 @@ import {
   SystemMessagePromptTemplate,
 } from '@langchain/core/prompts';
 import { ToolNode } from '@langchain/langgraph/prebuilt';
-import { ChatOllama } from '@langchain/ollama';
+import { ChatOpenAI } from '@langchain/openai';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
@@ -17,8 +17,8 @@ import {
 } from '../../types/llm-provider.types';
 
 @Injectable()
-export class OllamaProvider extends LLMProvider {
-  private readonly logger = new Logger(OllamaProvider.name);
+export class OpenAICompatibleProvider extends LLMProvider {
+  private readonly logger = new Logger(OpenAICompatibleProvider.name);
 
   constructor(
     private readonly configService: ConfigService<AppConfig>,
@@ -29,17 +29,23 @@ export class OllamaProvider extends LLMProvider {
   }
 
   initialize(): Promise<LLMProviderInitResult> {
-    const baseUrl = this.configService.get<string>(
-      'OLLAMA_BASE_URL',
-      'http://localhost:11434',
-    );
-    const modelName = this.configService.get<string>('MODEL_NAME');
+    const apiKey = this.configService.get<string>('OPENAI_API_KEY') as string;
+    const baseUrl = this.configService.get<string>('OPENAI_BASE_URL') as string;
+    const model = this.configService.get<string>('MODEL_NAME') as string;
 
-    const chatModel = new ChatOllama({
-      baseUrl,
-      model: modelName,
-      verbose: true,
-      think: false,
+    const chatModel = new ChatOpenAI({
+      model: model,
+      apiKey: apiKey,
+      configuration: {
+        baseURL: baseUrl,
+        defaultHeaders: {
+          'X-SITE': 'personal',
+          'X-Title': 'X-TitlePEronsla',
+          'X-OpenRouter-Title': 'X-OpenRouter-TitlePersonal',
+        },
+      },
+      temperature: 0.7,
+      streaming: true,
     });
 
     const allSystemPrompts = this.systemPromptsService.loadAllSystemPrompts();
@@ -56,7 +62,9 @@ export class OllamaProvider extends LLMProvider {
     const modelWithTools = chatModel.bindTools(tools);
     const toolNode = new ToolNode(tools);
 
-    this.logger.log('OllamaProvider initialized');
+    this.logger.log(
+      `OpenAICompatibleProvider initialized with base URL: ${baseUrl}`,
+    );
     return Promise.resolve({ modelWithTools, toolNode, chatPromptTemplate });
   }
 }

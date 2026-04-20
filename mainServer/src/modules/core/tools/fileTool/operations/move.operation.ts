@@ -1,9 +1,9 @@
 import * as fs from 'node:fs/promises';
 import { FileOperation, ToolResponse } from '../file-tool.types';
 import {
-    FileOperationContext,
-    FileOperationParams,
-    IFileOperation,
+  FileOperationContext,
+  FileOperationParams,
+  IFileOperation,
 } from './base.operation';
 
 export class MoveOperation implements IFileOperation {
@@ -23,12 +23,18 @@ export class MoveOperation implements IFileOperation {
       try {
         await fs.access(absolutePath);
       } catch {
-        return [{ message: `Source file does not exist at ${inputPath}` }, null];
+        return [
+          { message: `Source file does not exist at ${inputPath}` },
+          null,
+        ];
       }
 
       try {
         await fs.access(absoluteDest);
-        return [{ message: `Destination already exists at ${destination}` }, null];
+        return [
+          { message: `Destination already exists at ${destination}` },
+          null,
+        ];
       } catch {
         // Success
       }

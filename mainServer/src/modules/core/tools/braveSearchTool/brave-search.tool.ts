@@ -102,7 +102,6 @@ export class BraveSearchTool {
     }
   }
 
-
   private formatSearchResults(
     results: BraveSearchResult[],
     query: string,

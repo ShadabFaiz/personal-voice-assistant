@@ -1,7 +1,8 @@
 export type SearchEngine = 'brave' | 'google';
-export type ModelType = 'gemini' | 'ollama';
+export type ModelType = 'gemini' | 'ollama' | 'openai';
 
 export const DEFAULT_OLLAMA_BASE_URL = 'http://localhost:11434';
+export const DEFAULT_OPENAI_BASE_URL = 'https://api.openai.com/v1';
 export const DEFAULT_MODEL_NAME = 'default-model';
 export const DEFAULT_RECORDINGS_DIR = 'recordings';
 export const DEFAULT_APPLICATION_PORT = 3000;
@@ -17,3 +18,7 @@ export const DEFAULT_BRAVE_SEARCH_API_URL =
 export const DEFAULT_SEARCH_ENGINE: SearchEngine = 'google';
 export const DEFAULT_AGENT_WORKSPACE_DIRECTORY_NAME = 'agent_workspace';
 export const DEFAULT_MODEL_TYPE: ModelType = 'gemini';
+
+export const DEFAULT_GOOGLE_CLIENT_ID = '';
+export const DEFAULT_GOOGLE_CLIENT_SECRET = '';
+export const DEFAULT_GOOGLE_REFRESH_TOKEN = '';
