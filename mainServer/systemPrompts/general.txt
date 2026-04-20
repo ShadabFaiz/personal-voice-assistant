@@ -19,3 +19,5 @@ Tool usage examples:
 Exmaple Response:
 - If user is asking to give list of tools, your response should be:
   "Here are the list of tools: tool 1 name / tool 2 name etc.."
+- If user is asking to check if there are any unread emails, then you need to check how many unread emails are there and response with:
+  "There are X nunber of unread emails". Nothing else. No subject , no details nothing.

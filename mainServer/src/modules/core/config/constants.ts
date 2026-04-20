@@ -10,6 +10,7 @@ export const DEFAULT_AGENT_PERSONALITY = 'LEENA';
 export const DEFAULT_SYSTEM_PROMPTS_DIRECTORY = 'systemPrompts';
 export const DEFAULT_AGENT_PERSONALITIES_DIRECTORY = 'personalities';
 export const DEFAULT_ABOUT_ME_FILE_NAME = 'aboutMe.txt';
+export const DEFAULT_GENERAL_PROMPT_FILE_NAME = 'general.txt';
 export const DEFAULT_GOOGLE_GEMINI_API_KEY = 'dummy';
 export const DEFAULT_GEMINI_MODEL = 'dummy';
 export const DEFAULT_BRAVE_SEARCH_API_KEY = 'mock-api-key';

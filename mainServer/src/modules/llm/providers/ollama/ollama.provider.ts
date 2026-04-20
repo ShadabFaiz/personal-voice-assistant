@@ -38,7 +38,7 @@ export class OllamaProvider extends LLMProvider {
     const chatModel = new ChatOllama({
       baseUrl,
       model: modelName,
-      verbose: true,
+      verbose: false,
       think: false,
     });
 

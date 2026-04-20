@@ -10,6 +10,7 @@ export class SystemPromptsService {
   constructor(private readonly configService: ConfigService) {}
 
   loadAllSystemPrompts() {
+    const generalPrompt = this.loadGeneralPrompt();
     const agentPersonality = this.loadAgentPersonality();
     const aboutMe = this.loadAboutMe();
 
@@ -17,6 +18,7 @@ export class SystemPromptsService {
 
     const contexts = {
       system_context: {
+        general_instructions: generalPrompt,
         user_information: aboutMe,
         persona_instructions: agentPersonality,
       },
@@ -25,6 +27,27 @@ export class SystemPromptsService {
     this.logger.debug(` ***** System prompts loaded ***** `);
 
     return this.createXML(contexts);
+  }
+
+  loadGeneralPrompt(): string {
+    const generalPromptFilePath = path.join(
+      process.cwd(),
+      this.configService.get<string>('SYSTEM_PROMPTS_DIRECTORY', ''),
+      `${this.configService.get<string>('GENERAL_PROMPT_FILE_NAME', 'general.txt')}`,
+    );
+    try {
+      const generalPrompt = fs.readFileSync(generalPromptFilePath, 'utf-8');
+      this.logger.debug(
+        `General prompt loaded from file: ${generalPromptFilePath}`,
+      );
+      return generalPrompt;
+    } catch (error) {
+      this.logger.error(
+        `Failed to load general prompt from file: ${generalPromptFilePath}`,
+        error,
+      );
+      return '';
+    }
   }
 
   loadAboutMe() {
