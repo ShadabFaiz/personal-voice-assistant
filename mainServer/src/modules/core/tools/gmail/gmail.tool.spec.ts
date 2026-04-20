@@ -10,6 +10,10 @@ const mockGmail = {
       get: jest.fn(),
       send: jest.fn(),
       trash: jest.fn(),
+      modify: jest.fn(),
+    },
+    drafts: {
+      create: jest.fn(),
     },
   },
 };
@@ -123,6 +127,24 @@ describe('GmailTool', () => {
       expect(result!.emailId).toBe('new-msg-id');
       expect(mockGmail.users.messages.send).toHaveBeenCalled();
     });
+ 
+    it('should handle createDraftEmail', async () => {
+      mockGmail.users.drafts.create.mockResolvedValue({
+        data: { id: 'new-draft-id' },
+      });
+ 
+      const [error, result] = await tool.execute({
+        operation: 'createDraftEmail',
+        to: 'recipient@example.com',
+        subject: 'Hello',
+        body: 'World',
+      });
+ 
+      expect(error).toBeNull();
+      expect(result!.status).toBe('success');
+      expect(result!.emailId).toBe('new-draft-id');
+      expect(mockGmail.users.drafts.create).toHaveBeenCalled();
+    });
 
     it('should handle deleteEmail', async () => {
       mockGmail.users.messages.trash.mockResolvedValue({ data: {} });
@@ -136,6 +158,24 @@ describe('GmailTool', () => {
       expect(result!.status).toBe('success');
       expect(mockGmail.users.messages.trash).toHaveBeenCalledWith(
         expect.objectContaining({ id: 'msg123' }),
+      );
+    });
+ 
+    it('should handle markAsRead', async () => {
+      mockGmail.users.messages.modify.mockResolvedValue({ data: {} });
+ 
+      const [error, result] = await tool.execute({
+        operation: 'markAsRead',
+        emailId: 'msg123',
+      });
+ 
+      expect(error).toBeNull();
+      expect(result!.status).toBe('success');
+      expect(mockGmail.users.messages.modify).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: 'msg123',
+          requestBody: { removeLabelIds: ['UNREAD'] },
+        }),
       );
     });
 

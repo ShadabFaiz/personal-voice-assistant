@@ -7,13 +7,15 @@ import { z } from 'zod';
 import { AppConfig } from '@core/config';
 import { toolDescription } from './description';
 import {
-  GmailOperation,
-  GmailToolParams,
-  GmailToolResponse,
+    GmailOperation,
+    GmailToolParams,
+    GmailToolResponse,
 } from './gmail-tool.types';
+import { CreateDraftEmailOperation } from './operations/create-draft.operation';
 import { DeleteEmailOperation } from './operations/delete.operation';
 import { GetLatestEmailsOperation } from './operations/get-latest.operation';
 import { GetUnreadEmailsOperation } from './operations/get-unread.operation';
+import { MarkAsReadOperation } from './operations/mark-as-read.operation';
 import { ReadEmailOperation } from './operations/read.operation';
 import { ReplyToEmailOperation } from './operations/reply.operation';
 import { SearchEmailsOperation } from './operations/search.operation';
@@ -61,6 +63,10 @@ export class GmailTool {
           return await new ReadEmailOperation().execute(gmail, params);
         case 'sendEmail':
           return await new SendEmailOperation().execute(gmail, params);
+        case 'createDraftEmail':
+          return await new CreateDraftEmailOperation().execute(gmail, params);
+        case 'markAsRead':
+          return await new MarkAsReadOperation().execute(gmail, params);
         case 'replyToEmail':
           return await new ReplyToEmailOperation().execute(gmail, params);
         case 'deleteEmail':
@@ -113,6 +119,8 @@ export class GmailTool {
         'sendEmail',
         'replyToEmail',
         'deleteEmail',
+        'createDraftEmail',
+        'markAsRead',
       ]),
       maxResults: z.number().optional(),
       query: z.string().optional(),

@@ -132,6 +132,21 @@ Input:
   operation: "getLatestEmails",
   maxResults: 3
 }
+
+Output:
+[null, {
+  status: "success",
+  operation: "getLatestEmails",
+  emails: [
+    {
+      id: "18c1...",
+      subject: "Weekly Report",
+      from: { name: "Jane Smith", email: "jane@company.com" },
+      date: "2026-04-15T09:00:00Z",
+      snippet: "Here is the weekly report..."
+    }
+  ]
+}]
 ```
 
 ---
@@ -180,6 +195,21 @@ Input:
   operation: "searchEmails",
   query: "from:boss@gmail.com subject:meeting"
 }
+
+Output:
+[null, {
+  status: "success",
+  operation: "searchEmails",
+  emails: [
+    {
+      id: "18c2...",
+      subject: "Meeting Update",
+      from: { name: "Boss", email: "boss@gmail.com" },
+      date: "2026-04-15T11:00:00Z",
+      snippet: "Let's move the meeting to 2 PM..."
+    }
+  ]
+}]
 ```
 
 ---
@@ -286,6 +316,25 @@ sendEmail
   operation: "sendEmail",
   emailId: string
 }]
+ 
+ **Example**
+ 
+ ```ts
+ Input:
+ {
+   operation: "sendEmail",
+   to: "recipient@example.com",
+   subject: "Hello",
+   body: "World"
+ }
+ 
+ Output:
+ [null, {
+   status: "success",
+   operation: "sendEmail",
+   emailId: "new-msg-id"
+ }]
+ ```
 ```
 
 ---
@@ -321,11 +370,84 @@ replyToEmail
   operation: "replyToEmail",
   emailId: string
 }]
+ 
+ **Example**
+ 
+ ```ts
+ Input:
+ {
+   operation: "replyToEmail",
+   emailId: "18c1...",
+   body: "Thanks for the reminder!"
+ }
+ 
+ Output:
+ [null, {
+   status: "success",
+   operation: "replyToEmail",
+   emailId: "reply-msg-id"
+ }]
+ ```
 ```
 
 ---
 
-### 3.7 Delete Email
+### 3.7 Create Draft Email
+
+**Operation**
+
+```
+createDraftEmail
+```
+
+**Params**
+
+```ts
+{
+  operation: "createDraftEmail",
+  to?: string,
+  subject?: string,
+  body?: string
+}
+```
+
+**Behavior**
+
+- Creates a new draft using `drafts.create`
+- All fields are optional per Gmail API flexibility
+
+**Response**
+
+```ts
+[null, {
+  status: "success",
+  operation: "createDraftEmail",
+  emailId: string
+}]
+ 
+ **Example**
+ 
+ ```ts
+ Input:
+ {
+   operation: "createDraftEmail",
+   to: "recipient@example.com",
+   subject: "Draft Subject",
+   body: "Draft Body"
+ }
+ 
+ Output:
+ [null, {
+   status: "success",
+   operation: "createDraftEmail",
+   emailId: "draft-id"
+ }]
+ ```
+```
+
+---
+
+### 3.8 Delete Email
 
 **Operation**
 
@@ -352,6 +474,71 @@ deleteEmail
 [null, {
   status: "success",
   operation: "deleteEmail"
+}]
+```
+
+**Example**
+
+```ts
+Input:
+{
+  operation: "deleteEmail",
+  emailId: "18c1..."
+}
+
+Output:
+[null, {
+  status: "success",
+  operation: "deleteEmail"
+}]
+```
+
+---
+
+### 3.9 Mark As Read
+
+**Operation**
+
+```
+markAsRead
+```
+
+**Params**
+
+```ts
+{
+  operation: "markAsRead",
+  emailId: string       // required
+}
+```
+
+**Behavior**
+
+- Removes the `UNREAD` label from the specified message
+- Uses `messages.modify` with `removeLabelIds: ['UNREAD']`
+
+**Response**
+
+```ts
+[null, {
+  status: "success",
+  operation: "markAsRead"
+}]
+```
+
+**Example**
+
+```ts
+Input:
+{
+  operation: "markAsRead",
+  emailId: "18c1..."
+}
+
+Output:
+[null, {
+  status: "success",
+  operation: "markAsRead"
 }]
 ```
 
@@ -391,7 +578,8 @@ type EmailSummary = {
 - `operation` is required
 - `maxResults` must be ≤ 50
 - `query` required for `searchEmails`
-- `emailId` required for `readEmail`
+- `emailId` required for `readEmail`, `replyToEmail`, or `markAsRead`
+- `to`, `subject`, `body` optional for `createDraftEmail`
 
 ---
 

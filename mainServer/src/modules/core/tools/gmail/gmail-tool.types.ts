@@ -5,7 +5,9 @@ export type GmailOperation =
   | 'readEmail'
   | 'sendEmail'
   | 'replyToEmail'
-  | 'deleteEmail';
+  | 'deleteEmail'
+  | 'createDraftEmail'
+  | 'markAsRead';
 
 export interface EmailSummary {
   id: string;
