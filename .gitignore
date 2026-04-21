@@ -11,3 +11,4 @@ venv
 venv*
 
 agent_workspace
+.env
