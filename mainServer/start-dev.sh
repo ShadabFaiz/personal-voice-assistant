@@ -12,4 +12,4 @@ if [ -n "$CUSTOM_CA_CERT_PATH" ]; then
 fi
 
 # Start the application
-npx nest start --builder swc --watch
+npx nest start --watch

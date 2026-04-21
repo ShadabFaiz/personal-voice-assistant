@@ -7,9 +7,9 @@ import { z } from 'zod';
 import { AppConfig } from '@core/config';
 import { toolDescription } from './description';
 import {
-    GmailOperation,
-    GmailToolParams,
-    GmailToolResponse,
+  GmailOperation,
+  GmailToolParams,
+  GmailToolResponse,
 } from './gmail-tool.types';
 import { CreateDraftEmailOperation } from './operations/create-draft.operation';
 import { DeleteEmailOperation } from './operations/delete.operation';

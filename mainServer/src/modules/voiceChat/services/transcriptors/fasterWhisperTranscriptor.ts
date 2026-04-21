@@ -30,9 +30,11 @@ export class FasterWhisperTranscriptor {
       this.logger.log('Transcription recevied', response.data.transcript);
 
       return [response.data.transcript, null];
-    } catch (error) {
+    } catch (error: unknown) {
       if (this.DEBUG) {
-        this.logger.error(error.message);
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        this.logger.error(errorMessage);
       }
       return [
         null,

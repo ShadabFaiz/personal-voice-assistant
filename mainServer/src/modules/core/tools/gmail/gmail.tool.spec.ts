@@ -127,19 +127,19 @@ describe('GmailTool', () => {
       expect(result!.emailId).toBe('new-msg-id');
       expect(mockGmail.users.messages.send).toHaveBeenCalled();
     });
- 
+
     it('should handle createDraftEmail', async () => {
       mockGmail.users.drafts.create.mockResolvedValue({
         data: { id: 'new-draft-id' },
       });
- 
+
       const [error, result] = await tool.execute({
         operation: 'createDraftEmail',
         to: 'recipient@example.com',
         subject: 'Hello',
         body: 'World',
       });
- 
+
       expect(error).toBeNull();
       expect(result!.status).toBe('success');
       expect(result!.emailId).toBe('new-draft-id');
@@ -160,15 +160,15 @@ describe('GmailTool', () => {
         expect.objectContaining({ id: 'msg123' }),
       );
     });
- 
+
     it('should handle markAsRead', async () => {
       mockGmail.users.messages.modify.mockResolvedValue({ data: {} });
- 
+
       const [error, result] = await tool.execute({
         operation: 'markAsRead',
         emailId: 'msg123',
       });
- 
+
       expect(error).toBeNull();
       expect(result!.status).toBe('success');
       expect(mockGmail.users.messages.modify).toHaveBeenCalledWith(
