@@ -1,0 +1,14 @@
+services:
+  main-server:
+    build:
+      context: ./mainServer
+      dockerfile: Dockerfile
+    ports:
+      - "${APPLICATION_PORT:-3000}:${APPLICATION_PORT:-3000}"
+    env_file:
+      - .env
+    volumes:
+      - ./mainServer/recordings:/app/recordings
+      - ./mainServer/systemPrompts:/app/systemPrompts
+      - ./mainServer/agent_workspace:/app/agent_workspace
+    restart: always
