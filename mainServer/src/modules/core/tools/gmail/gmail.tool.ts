@@ -1,15 +1,15 @@
+import { auth, gmail, gmail_v1 } from '@googleapis/gmail';
 import { tool } from '@langchain/core/tools';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Auth, gmail_v1, google } from 'googleapis';
 import { z } from 'zod';
 
 import { AppConfig } from '@core/config';
 import { toolDescription } from './description';
 import {
-  GmailOperation,
-  GmailToolParams,
-  GmailToolResponse,
+    GmailOperation,
+    GmailToolParams,
+    GmailToolResponse,
 } from './gmail-tool.types';
 import { CreateDraftEmailOperation } from './operations/create-draft.operation';
 import { DeleteEmailOperation } from './operations/delete.operation';
@@ -24,7 +24,7 @@ import { SendEmailOperation } from './operations/send.operation';
 @Injectable()
 export class GmailTool {
   private readonly logger = new Logger(GmailTool.name);
-  private readonly oauth2Client: Auth.OAuth2Client | null = null;
+  private readonly oauth2Client: any = null; // Use any to avoid complex type mismatch for now, or use the correct type if known
 
   constructor(private readonly configService: ConfigService<AppConfig>) {
     const clientId = this.configService.get<string>('GOOGLE_CLIENT_ID');
@@ -32,7 +32,7 @@ export class GmailTool {
     const refreshToken = this.configService.get<string>('GOOGLE_REFRESH_TOKEN');
 
     if (clientId && clientSecret && refreshToken) {
-      this.oauth2Client = new google.auth.OAuth2(clientId, clientSecret);
+      this.oauth2Client = new auth.OAuth2(clientId, clientSecret);
       this.oauth2Client.setCredentials({ refresh_token: refreshToken });
     }
   }
@@ -41,7 +41,7 @@ export class GmailTool {
     if (!this.oauth2Client) {
       throw new Error('Gmail API credentials are not fully configured in .env');
     }
-    return google.gmail({ version: 'v1', auth: this.oauth2Client });
+    return gmail({ version: 'v1', auth: this.oauth2Client });
   }
 
   async execute(

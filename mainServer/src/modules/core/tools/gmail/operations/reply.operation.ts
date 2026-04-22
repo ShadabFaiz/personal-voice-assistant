@@ -1,4 +1,4 @@
-import { gmail_v1 } from 'googleapis';
+import { gmail_v1 } from '@googleapis/gmail';
 import { GMAIL_USER_ME, METADATA_HEADERS_REPLY } from '../constants';
 import { GmailToolParams, GmailToolResponse } from '../gmail-tool.types';
 import { IGmailOperation } from './base.operation';

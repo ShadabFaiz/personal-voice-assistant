@@ -1,4 +1,4 @@
-import { gmail_v1 } from 'googleapis';
+import { gmail_v1 } from '@googleapis/gmail';
 import {
   DEFAULT_MAX_RESULTS,
   GMAIL_USER_ME,
