@@ -8,3 +8,5 @@ Dockerfile
 agent_workspace
 recordings
 systemPrompts
+.env
+.env.example
