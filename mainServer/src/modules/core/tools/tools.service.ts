@@ -8,6 +8,7 @@ import { DuckDuckGoWebSearchTool } from './duckDuckGoSearchTool/duck-duck-go-sea
 import { FileTool } from './fileTool/file.tool';
 import { GmailTool } from './gmail/gmail.tool';
 import { LocationTool } from './locationTool/location.tool';
+import { TempMailTool } from './tempMailTool/temp-mail.tool';
 import { WebPageFetcherTool } from './webPageFetcherTool/web-page-fetcher.tool';
 
 @Injectable()
@@ -24,6 +25,7 @@ export class ToolsService implements OnModuleInit {
     private readonly webPageFetcherTool: WebPageFetcherTool,
     private readonly fileTool: FileTool,
     private readonly gmailTool: GmailTool,
+    private readonly tempMailTool: TempMailTool,
   ) {}
 
   onModuleInit() {
@@ -50,6 +52,7 @@ export class ToolsService implements OnModuleInit {
       ...this.webPageFetcherTool.getAllTools(),
       ...this.fileTool.getAllTools(),
       ...this.gmailTool.getAllTools(),
+      ...this.tempMailTool.getAllTools(),
     ];
   }
 }

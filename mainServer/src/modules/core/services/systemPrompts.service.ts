@@ -6,6 +6,7 @@ import path from 'node:path';
 @Injectable()
 export class SystemPromptsService {
   private readonly logger = new Logger(SystemPromptsService.name);
+  private readonly temporaryEmailPromptFileName = 'temporaryEmail.txt';
 
   constructor(private readonly configService: ConfigService) {}
 
@@ -13,6 +14,7 @@ export class SystemPromptsService {
     const generalPrompt = this.loadGeneralPrompt();
     const agentPersonality = this.loadAgentPersonality();
     const aboutMe = this.loadAboutMe();
+    const temporaryEmail = this.loadTemporaryEmail();
 
     this.logger.debug(` ***** Loading system prompts ***** `);
 
@@ -21,6 +23,7 @@ export class SystemPromptsService {
         general_instructions: generalPrompt,
         user_information: aboutMe,
         persona_instructions: agentPersonality,
+        temporaryEmail,
       },
     };
 
@@ -69,6 +72,27 @@ export class SystemPromptsService {
     }
 
     return abountMePrompt;
+  }
+
+  loadTemporaryEmail() {
+    const promptFilePath = path.join(
+      process.cwd(),
+      this.configService.get<string>('SYSTEM_PROMPTS_DIRECTORY', ''),
+      this.temporaryEmailPromptFileName,
+    );
+    let prompt: string;
+    try {
+      prompt = fs.readFileSync(promptFilePath, 'utf-8');
+      this.logger.debug(`TemporaryEmail loaded from file: ${promptFilePath}`);
+    } catch (error) {
+      this.logger.error(
+        `Failed to load TemporaryEmail from file: ${promptFilePath}`,
+        error,
+      );
+      return '';
+    }
+
+    return prompt;
   }
 
   loadAgentPersonality() {
