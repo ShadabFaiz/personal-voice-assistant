@@ -1,7 +1,9 @@
+import Mailjs from '@cemalgnlts/mailjs';
 import { HttpModule } from '@nestjs/axios';
 import { Global, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AppConfigFunction } from './config/configuration';
+import { AppDataDirectoryService } from './services/appDirectory.service';
 import { LLMWorkflowService } from './services/llmWorkflow.service';
 import { SystemPromptsService } from './services/systemPrompts.service';
 import { BraveSearchTool } from './tools/braveSearchTool/brave-search.tool';
@@ -10,6 +12,7 @@ import { DuckDuckGoWebSearchTool } from './tools/duckDuckGoSearchTool/duck-duck-
 import { FileTool } from './tools/fileTool/file.tool';
 import { GmailTool } from './tools/gmail/gmail.tool';
 import { LocationTool } from './tools/locationTool/location.tool';
+import { TempMailTool } from './tools/tempMailTool/temp-mail.tool';
 import { ToolsService } from './tools/tools.service';
 import { WebPageFetcherTool } from './tools/webPageFetcherTool/web-page-fetcher.tool';
 
@@ -54,6 +57,9 @@ import { WebPageFetcherTool } from './tools/webPageFetcherTool/web-page-fetcher.
     },
     FileTool,
     GmailTool,
+    TempMailTool,
+    Mailjs,
+    AppDataDirectoryService,
   ],
   exports: [
     LLMWorkflowService,
@@ -66,6 +72,9 @@ import { WebPageFetcherTool } from './tools/webPageFetcherTool/web-page-fetcher.
     WebPageFetcherTool,
     FileTool,
     GmailTool,
+    TempMailTool,
+    Mailjs,
+    AppDataDirectoryService,
   ],
 })
 export class CoreModule {}
