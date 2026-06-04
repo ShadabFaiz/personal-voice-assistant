@@ -23,3 +23,4 @@ export const DEFAULT_MODEL_TYPE: ModelType = 'gemini';
 export const DEFAULT_GOOGLE_CLIENT_ID = '';
 export const DEFAULT_GOOGLE_CLIENT_SECRET = '';
 export const DEFAULT_GOOGLE_REFRESH_TOKEN = '';
+export const APP_DATA_DIRECTORY_NAME = 'Personal Voice Assistant';
