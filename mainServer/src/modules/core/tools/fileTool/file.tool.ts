@@ -5,6 +5,7 @@ import * as path from 'node:path';
 import { z } from 'zod';
 
 import { AppConfig } from '@core/config';
+import { AppDataDirectoryService } from '@core/services/appDirectory.service';
 import { ConfigService } from '@nestjs/config';
 import { toolDescription } from './description';
 import { FileOperation, SearchType, ToolResponse } from './file-tool.types';
@@ -37,10 +38,13 @@ export class FileTool implements OnModuleInit {
   private readonly maxFileSize = 200 * 1024; // 200 KB
   private readonly operations: Map<FileOperation, IFileOperation>;
 
-  constructor(private readonly configService: ConfigService<AppConfig>) {
+  constructor(
+    private readonly configService: ConfigService<AppConfig>,
+    private readonly appDataDirectoryService: AppDataDirectoryService,
+  ) {
     // Workspace is relative to the project root
     this.workspaceRoot = path.resolve(
-      process.cwd(),
+      this.appDataDirectoryService.getAppDataPath(),
       this.configService.get<string>(
         'AGENT_WORKSPACE_DIRECTORY_NAME',
       ) as string,
