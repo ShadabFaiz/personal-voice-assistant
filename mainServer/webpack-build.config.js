@@ -1,14 +1,24 @@
-const path = require('path');
+const path = require('node:path');
 const webpack = require('webpack');
 const { IgnorePlugin } = webpack;
 
-module.exports = function(options) {
+module.exports = function (options) {
   return {
     ...options,
     entry: './src/main.ts',
     target: 'node',
-    externals: [], // Don't externalize anything
+    externals: [],
     stats: 'errors-only',
+    module: {
+      ...options.module,
+      rules: [
+        ...(options.module?.rules || []),
+        {
+          test: /\.md$/,
+          type: 'asset/source',
+        },
+      ],
+    },
     plugins: [
       ...options.plugins,
       new IgnorePlugin({
