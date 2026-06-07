@@ -5,10 +5,8 @@ import { z } from 'zod';
 import { toolDescription } from './description';
 import { CreateRandomTempEmailAccountOperation } from './operations/create-random-temp-email.operation';
 import { CreateTempEmailOperation } from './operations/create-temp-email.operation';
-import { GetInboxOperation } from './operations/get-inbox.operation';
 import { LoginWithIdAndPasswordParams } from './operations/interface';
 import { LoginWithIdAndPasswordOperation } from './operations/login-with-id-and-password.operation';
-import { ReadEmailOperation } from './operations/read-email.operation';
 import {
   GenericResponse,
   TempMailOperation,
@@ -24,19 +22,15 @@ export class TempMailTool {
 
   private readonly createTempEmailOperation: CreateTempEmailOperation;
   private readonly createRandomTempEmailAccountOperation: CreateRandomTempEmailAccountOperation;
-  private readonly getInboxOperation: GetInboxOperation;
   private readonly loginWithIdAndPasswordOperation: LoginWithIdAndPasswordOperation;
-  private readonly readEmailOperation: ReadEmailOperation;
 
   constructor(private readonly mailJs: Mailjs) {
     this.createTempEmailOperation = new CreateTempEmailOperation();
     this.createRandomTempEmailAccountOperation =
       new CreateRandomTempEmailAccountOperation(mailJs);
-    this.getInboxOperation = new GetInboxOperation();
     this.loginWithIdAndPasswordOperation = new LoginWithIdAndPasswordOperation(
       mailJs,
     );
-    this.readEmailOperation = new ReadEmailOperation();
   }
 
   async execute(params: TempMailToolParams): Promise<TempMailToolResponse> {
@@ -46,14 +40,12 @@ export class TempMailTool {
           return await this.createTempEmailOperation.execute(params);
         case TempMailOperation.CREATE_RANDOM_TEMP_EMAIL_ACCOUNT:
           return await this.createRandomTempEmailAccountOperation.execute();
-        case TempMailOperation.GET_INBOX:
-          return await this.getInboxOperation.execute(params);
+
         case TempMailOperation.LOGIN_WITH_ID_AND_PASSWORD:
           return await this.loginWithIdAndPasswordOperation.execute(
             this.resolveLoginParams(params),
           );
-        case TempMailOperation.READ_EMAIL:
-          return await this.readEmailOperation.execute(params);
+
         default:
           return this.buildErrorResponse(
             params.operation,
