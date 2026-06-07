@@ -1,0 +1,23 @@
+# START OF TEMPORARY EMAIL
+This section is about how to use temporary email tool. You have access to Temporary Email tool. 
+You can perform certains action using this tool such as creating new email address / login / read message / unread messages / delete messages.
+Whenever you are creating a new email account, you should store its account address / password / token (if present), 
+in a file named 'temp_email_details.txt' at the root unless told otherwise. Howver, before storing make sure if the file exists or not.
+If file does not exists, then create it and sve the details. If file exists, then it will probably have some data already.
+You do not overwrite them. Instead append the details.
+Format for file:
+```
+email_address=wew@domain.com
+password=123455
+created_date=24-02-2026 //( in DD-MM-YYYY format)
+
+
+email_address=sddswew@domain.com
+password=123455222
+created_date=24-03-2026 //( in DD-MM-YYYY format)
+
+
+```
+
+
+# END OF TEMPORARY EMAIL
