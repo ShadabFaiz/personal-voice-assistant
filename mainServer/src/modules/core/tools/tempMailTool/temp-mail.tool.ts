@@ -2,16 +2,16 @@ import Mailjs from '@cemalgnlts/mailjs';
 import { tool } from '@langchain/core/tools';
 import { Injectable, Logger } from '@nestjs/common';
 import { z } from 'zod';
-import { CreateRandomTempEmailAccountOperation } from './operations/create-random-temp-email.operation';
-import { CreateTempEmailOperation } from './operations/create-temp-email.operation';
-import { GetInboxOperation } from './operations/get-inbox.operation';
 import {
+  CreateRandomTempEmailAccountOperation,
+  CreateTempEmailOperation,
+  GetInboxOperation,
   GetInboxParams,
+  LoginWithIdAndPasswordOperation,
   LoginWithIdAndPasswordParams,
+  ReadEmailOperation,
   ReadEmailParams,
-} from './operations/interface';
-import { LoginWithIdAndPasswordOperation } from './operations/login-with-id-and-password.operation';
-import { ReadEmailOperation } from './operations/read-email.operation';
+} from './operations';
 import toolDescription from './specification.md';
 import {
   GenericResponse,

@@ -1,7 +1,7 @@
 import { tool } from '@langchain/core/tools';
 import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
-import { DAYS } from './constants/days';
+import { DAYS } from './constants';
 
 @Injectable()
 export class DateTimeTool {

@@ -10,18 +10,18 @@ import { ConfigService } from '@nestjs/config';
 import { toolDescription } from './description';
 import { FileOperation, SearchType, ToolResponse } from './file-tool.types';
 import {
+  CopyOperation,
+  CreateOperation,
+  DeleteOperation,
   FileOperationContext,
   IFileOperation,
-} from './operations/base.operation';
-import { CopyOperation } from './operations/copy.operation';
-import { CreateOperation } from './operations/create.operation';
-import { DeleteOperation } from './operations/delete.operation';
-import { ListOperation } from './operations/list.operation';
-import { MoveOperation } from './operations/move.operation';
-import { ReadOperation } from './operations/read.operation';
-import { RenameOperation } from './operations/rename.operation';
-import { SearchOperation } from './operations/search.operation';
-import { UpdateOperation } from './operations/update.operation';
+  ListOperation,
+  MoveOperation,
+  ReadOperation,
+  RenameOperation,
+  SearchOperation,
+  UpdateOperation,
+} from './operations';
 
 @Injectable()
 export class FileTool implements OnModuleInit {

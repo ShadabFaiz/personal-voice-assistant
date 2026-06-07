@@ -4,7 +4,7 @@ import {
   GetInboxResponse,
   LoginWithIdAndPasswordResponse,
   ReadEmailResponse,
-} from './operations/interface';
+} from './operations';
 
 export enum TempMailOperation {
   CREATE_TEMP_EMAIL = 'createTempEmail',

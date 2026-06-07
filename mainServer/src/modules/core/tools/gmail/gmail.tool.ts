@@ -7,19 +7,21 @@ import { z } from 'zod';
 import { AppConfig } from '@core/config';
 import { toolDescription } from './description';
 import {
-    GmailOperation,
-    GmailToolParams,
-    GmailToolResponse,
+  GmailOperation,
+  GmailToolParams,
+  GmailToolResponse,
 } from './gmail-tool.types';
-import { CreateDraftEmailOperation } from './operations/create-draft.operation';
-import { DeleteEmailOperation } from './operations/delete.operation';
-import { GetLatestEmailsOperation } from './operations/get-latest.operation';
-import { GetUnreadEmailsOperation } from './operations/get-unread.operation';
-import { MarkAsReadOperation } from './operations/mark-as-read.operation';
-import { ReadEmailOperation } from './operations/read.operation';
-import { ReplyToEmailOperation } from './operations/reply.operation';
-import { SearchEmailsOperation } from './operations/search.operation';
-import { SendEmailOperation } from './operations/send.operation';
+import {
+  CreateDraftEmailOperation,
+  DeleteEmailOperation,
+  GetLatestEmailsOperation,
+  GetUnreadEmailsOperation,
+  MarkAsReadOperation,
+  ReadEmailOperation,
+  ReplyToEmailOperation,
+  SearchEmailsOperation,
+  SendEmailOperation,
+} from './operations';
 
 @Injectable()
 export class GmailTool {
