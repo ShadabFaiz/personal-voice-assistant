@@ -18,6 +18,7 @@ export interface TempMailToolParams {
   operation: TempMailOperation;
   emailId?: string;
   password?: string;
+  page?: number;
 }
 
 export interface GenericResponse {

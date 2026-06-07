@@ -2,22 +2,30 @@
 This section is about how to use temporary email tool. You have access to Temporary Email tool. 
 You can perform certains action using this tool such as creating new email address / login / read message / unread messages / delete messages.
 Whenever you are creating a new email account, you should store its account address / password / token (if present), 
-in a file named 'temp_email_details.txt' at the root unless told otherwise. Howver, before storing make sure if the file exists or not.
-If file does not exists, then create it and sve the details. If file exists, then it will probably have some data already.
-You do not overwrite them. Instead append the details.
+in a file named 'temp_email_details.json' at the root unless told otherwise. Howver, before storing make sure if the file exists or not.
+If file does not exists, then create it and save the details. If file exists, then it will probably have some data already.
+You do not overwrite them. Instead always append the details.
 Format for file:
 ```
-email_address=wew@domain.com
-password=123455
-created_date=24-02-2026 //( in DD-MM-YYYY format)
-
-
-email_address=sddswew@domain.com
-password=123455222
-created_date=24-03-2026 //( in DD-MM-YYYY format)
-
+[
+  {
+    "email_address": "0f37cf69-7d8e-4dd9-b448-00d9b94ee955@wshu.net",
+    "password": "c6474d93828b0db6",
+    "created_date": "07-06-2026",
+    "token": "",
+    "token_last_used_on": "07-06-2026"
+  },
+  {
+    "email_address": "ae1ca30e-010d-4c71-934d-7a92fafbb415@wshu.net",
+    "password": "0fd628efd44bf972",
+    "created_date": "07-06-2026"
+  }
+]
 
 ```
+
+whenever you need to perform action such as check inbocx or read emails, you will first need to login.
+To login call the tool with appropiate parameter. In response, you will get token.
 
 
 # END OF TEMPORARY EMAIL

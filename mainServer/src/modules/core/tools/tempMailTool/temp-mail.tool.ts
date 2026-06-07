@@ -2,11 +2,17 @@ import Mailjs from '@cemalgnlts/mailjs';
 import { tool } from '@langchain/core/tools';
 import { Injectable, Logger } from '@nestjs/common';
 import { z } from 'zod';
-import { toolDescription } from './description';
 import { CreateRandomTempEmailAccountOperation } from './operations/create-random-temp-email.operation';
 import { CreateTempEmailOperation } from './operations/create-temp-email.operation';
-import { LoginWithIdAndPasswordParams } from './operations/interface';
+import { GetInboxOperation } from './operations/get-inbox.operation';
+import {
+  GetInboxParams,
+  LoginWithIdAndPasswordParams,
+  ReadEmailParams,
+} from './operations/interface';
 import { LoginWithIdAndPasswordOperation } from './operations/login-with-id-and-password.operation';
+import { ReadEmailOperation } from './operations/read-email.operation';
+import toolDescription from './specification.md';
 import {
   GenericResponse,
   TempMailOperation,
@@ -23,6 +29,8 @@ export class TempMailTool {
   private readonly createTempEmailOperation: CreateTempEmailOperation;
   private readonly createRandomTempEmailAccountOperation: CreateRandomTempEmailAccountOperation;
   private readonly loginWithIdAndPasswordOperation: LoginWithIdAndPasswordOperation;
+  private readonly readEmailOperation: ReadEmailOperation;
+  private readonly getInboxOperation: GetInboxOperation;
 
   constructor(private readonly mailJs: Mailjs) {
     this.createTempEmailOperation = new CreateTempEmailOperation();
@@ -31,6 +39,8 @@ export class TempMailTool {
     this.loginWithIdAndPasswordOperation = new LoginWithIdAndPasswordOperation(
       mailJs,
     );
+    this.readEmailOperation = new ReadEmailOperation(mailJs);
+    this.getInboxOperation = new GetInboxOperation(mailJs);
   }
 
   async execute(params: TempMailToolParams): Promise<TempMailToolResponse> {
@@ -44,6 +54,16 @@ export class TempMailTool {
         case TempMailOperation.LOGIN_WITH_ID_AND_PASSWORD:
           return await this.loginWithIdAndPasswordOperation.execute(
             this.resolveLoginParams(params),
+          );
+
+        case TempMailOperation.READ_EMAIL:
+          return await this.readEmailOperation.execute(
+            this.resolveReadEmailParams(params),
+          );
+
+        case TempMailOperation.GET_INBOX:
+          return await this.getInboxOperation.execute(
+            this.resolveGetInboxParams(params),
           );
 
         default:
@@ -68,6 +88,18 @@ export class TempMailTool {
     return {
       emailId: params.emailId ?? '',
       password: params.password ?? '',
+    };
+  }
+
+  private resolveReadEmailParams(params: TempMailToolParams): ReadEmailParams {
+    return {
+      emailId: params.emailId ?? '',
+    };
+  }
+
+  private resolveGetInboxParams(params: TempMailToolParams): GetInboxParams {
+    return {
+      page: params.page,
     };
   }
 
@@ -97,16 +129,25 @@ export class TempMailTool {
         .string()
         .optional()
         .describe('The email ID to read (required for readEmail operation)'),
+      password: z
+        .string()
+        .optional()
+        .describe(
+          'The password required for login (required for readEmail operation)',
+        ),
+      page: z
+        .number()
+        .optional()
+        .describe(
+          'The page number for paginated inbox retrieval (defaults to 1)',
+        ),
     });
   }
 
   private getTempMailTool() {
     return tool(
       async (params: z.infer<typeof this.tempMailSchema>) => {
-        const result = await this.execute({
-          operation: params.operation as TempMailOperation,
-          emailId: params.emailId,
-        });
+        const result = await this.execute(params);
         return JSON.stringify(result);
       },
       {

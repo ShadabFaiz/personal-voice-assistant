@@ -18,7 +18,7 @@ export class CreateRandomTempEmailAccountOperation implements ITempMailOperation
   async execute(): Promise<CreateRandomTempEmailResponse> {
     this.logger.log('Creating a random temp email account');
     try {
-      const response = await this.mailJs.createOneAccount();
+      const response = await this.mailJs.createOneAccount(true);
       this.logger.log('Account created: ');
       return {
         status: response.status,

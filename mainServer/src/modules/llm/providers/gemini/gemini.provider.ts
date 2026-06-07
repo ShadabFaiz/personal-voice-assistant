@@ -2,10 +2,10 @@ import { AppConfig } from '@core/config';
 import { SystemPromptsService } from '@core/services';
 import { ChatPromptTemplateType } from '@core/services/interface';
 import { ToolsService } from '@core/tools/tools.service';
+import { SystemMessage } from '@langchain/core/messages';
 import {
   ChatPromptTemplate,
   HumanMessagePromptTemplate,
-  SystemMessagePromptTemplate,
 } from '@langchain/core/prompts';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { ToolNode } from '@langchain/langgraph/prebuilt';
@@ -46,7 +46,7 @@ export class GeminiProvider extends LLMProvider {
     const chatPromptTemplate: ChatPromptTemplateType =
       ChatPromptTemplate.fromMessages(
         [
-          SystemMessagePromptTemplate.fromTemplate(allSystemPrompts),
+          new SystemMessage(allSystemPrompts),
           HumanMessagePromptTemplate.fromTemplate('{messages}'),
         ],
         { validateTemplate: true },
