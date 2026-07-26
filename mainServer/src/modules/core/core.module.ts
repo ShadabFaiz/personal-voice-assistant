@@ -15,6 +15,7 @@ import { LocationTool } from './tools/locationTool/location.tool';
 import { TempMailTool } from './tools/tempMailTool/temp-mail.tool';
 import { ToolsService } from './tools/tools.service';
 import { WebPageFetcherTool } from './tools/webPageFetcherTool/web-page-fetcher.tool';
+import { BrowserAutomationTool } from './tools/browserAutomationTool/browser-automation.tool';
 
 @Global()
 @Module({
@@ -60,6 +61,7 @@ import { WebPageFetcherTool } from './tools/webPageFetcherTool/web-page-fetcher.
     TempMailTool,
     Mailjs,
     AppDataDirectoryService,
+    BrowserAutomationTool,
   ],
   exports: [
     LLMWorkflowService,
@@ -75,6 +77,7 @@ import { WebPageFetcherTool } from './tools/webPageFetcherTool/web-page-fetcher.
     TempMailTool,
     Mailjs,
     AppDataDirectoryService,
+    BrowserAutomationTool,
   ],
 })
 export class CoreModule {}

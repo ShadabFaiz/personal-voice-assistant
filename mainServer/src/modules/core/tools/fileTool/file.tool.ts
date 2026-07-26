@@ -34,15 +34,18 @@ export class FileTool implements OnModuleInit {
     '.json',
     '.html',
     '.js',
+    '.png',
+    '.jpg',
+    '.jpeg',
   ];
-  private readonly maxFileSize = 200 * 1024; // 200 KB
+  private readonly maxFileSize = 10 * 1024 * 1024; // Upped to 10 MB for images
   private readonly operations: Map<FileOperation, IFileOperation>;
 
   constructor(
     private readonly configService: ConfigService<AppConfig>,
     private readonly appDataDirectoryService: AppDataDirectoryService,
   ) {
-    // Workspace is relative to the project root
+    // Workspace is relative to the OS AppData directory
     this.workspaceRoot = path.resolve(
       this.appDataDirectoryService.getAppDataPath(),
       this.configService.get<string>(

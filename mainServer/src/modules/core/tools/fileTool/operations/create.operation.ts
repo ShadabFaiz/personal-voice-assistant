@@ -1,4 +1,5 @@
 import * as fs from 'node:fs/promises';
+import * as path from 'node:path';
 import { FileOperation, ToolResponse } from '../file-tool.types';
 import {
   FileOperationContext,
@@ -34,7 +35,14 @@ export class CreateOperation implements IFileOperation {
       }
 
       await this.context.ensureDirectory(absolutePath);
-      await fs.writeFile(absolutePath, content, 'utf8');
+      
+      const ext = path.extname(absolutePath).toLowerCase();
+      if (['.png', '.jpg', '.jpeg'].includes(ext)) {
+        const buffer = Buffer.from(content, 'base64');
+        await fs.writeFile(absolutePath, buffer);
+      } else {
+        await fs.writeFile(absolutePath, content, 'utf8');
+      }
 
       return [
         null,

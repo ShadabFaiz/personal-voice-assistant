@@ -10,6 +10,7 @@ import { GmailTool } from './gmail/gmail.tool';
 import { LocationTool } from './locationTool/location.tool';
 import { TempMailTool } from './tempMailTool/temp-mail.tool';
 import { WebPageFetcherTool } from './webPageFetcherTool/web-page-fetcher.tool';
+import { BrowserAutomationTool } from './browserAutomationTool/browser-automation.tool';
 
 @Injectable()
 export class ToolsService implements OnModuleInit {
@@ -26,6 +27,7 @@ export class ToolsService implements OnModuleInit {
     private readonly fileTool: FileTool,
     private readonly gmailTool: GmailTool,
     private readonly tempMailTool: TempMailTool,
+    private readonly browserAutomationTool: BrowserAutomationTool,
   ) {}
 
   onModuleInit() {
@@ -53,6 +55,7 @@ export class ToolsService implements OnModuleInit {
       ...this.fileTool.getAllTools(),
       ...this.gmailTool.getAllTools(),
       ...this.tempMailTool.getAllTools(),
+      ...this.browserAutomationTool.getAllTools(),
     ];
   }
 }

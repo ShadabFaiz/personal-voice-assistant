@@ -7,7 +7,10 @@ module.exports = function (options) {
     ...options,
     entry: './src/main.ts',
     target: 'node',
-    externals: [],
+    externals: {
+      'playwright': 'commonjs playwright',
+      'playwright-core': 'commonjs playwright-core',
+    },
     stats: 'errors-only',
     module: {
       ...options.module,
