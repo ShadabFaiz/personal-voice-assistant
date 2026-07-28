@@ -1,42 +1,33 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import path from 'node:path';
-import { FileTool } from '../tools/fileTool/file.tool';
-import { FileOperation } from '../tools/fileTool/file-tool.types';
+import * as fs from 'node:fs/promises';
+import { AppDataDirectoryService } from './appDirectory.service';
 import { USER_DEFINED_PROMPTS_DIRECTORY } from './userDefinedPrompts.constants';
 
 @Injectable()
 export class UserDefinedPromptsService implements OnModuleInit {
   private readonly logger = new Logger(UserDefinedPromptsService.name);
 
-  constructor(private readonly fileTool: FileTool) {}
+  private userDefinedPromptsDir: string;
+
+  constructor(private readonly appDataDirectoryService: AppDataDirectoryService) {
+    this.userDefinedPromptsDir = path.join(
+      this.appDataDirectoryService.getAppDataPath(),
+      USER_DEFINED_PROMPTS_DIRECTORY,
+    );
+  }
 
   async onModuleInit() {
-    const directory = USER_DEFINED_PROMPTS_DIRECTORY;
-    this.logger.debug(`Checking if directory exists: ${directory}`);
-
-    const [listError] = await this.fileTool.execute({
-      operation: FileOperation.LIST,
-      path: directory,
-    });
-
-    if (listError) {
-      this.logger.log(`Directory ${directory} does not exist. Creating it...`);
-      // Since FileTool implicitly creates parent directories, we create and delete a temporary file
-      const dummyFilePath = `${USER_DEFINED_PROMPTS_DIRECTORY}init.txt`;
-      const [createError] = await this.fileTool.execute({
-        operation: FileOperation.CREATE,
-        path: dummyFilePath,
-        content: 'init',
-      });
-
-      if (!createError) {
-        await this.fileTool.execute({
-          operation: FileOperation.DELETE,
-          path: dummyFilePath,
-        });
-        this.logger.log(`Directory ${directory} successfully created.`);
-      } else {
-        this.logger.error(`Failed to create directory ${directory}`, createError.message);
+    this.logger.debug(`Checking if directory exists: ${this.userDefinedPromptsDir}`);
+    try {
+      await fs.access(this.userDefinedPromptsDir);
+    } catch {
+      this.logger.log(`Directory ${this.userDefinedPromptsDir} does not exist. Creating it...`);
+      try {
+        await fs.mkdir(this.userDefinedPromptsDir, { recursive: true });
+        this.logger.log(`Directory ${this.userDefinedPromptsDir} successfully created.`);
+      } catch (error: any) {
+        this.logger.error(`Failed to create directory ${this.userDefinedPromptsDir}`, error.message);
       }
     }
   }
@@ -55,46 +46,35 @@ export class UserDefinedPromptsService implements OnModuleInit {
   }
 
   private async loadPromptFilesFromWorkspace(): Promise<{ name: string; content: string }[]> {
-    const directory = USER_DEFINED_PROMPTS_DIRECTORY;
-
-    this.logger.debug(`Fetching list of files from: ${directory}`);
-    const [listError, listData] = await this.fileTool.execute({
-      operation: FileOperation.LIST,
-      path: directory,
-    });
-
-    if (listError) {
-      if (listError.message && listError.message.toLowerCase().includes('does not exist')) {
-        this.logger.debug(`User defined prompts directory does not exist, skipping: ${directory}`);
+    this.logger.debug(`Fetching list of files from: ${this.userDefinedPromptsDir}`);
+    
+    let entries;
+    try {
+      entries = await fs.readdir(this.userDefinedPromptsDir, { withFileTypes: true });
+    } catch (error: any) {
+      if (error.code === 'ENOENT') {
+        this.logger.debug(`User defined prompts directory does not exist, skipping: ${this.userDefinedPromptsDir}`);
       } else {
-        this.logger.warn(`Failed to list directory: ${directory}. Error: ${listError.message}`);
+        this.logger.warn(`Failed to list directory: ${this.userDefinedPromptsDir}. Error: ${error.message}`);
       }
       return [];
     }
 
-    const paths = listData?.paths || [];
     const promptFiles: { name: string; content: string }[] = [];
 
-    for (const filePath of paths) {
-      if (!filePath.endsWith('.txt') && !filePath.endsWith('.md')) {
-        continue;
+    for (const entry of entries) {
+      if (entry.isFile() && (entry.name.endsWith('.txt') || entry.name.endsWith('.md'))) {
+        const filePath = path.join(this.userDefinedPromptsDir, entry.name);
+        this.logger.debug(`Reading prompt file: ${filePath}`);
+        
+        try {
+          const content = await fs.readFile(filePath, 'utf-8');
+          const basename = path.basename(entry.name, path.extname(entry.name));
+          promptFiles.push({ name: basename, content });
+        } catch (error: any) {
+          this.logger.error(`Failed to read file: ${filePath}`, error.message);
+        }
       }
-
-      this.logger.debug(`Reading prompt file: ${filePath}`);
-      const [readError, readData] = await this.fileTool.execute({
-        operation: FileOperation.READ,
-        path: filePath,
-      });
-
-      if (readError) {
-        this.logger.error(`Failed to read file: ${filePath}`, readError.message);
-        continue;
-      }
-
-      const basename = path.basename(filePath, path.extname(filePath));
-      const content = readData?.content || '';
-
-      promptFiles.push({ name: basename, content });
     }
 
     return promptFiles;
