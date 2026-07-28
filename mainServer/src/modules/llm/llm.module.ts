@@ -1,5 +1,5 @@
 import { CoreModule } from '@core/core.module';
-import { SystemPromptsService } from '@core/services';
+import { SystemPromptsService, UserDefinedPromptsService } from '@core/services';
 import { ToolsService } from '@core/tools/tools.service';
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -11,7 +11,7 @@ import { LLMProvider } from './types/llm-provider.types';
 const LLMProviderFactory = {
   provide: LLMProvider,
   useFactory: createLLMProvider,
-  inject: [ConfigService, SystemPromptsService, ToolsService],
+  inject: [ConfigService, SystemPromptsService, UserDefinedPromptsService, ToolsService],
 };
 
 @Module({

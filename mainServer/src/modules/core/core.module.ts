@@ -6,6 +6,7 @@ import { AppConfigFunction } from './config/configuration';
 import { AppDataDirectoryService } from './services/appDirectory.service';
 import { LLMWorkflowService } from './services/llmWorkflow.service';
 import { SystemPromptsService } from './services/systemPrompts.service';
+import { UserDefinedPromptsService } from './services/userDefinedPrompts.service';
 import { BraveSearchTool } from './tools/braveSearchTool/brave-search.tool';
 import { DateTimeTool } from './tools/dateTimeTools/dateTime.tool';
 import { DuckDuckGoWebSearchTool } from './tools/duckDuckGoSearchTool/duck-duck-go-search.tool';
@@ -32,6 +33,7 @@ import { BrowserAutomationTool } from './tools/browserAutomationTool/browser-aut
   providers: [
     LLMWorkflowService,
     SystemPromptsService,
+    UserDefinedPromptsService,
     {
       provide: DateTimeTool,
       useClass: DateTimeTool,
@@ -66,6 +68,7 @@ import { BrowserAutomationTool } from './tools/browserAutomationTool/browser-aut
   exports: [
     LLMWorkflowService,
     SystemPromptsService,
+    UserDefinedPromptsService,
     DateTimeTool,
     BraveSearchTool,
     DuckDuckGoWebSearchTool,

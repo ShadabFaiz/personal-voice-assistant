@@ -1,5 +1,5 @@
 import { AppConfig } from '@core/config';
-import { SystemPromptsService } from '@core/services';
+import { SystemPromptsService, UserDefinedPromptsService } from '@core/services';
 import { ChatPromptTemplateType } from '@core/services/interface';
 import { ToolsService } from '@core/tools/tools.service';
 import {
@@ -23,12 +23,13 @@ export class OpenAICompatibleProvider extends LLMProvider {
   constructor(
     private readonly configService: ConfigService<AppConfig>,
     private readonly systemPromptsService: SystemPromptsService,
+    private readonly userDefinedPromptsService: UserDefinedPromptsService,
     private readonly toolService: ToolsService,
   ) {
     super();
   }
 
-  initialize(): Promise<LLMProviderInitResult> {
+  async initialize(): Promise<LLMProviderInitResult> {
     const apiKey = this.configService.get<string>('OPENAI_API_KEY') as string;
     const baseUrl = this.configService.get<string>('OPENAI_BASE_URL') as string;
     const model = this.configService.get<string>('MODEL_NAME') as string;
@@ -49,10 +50,12 @@ export class OpenAICompatibleProvider extends LLMProvider {
     });
 
     const allSystemPrompts = this.systemPromptsService.loadAllSystemPrompts();
+    const allUserPrompts = await this.userDefinedPromptsService.loadAllUserDefinedPrompts();
+    const combinedSystemPrompts = `${allSystemPrompts}\n\n${allUserPrompts}`;
     const chatPromptTemplate: ChatPromptTemplateType =
       ChatPromptTemplate.fromMessages(
         [
-          SystemMessagePromptTemplate.fromTemplate(allSystemPrompts),
+          SystemMessagePromptTemplate.fromTemplate(combinedSystemPrompts),
           HumanMessagePromptTemplate.fromTemplate('{messages}'),
         ],
         { validateTemplate: true },
@@ -65,6 +68,6 @@ export class OpenAICompatibleProvider extends LLMProvider {
     this.logger.log(
       `OpenAICompatibleProvider initialized with base URL: ${baseUrl}`,
     );
-    return Promise.resolve({ modelWithTools, toolNode, chatPromptTemplate });
+    return { modelWithTools, toolNode, chatPromptTemplate };
   }
 }

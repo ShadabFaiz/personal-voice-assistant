@@ -1,5 +1,5 @@
 import { AppConfig } from '@core/config';
-import { SystemPromptsService } from '@core/services';
+import { SystemPromptsService, UserDefinedPromptsService } from '@core/services';
 import { ChatPromptTemplateType } from '@core/services/interface';
 import { ToolsService } from '@core/tools/tools.service';
 import { SystemMessage } from '@langchain/core/messages';
@@ -23,12 +23,13 @@ export class GeminiProvider extends LLMProvider {
   constructor(
     private readonly configService: ConfigService<AppConfig>,
     private readonly systemPromptsService: SystemPromptsService,
+    private readonly userDefinedPromptsService: UserDefinedPromptsService,
     private readonly toolService: ToolsService,
   ) {
     super();
   }
 
-  initialize(): Promise<LLMProviderInitResult> {
+  async initialize(): Promise<LLMProviderInitResult> {
     const apiKey = this.configService.get<string>(
       'GOOGLE_GEMINI_API_KEY',
     ) as string;
@@ -43,10 +44,12 @@ export class GeminiProvider extends LLMProvider {
     });
 
     const allSystemPrompts = this.systemPromptsService.loadAllSystemPrompts();
+    const allUserPrompts = await this.userDefinedPromptsService.loadAllUserDefinedPrompts();
+    const combinedSystemPrompts = `${allSystemPrompts}\n\n${allUserPrompts}`;
     const chatPromptTemplate: ChatPromptTemplateType =
       ChatPromptTemplate.fromMessages(
         [
-          new SystemMessage(allSystemPrompts),
+          new SystemMessage(combinedSystemPrompts),
           HumanMessagePromptTemplate.fromTemplate('{messages}'),
         ],
         { validateTemplate: true },
@@ -57,6 +60,6 @@ export class GeminiProvider extends LLMProvider {
     const toolNode = new ToolNode(tools);
 
     this.logger.log('GeminiProvider initialized');
-    return Promise.resolve({ modelWithTools, toolNode, chatPromptTemplate });
+    return { modelWithTools, toolNode, chatPromptTemplate };
   }
 }

@@ -1,4 +1,4 @@
-import { SystemPromptsService } from '@core/services';
+import { SystemPromptsService, UserDefinedPromptsService } from '@core/services';
 import { ToolsService } from '@core/tools/tools.service';
 import { ConfigService } from '@nestjs/config';
 import { OpenAICompatibleProvider } from './openai-compatible.provider';
@@ -17,6 +17,7 @@ describe('OpenAICompatibleProvider', () => {
   let provider: OpenAICompatibleProvider;
   let configService: ConfigService;
   let systemPromptsService: SystemPromptsService;
+  let userDefinedPromptsService: UserDefinedPromptsService;
   let toolService: ToolsService;
 
   beforeEach(() => {
@@ -33,6 +34,10 @@ describe('OpenAICompatibleProvider', () => {
       loadAllSystemPrompts: jest.fn().mockReturnValue('system prompt'),
     } as any;
 
+    userDefinedPromptsService = {
+      loadAllUserDefinedPrompts: jest.fn().mockResolvedValue('user prompt'),
+    } as any;
+
     toolService = {
       getAllTools: jest.fn().mockReturnValue([]),
     } as any;
@@ -40,6 +45,7 @@ describe('OpenAICompatibleProvider', () => {
     provider = new OpenAICompatibleProvider(
       configService as any,
       systemPromptsService as any,
+      userDefinedPromptsService as any,
       toolService as any,
     );
   });

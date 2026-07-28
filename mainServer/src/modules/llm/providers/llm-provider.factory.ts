@@ -1,6 +1,6 @@
 import { AppConfig } from '@core/config';
 import { ModelType } from '@core/config/constants';
-import { SystemPromptsService } from '@core/services';
+import { SystemPromptsService, UserDefinedPromptsService } from '@core/services';
 import { ToolsService } from '@core/tools/tools.service';
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -16,17 +16,19 @@ const providerRegistry: Record<
   (
     configService: ConfigService<AppConfig>,
     systemPromptsService: SystemPromptsService,
+    userDefinedPromptsService: UserDefinedPromptsService,
     toolService: ToolsService,
   ) => LLMProvider
 > = {
-  gemini: (configService, systemPromptsService, toolService) =>
-    new GeminiProvider(configService, systemPromptsService, toolService),
-  ollama: (configService, systemPromptsService, toolService) =>
-    new OllamaProvider(configService, systemPromptsService, toolService),
-  openai: (configService, systemPromptsService, toolService) =>
+  gemini: (configService, systemPromptsService, userDefinedPromptsService, toolService) =>
+    new GeminiProvider(configService, systemPromptsService, userDefinedPromptsService, toolService),
+  ollama: (configService, systemPromptsService, userDefinedPromptsService, toolService) =>
+    new OllamaProvider(configService, systemPromptsService, userDefinedPromptsService, toolService),
+  openai: (configService, systemPromptsService, userDefinedPromptsService, toolService) =>
     new OpenAICompatibleProvider(
       configService,
       systemPromptsService,
+      userDefinedPromptsService,
       toolService,
     ),
 };
@@ -34,6 +36,7 @@ const providerRegistry: Record<
 export const createLLMProvider = (
   configService: ConfigService<AppConfig>,
   systemPromptsService: SystemPromptsService,
+  userDefinedPromptsService: UserDefinedPromptsService,
   toolService: ToolsService,
 ): LLMProvider => {
   const modelType = configService.get<ModelType>('MODEL_TYPE');
@@ -48,5 +51,5 @@ export const createLLMProvider = (
     );
   }
 
-  return providerFactory(configService, systemPromptsService, toolService);
+  return providerFactory(configService, systemPromptsService, userDefinedPromptsService, toolService);
 };
