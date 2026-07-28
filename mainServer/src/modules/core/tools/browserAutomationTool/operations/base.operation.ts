@@ -13,5 +13,9 @@ export interface IBrowserOperation {
 
 export interface BrowserOperationContext {
   getPage(): Promise<Page>;
+  getPagesMap(): Map<string, Page>;
+  setActivePageId(id: string): void;
+  getActivePageId(): string | null;
+  getBrowserContext(): any;
   fileTool: FileTool;
 }

@@ -6,3 +6,5 @@ export * from './screenshot.operation';
 export * from './evaluate.operation';
 export * from './close.operation';
 export * from './pause.operation';
+export * from './tab.operation';
+export * from './wait.operation';

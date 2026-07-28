@@ -15,6 +15,10 @@ import {
   IBrowserOperation,
   PauseForInputOperation,
   ScreenshotOperation,
+  ListTabsOperation,
+  NewTabOperation,
+  SwitchTabOperation,
+  WaitForOperation,
 } from './operations';
 import { toolDescription } from './description';
 
@@ -22,14 +26,20 @@ import { toolDescription } from './description';
 export class BrowserAutomationTool implements OnModuleDestroy {
   private readonly logger = new Logger(BrowserAutomationTool.name);
   private browser: Browser | null = null;
-  private page: Page | null = null;
-  private readonly operations: Map<BrowserOperation, IBrowserOperation>;
+  public readonly pageTracker = new Map<string, Page>();
+  public activePageId: string | null = null;
+  public browserContext: any = null;
+  private operations: Map<BrowserOperation, IBrowserOperation> = new Map();
 
   constructor(
     private readonly fileTool: FileTool
   ) {
     const context: BrowserOperationContext = {
-      getPage: () => this.getBrowserPage(),
+      getPage: async () => this.getActivePage(),
+      getPagesMap: () => this.pageTracker,
+      setActivePageId: (id: string) => { this.activePageId = id; },
+      getActivePageId: () => this.activePageId,
+      getBrowserContext: () => this.browserContext,
       fileTool: this.fileTool,
     };
 
@@ -41,17 +51,28 @@ export class BrowserAutomationTool implements OnModuleDestroy {
       [BrowserOperation.EVALUATE, new EvaluateOperation(context)],
       [BrowserOperation.CLOSE, new CloseOperation(context, () => this.closeBrowser())],
       [BrowserOperation.PAUSE_FOR_INPUT, new PauseForInputOperation(context)],
+      [BrowserOperation.LIST_TABS, new ListTabsOperation(context)],
+      [BrowserOperation.NEW_TAB, new NewTabOperation(context)],
+      [BrowserOperation.SWITCH_TAB, new SwitchTabOperation(context)],
+      [BrowserOperation.WAIT_FOR, new WaitForOperation(context)],
     ]);
+  }
+
+  private getActivePage(): Page {
+    if (!this.activePageId) throw new Error("No active page.");
+    const page = this.pageTracker.get(this.activePageId);
+    if (!page) throw new Error("Active page pointer is dead.");
+    return page;
   }
 
   async onModuleDestroy() {
     await this.closeBrowser();
   }
 
-  private async getBrowserPage(): Promise<Page> {
+  private async initBrowser(payload?: Record<string, any>): Promise<void> {
     if (!this.browser) {
       this.logger.debug('Launching Playwright browser...');
-      this.browser = await chromium.launch({
+      const launchArgs: any = {
         headless: false,
         args: [
           '--ignore-certificate-errors',
@@ -60,27 +81,45 @@ export class BrowserAutomationTool implements OnModuleDestroy {
           '--no-sandbox',
           '--disable-blink-features=AutomationControlled',
         ],
-      });
-      const context = await this.browser.newContext({
+      };
+      
+      if (payload?.channel) {
+        launchArgs.channel = payload.channel;
+      }
+      
+      this.browser = await chromium.launch(launchArgs);
+      
+      this.browserContext = await this.browser.newContext({
         ignoreHTTPSErrors: true,
         userAgent:
           'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
         viewport: { width: 1280, height: 800 },
         locale: 'en-US',
       });
-      await context.addInitScript(() => {
+      
+      await this.browserContext.addInitScript(() => {
         Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
       });
-      this.page = await context.newPage();
+      
+      const newPage = await this.browserContext.newPage();
+      const initialId = `tab_${Date.now()}`;
+      this.pageTracker.set(initialId, newPage);
+      this.activePageId = initialId;
+      
+      newPage.on('close', () => {
+         this.pageTracker.delete(initialId);
+         if (this.activePageId === initialId) this.activePageId = null;
+      });
     }
-    return this.page!;
   }
 
   private async closeBrowser() {
     if (this.browser) {
       await this.browser.close();
       this.browser = null;
-      this.page = null;
+      this.browserContext = null;
+      this.pageTracker.clear();
+      this.activePageId = null;
     }
   }
 
@@ -88,9 +127,13 @@ export class BrowserAutomationTool implements OnModuleDestroy {
     this.logger.log(`Executing operation: ${operationType} with payload: ${JSON.stringify(payload || {})}`);
 
     try {
+      if (!this.browser && operationType !== BrowserOperation.CLOSE) {
+        await this.initBrowser(payload);
+      }
+      
       const op = this.operations.get(operationType);
       if (!op) {
-        return `Unknown operation: ${operationType}. Supported: goto, click, fill, screenshot, evaluate, close, pause_for_input`;
+        return `Unknown operation: ${operationType}.`;
       }
       
       const result = await op.execute({ operation: operationType, payload });
