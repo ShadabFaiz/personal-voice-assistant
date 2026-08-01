@@ -39,14 +39,9 @@ export class SystemPromptsService {
     try {
       const entries = fs.readdirSync(directory, { withFileTypes: true });
       const promptFiles = entries
-        .filter(
-          (entry) => entry.isFile() && path.extname(entry.name) === '.txt',
-        )
+        .filter((entry) => entry.isFile())
         .map((entry) => this.readPromptFile(directory, entry.name));
 
-      this.logger.debug(
-        `Loaded ${promptFiles.length} prompt file(s) from: ${directory}`,
-      );
       return promptFiles;
     } catch (error) {
       this.logger.error(`Failed to read prompt directory: ${directory}`, error);
