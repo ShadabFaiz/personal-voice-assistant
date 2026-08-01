@@ -1,6 +1,6 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import path from 'node:path';
 import * as fs from 'node:fs/promises';
+import path from 'node:path';
 import { AppDataDirectoryService } from './appDirectory.service';
 import { USER_DEFINED_PROMPTS_DIRECTORY } from './userDefinedPrompts.constants';
 
@@ -10,7 +10,9 @@ export class UserDefinedPromptsService implements OnModuleInit {
 
   private userDefinedPromptsDir: string;
 
-  constructor(private readonly appDataDirectoryService: AppDataDirectoryService) {
+  constructor(
+    private readonly appDataDirectoryService: AppDataDirectoryService,
+  ) {
     this.userDefinedPromptsDir = path.join(
       this.appDataDirectoryService.getAppDataPath(),
       USER_DEFINED_PROMPTS_DIRECTORY,
@@ -18,20 +20,28 @@ export class UserDefinedPromptsService implements OnModuleInit {
   }
 
   async onModuleInit() {
-    this.logger.debug(`Checking if directory exists: ${this.userDefinedPromptsDir}`);
+    this.logger.debug(
+      `Checking if directory exists: ${this.userDefinedPromptsDir}`,
+    );
     try {
       await fs.access(this.userDefinedPromptsDir);
     } catch {
-      this.logger.log(`Directory ${this.userDefinedPromptsDir} does not exist. Creating it...`);
+      this.logger.log(
+        `Directory ${this.userDefinedPromptsDir} does not exist. Creating it...`,
+      );
       try {
         await fs.mkdir(this.userDefinedPromptsDir, { recursive: true });
-        this.logger.log(`Directory ${this.userDefinedPromptsDir} successfully created.`);
+        this.logger.log(
+          `Directory ${this.userDefinedPromptsDir} successfully created.`,
+        );
       } catch (error: any) {
-        this.logger.error(`Failed to create directory ${this.userDefinedPromptsDir}`, error.message);
+        this.logger.error(
+          `Failed to create directory ${this.userDefinedPromptsDir}`,
+          error.message,
+        );
       }
     }
   }
-
 
   async loadAllUserDefinedPrompts(): Promise<string> {
     this.logger.debug(' ***** Loading user defined prompts ***** ');
@@ -45,17 +55,27 @@ export class UserDefinedPromptsService implements OnModuleInit {
     return this.createXML(contexts);
   }
 
-  private async loadPromptFilesFromWorkspace(): Promise<{ name: string; content: string }[]> {
-    this.logger.debug(`Fetching list of files from: ${this.userDefinedPromptsDir}`);
-    
+  private async loadPromptFilesFromWorkspace(): Promise<
+    { name: string; content: string }[]
+  > {
+    this.logger.debug(
+      `Fetching list of files from: ${this.userDefinedPromptsDir}`,
+    );
+
     let entries;
     try {
-      entries = await fs.readdir(this.userDefinedPromptsDir, { withFileTypes: true });
+      entries = await fs.readdir(this.userDefinedPromptsDir, {
+        withFileTypes: true,
+      });
     } catch (error: any) {
       if (error.code === 'ENOENT') {
-        this.logger.debug(`User defined prompts directory does not exist, skipping: ${this.userDefinedPromptsDir}`);
+        this.logger.debug(
+          `User defined prompts directory does not exist, skipping: ${this.userDefinedPromptsDir}`,
+        );
       } else {
-        this.logger.warn(`Failed to list directory: ${this.userDefinedPromptsDir}. Error: ${error.message}`);
+        this.logger.warn(
+          `Failed to list directory: ${this.userDefinedPromptsDir}. Error: ${error.message}`,
+        );
       }
       return [];
     }
@@ -63,10 +83,13 @@ export class UserDefinedPromptsService implements OnModuleInit {
     const promptFiles: { name: string; content: string }[] = [];
 
     for (const entry of entries) {
-      if (entry.isFile() && (entry.name.endsWith('.txt') || entry.name.endsWith('.md'))) {
+      if (
+        entry.isFile() &&
+        (entry.name.endsWith('.txt') || entry.name.endsWith('.md'))
+      ) {
         const filePath = path.join(this.userDefinedPromptsDir, entry.name);
         this.logger.debug(`Reading prompt file: ${filePath}`);
-        
+
         try {
           const content = await fs.readFile(filePath, 'utf-8');
           const basename = path.basename(entry.name, path.extname(entry.name));
