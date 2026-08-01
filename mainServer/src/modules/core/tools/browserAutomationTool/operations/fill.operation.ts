@@ -8,7 +8,8 @@ export class FillOperation implements IBrowserOperation {
     const text = params.payload?.text;
     if (!fillSelector || text === undefined) throw new Error('Missing "selector" or "text" in payload');
     const page = await this.context.getPage();
-    await page.fill(fillSelector, text);
-    return `Filled ${fillSelector} with provided text.`;
+    // Swap back from .fill() to .type() with an organic keystroke delay to bypass modern SPA anti-bot hooks.
+    await page.type(fillSelector, text, { delay: 90 });
+    return `Organically typed ${fillSelector} with provided text.`;
   }
 }
