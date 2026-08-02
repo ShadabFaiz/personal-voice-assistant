@@ -1,4 +1,8 @@
-import { BrowserOperationContext, BrowserOperationParams, IBrowserOperation } from './base.operation';
+import {
+  BrowserOperationContext,
+  BrowserOperationParams,
+  IBrowserOperation,
+} from './base.operation';
 
 export class GotoOperation implements IBrowserOperation {
   constructor(private readonly context: BrowserOperationContext) {}

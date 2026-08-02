@@ -1,4 +1,7 @@
-import { SystemPromptsService, UserDefinedPromptsService } from '@core/services';
+import {
+  SystemPromptsService,
+  UserDefinedPromptsService,
+} from '@core/services';
 import { ToolsService } from '@core/tools/tools.service';
 import { ConfigService } from '@nestjs/config';
 import { OpenAICompatibleProvider } from './openai-compatible.provider';

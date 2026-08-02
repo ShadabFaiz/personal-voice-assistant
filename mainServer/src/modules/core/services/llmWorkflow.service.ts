@@ -20,7 +20,10 @@ export class LLMWorkflowService {
   private toolNode!: ToolNode;
   private readonly memory = new MemorySaver();
 
-  private readonly config = { configurable: { thread_id: 'thread-id' }, recursionLimit: 150 };
+  private readonly config = {
+    configurable: { thread_id: 'thread-id' },
+    recursionLimit: 150,
+  };
 
   private readonly workflow = new StateGraph(MessagesAnnotation)
     .addNode('model', this.callModel.bind(this))

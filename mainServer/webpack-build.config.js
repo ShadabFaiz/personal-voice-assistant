@@ -10,6 +10,9 @@ module.exports = function (options) {
     externals: {
       'playwright': 'commonjs playwright',
       'playwright-core': 'commonjs playwright-core',
+      '@whiskeysockets/baileys': 'commonjs @whiskeysockets/baileys',
+      'sharp': 'commonjs sharp',
+      'jimp': 'commonjs jimp',
     },
     stats: 'errors-only',
     module: {

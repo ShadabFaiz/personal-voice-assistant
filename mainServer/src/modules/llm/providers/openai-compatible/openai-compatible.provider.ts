@@ -1,5 +1,8 @@
 import { AppConfig } from '@core/config';
-import { SystemPromptsService, UserDefinedPromptsService } from '@core/services';
+import {
+  SystemPromptsService,
+  UserDefinedPromptsService,
+} from '@core/services';
 import { ChatPromptTemplateType } from '@core/services/interface';
 import { ToolsService } from '@core/tools/tools.service';
 import {
@@ -50,7 +53,8 @@ export class OpenAICompatibleProvider extends LLMProvider {
     });
 
     const allSystemPrompts = this.systemPromptsService.loadAllSystemPrompts();
-    const allUserPrompts = await this.userDefinedPromptsService.loadAllUserDefinedPrompts();
+    const allUserPrompts =
+      await this.userDefinedPromptsService.loadAllUserDefinedPrompts();
     const combinedSystemPrompts = `${allSystemPrompts}\n\n${allUserPrompts}`;
     const chatPromptTemplate: ChatPromptTemplateType =
       ChatPromptTemplate.fromMessages(

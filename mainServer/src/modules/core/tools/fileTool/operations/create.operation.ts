@@ -35,7 +35,7 @@ export class CreateOperation implements IFileOperation {
       }
 
       await this.context.ensureDirectory(absolutePath);
-      
+
       const ext = path.extname(absolutePath).toLowerCase();
       if (['.png', '.jpg', '.jpeg'].includes(ext)) {
         const buffer = Buffer.from(content, 'base64');

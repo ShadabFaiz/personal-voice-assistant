@@ -31,13 +31,13 @@ export class BrowserAutomationTool implements OnModuleDestroy {
   public browserContext: any = null;
   private operations: Map<BrowserOperation, IBrowserOperation> = new Map();
 
-  constructor(
-    private readonly fileTool: FileTool
-  ) {
+  constructor(private readonly fileTool: FileTool) {
     const context: BrowserOperationContext = {
       getPage: async () => this.getActivePage(),
       getPagesMap: () => this.pageTracker,
-      setActivePageId: (id: string) => { this.activePageId = id; },
+      setActivePageId: (id: string) => {
+        this.activePageId = id;
+      },
       getActivePageId: () => this.activePageId,
       getBrowserContext: () => this.browserContext,
       fileTool: this.fileTool,
@@ -49,7 +49,10 @@ export class BrowserAutomationTool implements OnModuleDestroy {
       [BrowserOperation.FILL, new FillOperation(context)],
       [BrowserOperation.SCREENSHOT, new ScreenshotOperation(context)],
       [BrowserOperation.EVALUATE, new EvaluateOperation(context)],
-      [BrowserOperation.CLOSE, new CloseOperation(context, () => this.closeBrowser())],
+      [
+        BrowserOperation.CLOSE,
+        new CloseOperation(context, () => this.closeBrowser()),
+      ],
       [BrowserOperation.PAUSE_FOR_INPUT, new PauseForInputOperation(context)],
       [BrowserOperation.LIST_TABS, new ListTabsOperation(context)],
       [BrowserOperation.NEW_TAB, new NewTabOperation(context)],
@@ -59,9 +62,9 @@ export class BrowserAutomationTool implements OnModuleDestroy {
   }
 
   private getActivePage(): Page {
-    if (!this.activePageId) throw new Error("No active page.");
+    if (!this.activePageId) throw new Error('No active page.');
     const page = this.pageTracker.get(this.activePageId);
-    if (!page) throw new Error("Active page pointer is dead.");
+    if (!page) throw new Error('Active page pointer is dead.');
     return page;
   }
 
@@ -82,13 +85,13 @@ export class BrowserAutomationTool implements OnModuleDestroy {
           '--disable-blink-features=AutomationControlled',
         ],
       };
-      
+
       if (payload?.channel) {
         launchArgs.channel = payload.channel;
       }
-      
+
       this.browser = await chromium.launch(launchArgs);
-      
+
       this.browserContext = await this.browser.newContext({
         ignoreHTTPSErrors: true,
         userAgent:
@@ -96,19 +99,19 @@ export class BrowserAutomationTool implements OnModuleDestroy {
         viewport: { width: 1280, height: 800 },
         locale: 'en-US',
       });
-      
+
       await this.browserContext.addInitScript(() => {
         Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
       });
-      
+
       const newPage = await this.browserContext.newPage();
       const initialId = `tab_${Date.now()}`;
       this.pageTracker.set(initialId, newPage);
       this.activePageId = initialId;
-      
+
       newPage.on('close', () => {
-         this.pageTracker.delete(initialId);
-         if (this.activePageId === initialId) this.activePageId = null;
+        this.pageTracker.delete(initialId);
+        if (this.activePageId === initialId) this.activePageId = null;
       });
     }
   }
@@ -123,30 +126,41 @@ export class BrowserAutomationTool implements OnModuleDestroy {
     }
   }
 
-  private async performOperation(operationType: BrowserOperation, payload?: Record<string, any>): Promise<string> {
-    this.logger.log(`Executing operation: ${operationType} with payload: ${JSON.stringify(payload || {})}`);
+  private async performOperation(
+    operationType: BrowserOperation,
+    payload?: Record<string, any>,
+  ): Promise<string> {
+    this.logger.log(
+      `Executing operation: ${operationType} with payload: ${JSON.stringify(payload || {})}`,
+    );
 
     try {
       if (!this.browser && operationType !== BrowserOperation.CLOSE) {
         await this.initBrowser(payload);
       }
-      
+
       const op = this.operations.get(operationType);
       if (!op) {
         return `Unknown operation: ${operationType}.`;
       }
-      
+
       const result = await op.execute({ operation: operationType, payload });
       return result;
     } catch (error) {
-      this.logger.error(`Error in BrowserAutomationTool[${operationType}]:`, error);
+      this.logger.error(
+        `Error in BrowserAutomationTool[${operationType}]:`,
+        error,
+      );
       return `Error performing '${operationType}': ${(error as Error).message}`;
     }
   }
 
   private getBrowserTool() {
     return tool(
-      async (input: { operation: BrowserOperation; payload?: Record<string, any> }) => {
+      async (input: {
+        operation: BrowserOperation;
+        payload?: Record<string, any>;
+      }) => {
         return this.performOperation(input.operation, input.payload);
       },
       {
@@ -154,8 +168,15 @@ export class BrowserAutomationTool implements OnModuleDestroy {
         description: toolDescription,
         responseFormat: 'content',
         schema: z.object({
-          operation: z.nativeEnum(BrowserOperation).describe('The action to perform'),
-          payload: z.record(z.any()).optional().describe('Contextual data for the operation (e.g. url, selector, text, filename, timeout, code)'),
+          operation: z
+            .nativeEnum(BrowserOperation)
+            .describe('The action to perform'),
+          payload: z
+            .record(z.any())
+            .optional()
+            .describe(
+              'Contextual data for the operation (e.g. url, selector, text, filename, timeout, code)',
+            ),
         }),
       },
     );

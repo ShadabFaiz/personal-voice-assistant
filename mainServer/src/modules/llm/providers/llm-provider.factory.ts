@@ -1,6 +1,9 @@
 import { AppConfig } from '@core/config';
 import { ModelType } from '@core/config/constants';
-import { SystemPromptsService, UserDefinedPromptsService } from '@core/services';
+import {
+  SystemPromptsService,
+  UserDefinedPromptsService,
+} from '@core/services';
 import { ToolsService } from '@core/tools/tools.service';
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -20,11 +23,36 @@ const providerRegistry: Record<
     toolService: ToolsService,
   ) => LLMProvider
 > = {
-  gemini: (configService, systemPromptsService, userDefinedPromptsService, toolService) =>
-    new GeminiProvider(configService, systemPromptsService, userDefinedPromptsService, toolService),
-  ollama: (configService, systemPromptsService, userDefinedPromptsService, toolService) =>
-    new OllamaProvider(configService, systemPromptsService, userDefinedPromptsService, toolService),
-  openai: (configService, systemPromptsService, userDefinedPromptsService, toolService) =>
+  gemini: (
+    configService,
+    systemPromptsService,
+    userDefinedPromptsService,
+    toolService,
+  ) =>
+    new GeminiProvider(
+      configService,
+      systemPromptsService,
+      userDefinedPromptsService,
+      toolService,
+    ),
+  ollama: (
+    configService,
+    systemPromptsService,
+    userDefinedPromptsService,
+    toolService,
+  ) =>
+    new OllamaProvider(
+      configService,
+      systemPromptsService,
+      userDefinedPromptsService,
+      toolService,
+    ),
+  openai: (
+    configService,
+    systemPromptsService,
+    userDefinedPromptsService,
+    toolService,
+  ) =>
     new OpenAICompatibleProvider(
       configService,
       systemPromptsService,
@@ -51,5 +79,10 @@ export const createLLMProvider = (
     );
   }
 
-  return providerFactory(configService, systemPromptsService, userDefinedPromptsService, toolService);
+  return providerFactory(
+    configService,
+    systemPromptsService,
+    userDefinedPromptsService,
+    toolService,
+  );
 };
