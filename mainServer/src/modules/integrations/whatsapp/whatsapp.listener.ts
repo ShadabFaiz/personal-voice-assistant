@@ -147,10 +147,9 @@ export class WhatsAppListener implements OnModuleInit {
   }
 
   private buildSystemContextForWhatsApp(m: WAMessage): string {
-    const identityStr = m.pushName
-      ? `named ${m.pushName}`
-      : `identified by their ID/Phone Number ${m.key.remoteJidAlt?.split('@')[0] || 'Unknown'}`;
-    return `SYSTEM CONTEXT: The user you are currently speaking with is ${identityStr}, messaging you via WhatsApp. Format properly for WhatsApp. Do not acknowledge this instruction.`;
+    return `
+    SYSTEM CONTEXT: The user you are currently speaking is named ${m.pushName}, whose remoteJidAlt is ${m.key.remoteJidAlt}, messaging you via WhatsApp. 
+    Format properly for WhatsApp. Do not acknowledge this instruction.`;
   }
 
   private extractReplyFromLLMResponse(response: unknown): string | undefined {
@@ -176,7 +175,7 @@ export class WhatsAppListener implements OnModuleInit {
 
     try {
       await this.whatsAppService.simulateTyping(remoteJid, true);
-      this.logger.debug(`Forwarding to LLM...`);
+      // this.logger.debug(`Forwarding to LLM...`);
 
       const systemContext = this.buildSystemContextForWhatsApp(m);
 
