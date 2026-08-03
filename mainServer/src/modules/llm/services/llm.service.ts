@@ -27,7 +27,6 @@ export class LLMService implements OnModuleInit {
     this.llmWorkflowService.setModelWithTools(modelWithTools);
     this.llmWorkflowService.setToolNode(toolNode);
     this.llmWorkflowService.setChatPromptTemplate(chatPromptTemplate);
-    this.llmWorkflowService.setThreadId(this.threadId);
 
     this.logger.log(`LLM service initialized with ${modelType} provider`);
   }
@@ -36,7 +35,10 @@ export class LLMService implements OnModuleInit {
     try {
       this.logger.log(`User: ${userPrompt}`);
       const input = [{ role: 'user', content: userPrompt }];
-      const output = await this.llmWorkflowService.invokeChat(input);
+      const output = await this.llmWorkflowService.invokeChat(
+        this.threadId,
+        input,
+      );
       const modelResponse = output.messages.at(-1)!.content as string;
       this.logger.log(`Model: ${modelResponse}`);
       return modelResponse;

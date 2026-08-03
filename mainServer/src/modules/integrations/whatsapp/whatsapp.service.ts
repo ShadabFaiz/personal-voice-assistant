@@ -114,4 +114,16 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
     if (!this.sock) throw new Error('Socket not initialized');
     await this.sock.sendMessage(jid, { text });
   }
+
+  public async simulateTyping(jid: string, isTyping: boolean) {
+    if (!this.sock) return;
+    try {
+      await this.sock.sendPresenceUpdate(
+        isTyping ? 'composing' : 'paused',
+        jid,
+      );
+    } catch (err) {
+      this.logger.debug('Failed to send presence update', err);
+    }
+  }
 }

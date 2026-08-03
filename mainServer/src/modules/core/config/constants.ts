@@ -24,3 +24,4 @@ export const DEFAULT_GOOGLE_CLIENT_ID = '';
 export const DEFAULT_GOOGLE_CLIENT_SECRET = '';
 export const DEFAULT_GOOGLE_REFRESH_TOKEN = '';
 export const APP_DATA_DIRECTORY_NAME = 'Personal Voice Assistant';
+export const DEFAULT_LLM_WORKFLOW_RECURSION_LIMIT = 150;

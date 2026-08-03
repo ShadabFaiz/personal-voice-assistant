@@ -1,16 +1,15 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { WAMessage } from '@whiskeysockets/baileys';
+import { Injectable } from '@nestjs/common';
+import { WAMessage, WAMessageKey } from '@whiskeysockets/baileys';
 
 @Injectable()
 export class WhatsAppCacheService {
-  private readonly logger = new Logger(WhatsAppCacheService.name);
-  private readonly messageCache = new Map<string, WAMessage>();
+  private readonly messageCache = new Map<NonNullable<WAMessageKey['id']>, WAMessage>();
 
-  public getMessage(id: string): WAMessage | undefined {
+  public getMessage(id: NonNullable<WAMessageKey['id']>): WAMessage | undefined {
     return this.messageCache.get(id) || undefined;
   }
 
-  public saveMessage(id: string, message: WAMessage): void {
+  public saveMessage(id: NonNullable<WAMessageKey['id']>, message: WAMessage): void {
     this.messageCache.set(id, message);
   }
 }

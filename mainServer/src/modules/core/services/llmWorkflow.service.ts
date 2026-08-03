@@ -1,3 +1,4 @@
+import { DEFAULT_LLM_WORKFLOW_RECURSION_LIMIT } from '@core/config/constants';
 import { AIMessage } from '@langchain/core/messages';
 import {
   END,
@@ -19,11 +20,6 @@ export class LLMWorkflowService {
   private modelWithTools!: ModelWithTools;
   private toolNode!: ToolNode;
   private readonly memory = new MemorySaver();
-
-  private readonly config = {
-    configurable: { thread_id: 'thread-id' },
-    recursionLimit: 150,
-  };
 
   private readonly workflow = new StateGraph(MessagesAnnotation)
     .addNode('model', this.callModel.bind(this))
@@ -48,10 +44,6 @@ export class LLMWorkflowService {
 
   setChatPromptTemplate(chatPromptTemplate: ChatPromptTemplateType) {
     this.chatPromptTemplate = chatPromptTemplate;
-  }
-
-  setThreadId(threadId: string) {
-    this.config.configurable.thread_id = threadId;
   }
 
   private async callTools(
@@ -97,7 +89,25 @@ export class LLMWorkflowService {
     return { messages: response };
   }
 
-  async invokeChat(messages: { role: string; content: string }[]) {
-    return this.app.invoke({ messages }, this.config);
+  async invokeChat(
+    threadId: string,
+    messages: { role: string; content: string }[],
+    systemContext?: string,
+  ) {
+    const runConfig = {
+      configurable: { thread_id: threadId },
+      recursionLimit: DEFAULT_LLM_WORKFLOW_RECURSION_LIMIT,
+    };
+
+    if (systemContext) {
+      const state = await this.app.getState(runConfig);
+      if (!(state?.values as Record<string, string>)?.messages?.length) {
+        messages.unshift({
+          role: 'system',
+          content: systemContext,
+        });
+      }
+    }
+    return this.app.invoke({ messages }, runConfig);
   }
 }
