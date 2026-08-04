@@ -5,12 +5,12 @@
   "editor.formatOnSaveMode": "file", // required to format on save
   // "files.autoSave": "onFocusChange", // optional but recommended
   "vs-code-prettier-eslint.prettierLast": true, // set as "true" to run 'prettier' last not fi
-  "editor.formatOnSave": true,
+  "editor.formatOnSave": false,
   "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "always",
+    "source.fixAll.eslint": "never",
     "source.organizeImports": "always",
-    "source.removeUnused.ts": "never"
+    "source.removeUnused.ts": "always",
   },
   "eslint.validate": [
     "javascript",
