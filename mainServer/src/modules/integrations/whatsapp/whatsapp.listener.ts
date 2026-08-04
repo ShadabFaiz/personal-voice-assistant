@@ -187,6 +187,7 @@ export class WhatsAppListener implements OnModuleInit {
 
       const replyText = this.extractReplyFromLLMResponse(response);
       if (replyText) {
+        this.logger.debug(`[LLM]: ${replyText}`);
         await this.whatsAppService.sendMessage(remoteJid, replyText);
       }
     } catch (error) {

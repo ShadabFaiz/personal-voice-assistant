@@ -28,15 +28,16 @@ export class GeminiProvider extends LLMProvider {
     private readonly systemPromptsService: SystemPromptsService,
     private readonly userDefinedPromptsService: UserDefinedPromptsService,
     private readonly toolService: ToolsService,
+    private readonly configPrefix: 'VISION_' | '' = '',
   ) {
     super();
   }
 
   async initialize(): Promise<LLMProviderInitResult> {
-    const apiKey = this.configService.get<string>(
-      'GOOGLE_GEMINI_API_KEY',
-    ) as string;
-    const model = this.configService.get<string>('GEMINI_MODEL') as string;
+    const apiKeyKey = (this.configPrefix + 'GOOGLE_GEMINI_API_KEY') as keyof AppConfig;
+    const modelKey = (this.configPrefix + 'GEMINI_MODEL') as keyof AppConfig;
+    const apiKey = this.configService.get<string>(apiKeyKey) as string;
+    const model = this.configService.get<string>(modelKey) as string;
 
     const chatModel = new ChatGoogleGenerativeAI({
       model,
@@ -64,6 +65,6 @@ export class GeminiProvider extends LLMProvider {
     const toolNode = new ToolNode(tools);
 
     this.logger.log('GeminiProvider initialized');
-    return { modelWithTools, toolNode, chatPromptTemplate };
+    return { modelWithTools, model: chatModel, toolNode, chatPromptTemplate };
   }
 }

@@ -11,6 +11,7 @@ import { LocationTool } from './locationTool/location.tool';
 import { TempMailTool } from './tempMailTool/temp-mail.tool';
 import { WebPageFetcherTool } from './webPageFetcherTool/web-page-fetcher.tool';
 import { BrowserAutomationTool } from './browserAutomationTool/browser-automation.tool';
+import { ImageAnalysisTool } from './imageAnalysisTool/image-analysis.tool';
 
 @Injectable()
 export class ToolsService implements OnModuleInit {
@@ -28,6 +29,7 @@ export class ToolsService implements OnModuleInit {
     private readonly gmailTool: GmailTool,
     private readonly tempMailTool: TempMailTool,
     private readonly browserAutomationTool: BrowserAutomationTool,
+    private readonly imageAnalysisTool: ImageAnalysisTool,
   ) {}
 
   onModuleInit() {
@@ -56,6 +58,7 @@ export class ToolsService implements OnModuleInit {
       ...this.gmailTool.getAllTools(),
       ...this.tempMailTool.getAllTools(),
       ...this.browserAutomationTool.getAllTools(),
+      ...this.imageAnalysisTool.getAllTools(),
     ];
   }
 }

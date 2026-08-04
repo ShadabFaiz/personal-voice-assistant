@@ -28,14 +28,18 @@ export class OpenAICompatibleProvider extends LLMProvider {
     private readonly systemPromptsService: SystemPromptsService,
     private readonly userDefinedPromptsService: UserDefinedPromptsService,
     private readonly toolService: ToolsService,
+    private readonly configPrefix: 'VISION_' | '' = '',
   ) {
     super();
   }
 
   async initialize(): Promise<LLMProviderInitResult> {
-    const apiKey = this.configService.get<string>('OPENAI_API_KEY') as string;
-    const baseUrl = this.configService.get<string>('OPENAI_BASE_URL') as string;
-    const model = this.configService.get<string>('MODEL_NAME') as string;
+    const apiKeyKey = (this.configPrefix + 'OPENAI_API_KEY') as keyof AppConfig;
+    const baseUrlKey = (this.configPrefix + 'OPENAI_BASE_URL') as keyof AppConfig;
+    const modelKey = (this.configPrefix + 'MODEL_NAME') as keyof AppConfig;
+    const apiKey = this.configService.get<string>(apiKeyKey) as string;
+    const baseUrl = this.configService.get<string>(baseUrlKey) as string;
+    const model = this.configService.get<string>(modelKey) as string;
 
     const chatModel = new ChatOpenAI({
       model: model,
@@ -72,6 +76,6 @@ export class OpenAICompatibleProvider extends LLMProvider {
     this.logger.log(
       `OpenAICompatibleProvider initialized with base URL: ${baseUrl}`,
     );
-    return { modelWithTools, toolNode, chatPromptTemplate };
+    return { modelWithTools, model: chatModel, toolNode, chatPromptTemplate };
   }
 }

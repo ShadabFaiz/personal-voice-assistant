@@ -28,16 +28,19 @@ export class OllamaProvider extends LLMProvider {
     private readonly systemPromptsService: SystemPromptsService,
     private readonly userDefinedPromptsService: UserDefinedPromptsService,
     private readonly toolService: ToolsService,
+    private readonly configPrefix: 'VISION_' | '' = '',
   ) {
     super();
   }
 
   async initialize(): Promise<LLMProviderInitResult> {
+    const baseUrlKey = (this.configPrefix + 'OLLAMA_BASE_URL') as keyof AppConfig;
+    const modelKey = (this.configPrefix + 'MODEL_NAME') as keyof AppConfig;
     const baseUrl = this.configService.get<string>(
-      'OLLAMA_BASE_URL',
+      baseUrlKey,
       'http://localhost:11434',
-    );
-    const modelName = this.configService.get<string>('MODEL_NAME');
+    ) as string;
+    const modelName = this.configService.get<string>(modelKey) as string;
 
     const chatModel = new ChatOllama({
       baseUrl,
@@ -64,6 +67,6 @@ export class OllamaProvider extends LLMProvider {
     const toolNode = new ToolNode(tools);
 
     this.logger.log('OllamaProvider initialized');
-    return { modelWithTools, toolNode, chatPromptTemplate };
+    return { modelWithTools, model: chatModel, toolNode, chatPromptTemplate };
   }
 }

@@ -21,6 +21,7 @@ const providerRegistry: Record<
     systemPromptsService: SystemPromptsService,
     userDefinedPromptsService: UserDefinedPromptsService,
     toolService: ToolsService,
+    configPrefix?: 'VISION_' | '',
   ) => LLMProvider
 > = {
   gemini: (
@@ -28,36 +29,42 @@ const providerRegistry: Record<
     systemPromptsService,
     userDefinedPromptsService,
     toolService,
+    configPrefix = '',
   ) =>
     new GeminiProvider(
       configService,
       systemPromptsService,
       userDefinedPromptsService,
       toolService,
+      configPrefix,
     ),
   ollama: (
     configService,
     systemPromptsService,
     userDefinedPromptsService,
     toolService,
+    configPrefix = '',
   ) =>
     new OllamaProvider(
       configService,
       systemPromptsService,
       userDefinedPromptsService,
       toolService,
+      configPrefix,
     ),
   openai: (
     configService,
     systemPromptsService,
     userDefinedPromptsService,
     toolService,
+    configPrefix = '',
   ) =>
     new OpenAICompatibleProvider(
       configService,
       systemPromptsService,
       userDefinedPromptsService,
       toolService,
+      configPrefix,
     ),
 };
 
@@ -84,5 +91,33 @@ export const createLLMProvider = (
     systemPromptsService,
     userDefinedPromptsService,
     toolService,
+    '',
+  );
+};
+
+export const createVisionLLMProvider = (
+  configService: ConfigService<AppConfig>,
+  systemPromptsService: SystemPromptsService,
+  userDefinedPromptsService: UserDefinedPromptsService,
+  toolService: ToolsService,
+): LLMProvider => {
+  const modelType = configService.get<ModelType>('VISION_MODEL_TYPE') || 'gemini';
+  logger.log(`Creating Vision LLM provider for model type: ${modelType}`);
+
+  const validTypes = Object.keys(providerRegistry) as ModelType[];
+  const providerFactory = providerRegistry[modelType as ModelType];
+
+  if (!providerFactory) {
+    throw new Error(
+      `Unsupported VISION_MODEL_TYPE: "${modelType}". Valid values: ${validTypes.join(' | ')}`,
+    );
+  }
+
+  return providerFactory(
+    configService,
+    systemPromptsService,
+    userDefinedPromptsService,
+    toolService,
+    'VISION_',
   );
 };

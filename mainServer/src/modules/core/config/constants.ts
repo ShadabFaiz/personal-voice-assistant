@@ -19,6 +19,7 @@ export const DEFAULT_BRAVE_SEARCH_API_URL =
 export const DEFAULT_SEARCH_ENGINE: SearchEngine = 'google';
 export const DEFAULT_AGENT_WORKSPACE_DIRECTORY_NAME = 'agent_workspace';
 export const DEFAULT_MODEL_TYPE: ModelType = 'gemini';
+export const DEFAULT_VISION_MODEL_TYPE: ModelType = 'gemini';
 
 export const DEFAULT_GOOGLE_CLIENT_ID = '';
 export const DEFAULT_GOOGLE_CLIENT_SECRET = '';
