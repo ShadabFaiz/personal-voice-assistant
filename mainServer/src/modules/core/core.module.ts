@@ -17,7 +17,7 @@ import { TempMailTool } from './tools/tempMailTool/temp-mail.tool';
 import { ToolsService } from './tools/tools.service';
 import { WebPageFetcherTool } from './tools/webPageFetcherTool/web-page-fetcher.tool';
 import { BrowserAutomationTool } from './tools/browserAutomationTool/browser-automation.tool';
-import { ImageAnalysisTool } from './tools/imageAnalysisTool/image-analysis.tool';
+import { MediaAnalysisTool } from './tools/mediaAnalysisTool/media-analysis.tool';
 
 @Global()
 @Module({
@@ -65,7 +65,7 @@ import { ImageAnalysisTool } from './tools/imageAnalysisTool/image-analysis.tool
     Mailjs,
     AppDataDirectoryService,
     BrowserAutomationTool,
-    ImageAnalysisTool,
+    MediaAnalysisTool,
   ],
   exports: [
     LLMWorkflowService,
@@ -83,7 +83,7 @@ import { ImageAnalysisTool } from './tools/imageAnalysisTool/image-analysis.tool
     Mailjs,
     AppDataDirectoryService,
     BrowserAutomationTool,
-    ImageAnalysisTool,
+    MediaAnalysisTool,
   ],
 })
 export class CoreModule {}

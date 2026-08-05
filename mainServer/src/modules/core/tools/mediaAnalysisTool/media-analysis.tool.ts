@@ -12,8 +12,8 @@ import { AppConfig } from '../../config/configuration';
 import { toolDescription } from './description';
 
 @Injectable()
-export class ImageAnalysisTool {
-  private readonly logger = new Logger(ImageAnalysisTool.name);
+export class MediaAnalysisTool {
+  private readonly logger = new Logger(MediaAnalysisTool.name);
 
   constructor(
     private readonly moduleRef: ModuleRef,
@@ -51,7 +51,16 @@ export class ImageAnalysisTool {
       const fileBuffer = await fs.readFile(absolutePath);
       const base64Str = fileBuffer.toString('base64');
       const ext = path.extname(params.path).toLowerCase().slice(1);
-      const mimeType = ['png', 'jpg', 'jpeg', 'webp'].includes(ext) ? `image/${ext === 'jpg' ? 'jpeg' : ext}` : 'image/jpeg';
+      let mimeType = 'application/octet-stream';
+      if (['png', 'jpg', 'jpeg', 'webp'].includes(ext)) {
+         mimeType = `image/${ext === 'jpg' ? 'jpeg' : ext}`;
+      } else if (ext === 'pdf') {
+         mimeType = 'application/pdf';
+      } else if (['mp4', 'webm'].includes(ext)) {
+         mimeType = `video/${ext}`;
+      } else if (['mp3', 'ogg', 'wav', 'webm'].includes(ext)) {
+         mimeType = `audio/${ext}`;
+      }
       
       const chatModel = await this.getVisionModel();
       
@@ -71,19 +80,19 @@ export class ImageAnalysisTool {
       return response.content as string;
     } catch (error) {
       const errStr = error instanceof Error ? error.message : String(error);
-      this.logger.error(`Image analysis failed: ${errStr}`);
-      return `Error analyzing image. The tool failed to execute: ${errStr}`;
+      this.logger.error(`Media analysis failed: ${errStr}`);
+      return `Error analyzing media. The tool failed to execute: ${errStr}`;
     }
   }
 
   getAllTools() {
     return [
       tool((params) => this.execute(params), {
-        name: 'analyze_image',
+        name: 'analyze_media',
         description: toolDescription,
         schema: z.object({
-          path: z.string().describe('The path to the local image file relative to the agent_workspace/ root folder (exactly as it was provided to you in the prompt).'),
-          query: z.string().describe('Detailed instruction for what the vision model should look for or extract from the image (e.g. "Read this receipt and return the total price").')
+          path: z.string().describe('The path to the local media file relative to the agent_workspace/ root folder (exactly as it was provided to you in the prompt).'),
+          query: z.string().describe('Detailed instruction for what the vision model should look for or extract from the media (e.g. "Read this PDF and summarize the total sum").')
         }),
       })
     ];
