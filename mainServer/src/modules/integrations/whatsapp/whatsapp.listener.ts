@@ -5,6 +5,7 @@ import { WAMessage, downloadMediaMessage } from '@whiskeysockets/baileys';
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 import { WhatsAppCacheService } from './whatsapp-cache.service';
+import { WhatsAppMediaStorageService } from './whatsapp-media-storage.service';
 import { WhatsAppService } from './whatsapp.service';
 
 @Injectable()
@@ -16,6 +17,7 @@ export class WhatsAppListener implements OnModuleInit {
     private readonly llmWorkflowService: LLMWorkflowService,
     private readonly appDataDirectoryService: AppDataDirectoryService,
     private readonly whatsAppCacheService: WhatsAppCacheService,
+    private readonly whatsAppMediaStorageService: WhatsAppMediaStorageService,
   ) {}
 
   onModuleInit() {
@@ -35,61 +37,6 @@ export class WhatsAppListener implements OnModuleInit {
     this.logger.log('WhatsApp listeners attached.');
   }
 
-  private async downloadAndSaveMedia(
-    m: WAMessage,
-  ): Promise<string | undefined> {
-    try {
-      const buffer = await downloadMediaMessage(
-        m,
-        'buffer',
-        {},
-        {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
-          logger: this.logger as any,
-          reuploadRequest: this.whatsAppService.sock.updateMediaMessage,
-        },
-      );
-
-      const dateObj = new Date();
-      const dateStr = `${String(dateObj.getDate()).padStart(2, '0')}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${dateObj.getFullYear()}`;
-
-      let filenameStr = `${m.key.id}`;
-      if (m.message?.documentMessage?.fileName) {
-        filenameStr = m.message.documentMessage.fileName;
-      } else if (m.message?.imageMessage) {
-        filenameStr += '.jpeg';
-      } else if (m.message?.videoMessage) {
-        filenameStr += '.mp4';
-      } else if (m.message?.audioMessage) {
-        filenameStr += '.ogg';
-      }
-
-      const sender =
-        m.pushName ?? m.key.remoteJidAlt?.split('@')[0] ?? 'Unknown';
-
-      const folderName = path.join(
-        this.appDataDirectoryService.getAppDataPath(),
-        'agent_workspace',
-        'media',
-        'whatsapp',
-        sender,
-        dateStr,
-      );
-
-      await fs.mkdir(folderName, { recursive: true });
-
-      const filename = path.join(folderName, filenameStr);
-      await fs.writeFile(filename, buffer);
-
-      this.logger.log(`Successfully saved media to ${filename}`);
-
-      return path.join('/', 'media', 'whatsapp', sender, dateStr, filenameStr);
-    } catch (err) {
-      this.logger.error('Failed to download media', err);
-      return undefined;
-    }
-  }
-
   private async extractPrompt(m: WAMessage): Promise<string> {
     let prompt =
       m.message?.conversation || m.message?.extendedTextMessage?.text || '';
@@ -100,7 +47,7 @@ export class WhatsAppListener implements OnModuleInit {
       m.message?.videoMessage ||
       m.message?.audioMessage
     ) {
-      const savedPath = await this.downloadAndSaveMedia(m);
+      const savedPath = await this.whatsAppMediaStorageService.downloadAndSaveMedia(m);
       if (savedPath) {
         prompt += `\n[User attached a file. It is saved here for you to analyze: ${savedPath}]`;
 
@@ -131,7 +78,8 @@ export class WhatsAppListener implements OnModuleInit {
     const prompt = await this.extractPrompt(m);
     if (!prompt) return;
 
-    const sender = m.pushName ?? m.key.remoteJidAlt?.split('@')[0] ?? 'Unknown';
+    const remoteJid = m.key.remoteJidAlt?.split('@')[0] ?? 'Unknown';
+    const sender = m.pushName ? `${m.pushName}_${remoteJid}` : remoteJid;
     this.logger.log(`Incoming message from ${sender}: ${prompt}`);
 
     await this.sendReadReceipt(m);

@@ -105,7 +105,7 @@ export const createVisionLLMProvider = (
   logger.log(`Creating Vision LLM provider for model type: ${modelType}`);
 
   const validTypes = Object.keys(providerRegistry) as ModelType[];
-  const providerFactory = providerRegistry[modelType as ModelType];
+  const providerFactory = providerRegistry[modelType];
 
   if (!providerFactory) {
     throw new Error(

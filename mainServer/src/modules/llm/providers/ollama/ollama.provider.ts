@@ -39,7 +39,7 @@ export class OllamaProvider extends LLMProvider {
     const baseUrl = this.configService.get<string>(
       baseUrlKey,
       'http://localhost:11434',
-    ) as string;
+    );
     const modelName = this.configService.get<string>(modelKey) as string;
 
     const chatModel = new ChatOllama({
