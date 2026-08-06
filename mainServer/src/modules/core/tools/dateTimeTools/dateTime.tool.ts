@@ -39,8 +39,9 @@ export class DateTimeTool {
   private getDay() {
     const now = new Date();
     const day = now.getDay();
+    const daysMap = [DAYS.SUNDAY, DAYS.MONDAY, DAYS.TUESDAY, DAYS.WEDNESDAY, DAYS.THURSDAY, DAYS.FRIDAY, DAYS.SATURDAY];
     return {
-      day: DAYS[day] as DAYS,
+      day: daysMap[day],
     };
   }
 

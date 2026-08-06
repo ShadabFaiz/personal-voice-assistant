@@ -1,4 +1,5 @@
 import { HumanMessage } from '@langchain/core/messages';
+import { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import { tool } from '@langchain/core/tools';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -94,7 +95,7 @@ export class MediaAnalysisTool {
   }
 
   private async executeCacheHit(
-    chatModel: any,
+    chatModel: BaseChatModel,
     fileName: string,
     cachedText: string,
     query: string,
@@ -114,7 +115,7 @@ export class MediaAnalysisTool {
   }
 
   private async executeCacheMiss(
-    chatModel: any,
+    chatModel: BaseChatModel,
     cachePath: string,
     fileBuffer: Buffer,
     fileName: string,

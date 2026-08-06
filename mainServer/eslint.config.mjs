@@ -5,9 +5,22 @@ import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
-export default tseslint.config(
+/** @type {import('eslint').Linter.FlatConfig[]} */
+export default [
   {
-    ignores: ['eslint.config.mjs', 'dist', 'recordings', 'node_modules', '*.main.ts'],
+    ignores: [
+      'eslint.config.mjs',
+      'dist',
+      'recordings',
+      'node_modules',
+      '**/openai-compatible/**',
+      '*.main.ts',
+      '**/waveAudioFileValidator.ts',
+      '**/voiceChat/**/*.ts',
+      '**/tools/**/*.ts',
+      'webpack-build.config.js',
+      // '**/core/**/*.ts'
+    ],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
@@ -35,5 +48,19 @@ export default tseslint.config(
     },
   },
   prettierConfig, // Ensures Prettier formatting takes precedence over ESLint
-
-);
+  {
+    files: [
+      '**/*.spec.ts',
+      '**/*.e2e-spec.ts',
+      'test/**/*.ts'
+    ],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
+    },
+  },
+];

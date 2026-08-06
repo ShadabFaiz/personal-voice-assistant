@@ -1,9 +1,7 @@
 import { AppDataDirectoryService } from '@core/services/appDirectory.service';
 import { LLMWorkflowService } from '@core/services/llmWorkflow.service';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { WAMessage, downloadMediaMessage } from '@whiskeysockets/baileys';
-import * as fs from 'node:fs/promises';
-import * as path from 'node:path';
+import { WAMessage } from '@whiskeysockets/baileys';
 import { WhatsAppCacheService } from './whatsapp-cache.service';
 import { WhatsAppMediaStorageService } from './whatsapp-media-storage.service';
 import { WhatsAppService } from './whatsapp.service';

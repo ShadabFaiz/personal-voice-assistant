@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
-    "typeRoots": ["./node_modules/@types", "./src/typings"],
-
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/typings"
+    ],
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
@@ -11,7 +13,10 @@
     "moduleResolution": "NodeNext",
     "target": "ES2022",
     "sourceMap": true,
-    "types": ["jest", "node"],
+    "types": [
+      "jest",
+      "node"
+    ],
     "baseUrl": "./",
     "rootDir": "./src",
     "outDir": "./dist",
@@ -20,14 +25,20 @@
     "strictNullChecks": true,
     "strictPropertyInitialization": false,
     "forceConsistentCasingInFileNames": true,
-    "noImplicitAny": false,
+    "noImplicitAny": true,
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "esModuleInterop": true,
     "paths": {
-      "@core/*": ["src/modules/core/*"],
-      "@tools/*": ["src/tools/*"],
-      "@llm/*": ["src/modules/llm/*"]
+      "@core/*": [
+        "src/modules/core/*"
+      ],
+      "@tools/*": [
+        "src/tools/*"
+      ],
+      "@llm/*": [
+        "src/modules/llm/*"
+      ]
     }
   }
 }

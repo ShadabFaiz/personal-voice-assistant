@@ -19,7 +19,7 @@ export const loadCertificate = (
   } catch (err) {
     const error = new Error(
       `[TLS CONFIG ERROR] Failed to read certificate at ${caPath}. ${
-        err instanceof Error ? err.message : err
+        err instanceof Error ? err.message : String(err)
       }`,
     );
     return [error, null];

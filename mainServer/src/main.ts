@@ -11,7 +11,7 @@ function printEnvVariables() {
 
   const config = AppConfigFunction();
   for (const key in config) {
-    console.log(`  ${key}: ${config[key]}`);
+    console.log(`  ${key}: ${config[key as keyof typeof config]}`);
   }
   console.log('************');
 }

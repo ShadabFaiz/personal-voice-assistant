@@ -1,6 +1,5 @@
 import { AppDataDirectoryService } from '@core/services/appDirectory.service';
 import { ConfigService } from '@nestjs/config';
-import { DEFAULT_AGENT_WORKSPACE_DIRECTORY_NAME } from '../../core/config/constants';
 import { Injectable, Logger } from '@nestjs/common';
 import { WAMessage, downloadMediaMessage } from '@whiskeysockets/baileys';
 import * as fs from 'node:fs/promises';

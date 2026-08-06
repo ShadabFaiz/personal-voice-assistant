@@ -34,10 +34,10 @@ export class UserDefinedPromptsService implements OnModuleInit {
         this.logger.log(
           `Directory ${this.userDefinedPromptsDir} successfully created.`,
         );
-      } catch (error: any) {
+      } catch (error: unknown) {
         this.logger.error(
           `Failed to create directory ${this.userDefinedPromptsDir}`,
-          error.message,
+          error instanceof Error ? error.message : String(error),
         );
       }
     }
@@ -67,14 +67,15 @@ export class UserDefinedPromptsService implements OnModuleInit {
       entries = await fs.readdir(this.userDefinedPromptsDir, {
         withFileTypes: true,
       });
-    } catch (error: any) {
-      if (error.code === 'ENOENT') {
+    } catch (error: unknown) {
+      const err = error as NodeJS.ErrnoException;
+      if (err.code === 'ENOENT') {
         this.logger.debug(
           `User defined prompts directory does not exist, skipping: ${this.userDefinedPromptsDir}`,
         );
       } else {
         this.logger.warn(
-          `Failed to list directory: ${this.userDefinedPromptsDir}. Error: ${error.message}`,
+          `Failed to list directory: ${this.userDefinedPromptsDir}. Error: ${err.message || String(error)}`,
         );
       }
       return [];
@@ -94,8 +95,8 @@ export class UserDefinedPromptsService implements OnModuleInit {
           const content = await fs.readFile(filePath, 'utf-8');
           const basename = path.basename(entry.name, path.extname(entry.name));
           promptFiles.push({ name: basename, content });
-        } catch (error: any) {
-          this.logger.error(`Failed to read file: ${filePath}`, error.message);
+        } catch (error: unknown) {
+          this.logger.error(`Failed to read file: ${filePath}`, error instanceof Error ? error.message : String(error));
         }
       }
     }

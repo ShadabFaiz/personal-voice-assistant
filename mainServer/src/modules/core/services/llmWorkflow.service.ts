@@ -22,10 +22,10 @@ export class LLMWorkflowService {
   private readonly memory = new MemorySaver();
 
   private readonly workflow = new StateGraph(MessagesAnnotation)
-    .addNode('model', this.callModel.bind(this))
-    .addNode('tools', this.callTools.bind(this))
+    .addNode('model', (state: typeof MessagesAnnotation.State) => this.callModel(state))
+    .addNode('tools', (state: typeof MessagesAnnotation.State) => this.callTools(state))
     .addEdge(START, 'model')
-    .addConditionalEdges('model', this.llmResponseHandler.bind(this), [
+    .addConditionalEdges('model', (state: typeof MessagesAnnotation.State) => this.llmResponseHandler(state), [
       'tools',
       END,
     ])
