@@ -115,6 +115,7 @@ export const AppConfigFunction = () =>
       process.env.VISION_GEMINI_MODEL || DEFAULT_GEMINI_MODEL,
     VISION_OLLAMA_BASE_URL:
       process.env.VISION_OLLAMA_BASE_URL || DEFAULT_OLLAMA_BASE_URL,
+    adminRemoteJidAlt: process.env.adminRemoteJidAlt,
   }) as const;
 
 export type AppConfig = ReturnType<typeof AppConfigFunction>;

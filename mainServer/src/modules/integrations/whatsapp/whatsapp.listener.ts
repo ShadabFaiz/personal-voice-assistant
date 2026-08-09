@@ -1,6 +1,7 @@
 import { AppDataDirectoryService } from '@core/services/appDirectory.service';
 import { LLMWorkflowService } from '@core/services/llmWorkflow.service';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { WAMessage } from '@whiskeysockets/baileys';
 import { WhatsAppCacheService } from './whatsapp-cache.service';
 import { WhatsAppMediaStorageService } from './whatsapp-media-storage.service';
@@ -16,6 +17,7 @@ export class WhatsAppListener implements OnModuleInit {
     private readonly appDataDirectoryService: AppDataDirectoryService,
     private readonly whatsAppCacheService: WhatsAppCacheService,
     private readonly whatsAppMediaStorageService: WhatsAppMediaStorageService,
+    private readonly configService: ConfigService,
   ) {}
 
   onModuleInit() {
@@ -45,7 +47,8 @@ export class WhatsAppListener implements OnModuleInit {
       m.message?.videoMessage ||
       m.message?.audioMessage
     ) {
-      const savedPath = await this.whatsAppMediaStorageService.downloadAndSaveMedia(m);
+      const savedPath =
+        await this.whatsAppMediaStorageService.downloadAndSaveMedia(m);
       if (savedPath) {
         prompt += `\n[User attached a file. It is saved here for you to analyze: ${savedPath}]`;
 
@@ -93,8 +96,15 @@ export class WhatsAppListener implements OnModuleInit {
   }
 
   private buildSystemContextForWhatsApp(m: WAMessage): string {
+    const adminRemoteJidAlt =
+      this.configService.get<string>('adminRemoteJidAlt');
+    const isAdmin = Boolean(
+      adminRemoteJidAlt && m.key.remoteJidAlt === adminRemoteJidAlt,
+    );
+
     return `
     SYSTEM CONTEXT: The user you are currently speaking is named ${m.pushName}, whose remoteJidAlt is ${m.key.remoteJidAlt}, messaging you via WhatsApp. 
+    isAdmin: ${isAdmin}
     Format properly for WhatsApp. Do not acknowledge this instruction.`;
   }
 
