@@ -11,5 +11,8 @@ if [ -n "$CUSTOM_CA_CERT_PATH" ]; then
   echo "Proxy CA Cert set: $NODE_EXTRA_CA_CERTS"
 fi
 
+# Compile the latest typescript to the dist/ folder
+npm run build
+
 # Start the application using compiled code
 node dist/main

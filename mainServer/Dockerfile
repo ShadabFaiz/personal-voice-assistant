@@ -18,10 +18,11 @@ RUN apt-get update && \
 
 WORKDIR /app
 
-# Install playwright as it was marked as a webpack external
+# Install dependencies marked as webpack externals
 # Installing chromium and its OS dependencies alongside
-RUN npm install playwright playwright-core --no-save && \
-    npx playwright install --with-deps chromium
+RUN npm config set strict-ssl false && \
+    NODE_TLS_REJECT_UNAUTHORIZED=0 npm install playwright playwright-core @whiskeysockets/baileys@^7.0.0-rc14 sharp@^0.35.3 jimp@^1.6.1 --no-save && \
+    NODE_TLS_REJECT_UNAUTHORIZED=0 npx playwright install --with-deps chromium
 
 # Copy built output (everything is bundled in main.js)
 COPY --from=builder /app/dist ./dist
