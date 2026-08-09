@@ -77,10 +77,6 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
           small: true,
         });
         this.logger.log(`\n${qrcode}`);
-        
-        const qrPath = path.join(process.cwd(), 'qr.png');
-        await QRCode.toFile(qrPath, qr);
-        this.logger.log(`QR Code also saved to image at: ${qrPath}`);
       } catch (err) {
         this.logger.error('Failed to generate QR code', err);
       }
