@@ -43,7 +43,7 @@ export class WhatsAppMediaStorageService {
         filenameStr += '.ogg';
       }
 
-      const remoteJid = m.key.remoteJidAlt?.split('@')[0] ?? 'Unknown';
+      const remoteJid = m.key.remoteJid?.split('@')[0] ?? 'Unknown';
       const sender = m.pushName ? `${m.pushName}_${remoteJid}` : remoteJid;
 
       const folderName = path.join(

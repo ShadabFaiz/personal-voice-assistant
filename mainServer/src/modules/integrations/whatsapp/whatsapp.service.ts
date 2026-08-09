@@ -1,11 +1,6 @@
 import { AppDataDirectoryService } from '@core/services/appDirectory.service';
 import { Boom } from '@hapi/boom';
-import {
-  Injectable,
-  Logger,
-  OnModuleDestroy,
-  OnModuleInit,
-} from '@nestjs/common';
+import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import makeWASocket, {
   ConnectionState,
   DisconnectReason,
@@ -41,11 +36,7 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
   }
 
   private async connectToWhatsApp() {
-    const credentialsPath = path.join(
-      this.appDataDirectoryService.getAppDataPath(),
-      'credentials',
-      'whatsapp',
-    );
+    const credentialsPath = path.join(this.appDataDirectoryService.getAppDataPath(), 'credentials', 'whatsapp');
 
     this.logger.debug(`Storing WhatsApp credentials at: ${credentialsPath}`);
     const { state, saveCreds } = await useMultiFileAuthState(credentialsPath);
@@ -53,15 +44,16 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
     this.sock = makeWASocket({
       retryRequestDelayMs: 3000,
       auth: state,
-      shouldSyncHistoryMessage: () => true,
-      syncFullHistory: false,
-      fireInitQueries: true,
+      browser: ['Ubuntu', 'Chrome', '20.0.04'],
+      markOnlineOnConnect: false,
+      // Removing shouldSyncHistoryMessage as disabling it prevents LID mapping 
+      // and causes "failed to ack notification" during initial QR connection.
+      fireInitQueries: false,
       generateHighQualityLinkPreview: true,
-      enableAutoSessionRecreation: true,
-      enableRecentMessageCache: true,
+      // Removed enableAutoSessionRecreation for Baileys v6.7.24 compatibility
+      // Removed enableRecentMessageCache for Baileys v6.7.24 compatibility
       getMessage: (key: WAMessageKey) => {
-        const message =
-          this.whatsAppCacheService.getMessage(key.id!)?.message ?? undefined;
+        const message = this.whatsAppCacheService.getMessage(key.id!)?.message ?? undefined;
         return Promise.resolve(message);
       },
     });
@@ -75,9 +67,7 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
     });
   }
 
-  private async handleConnectionUpdate(
-    update: Partial<ConnectionState>,
-  ): Promise<void> {
+  private async handleConnectionUpdate(update: Partial<ConnectionState>): Promise<void> {
     const { connection, lastDisconnect, qr } = update;
 
     if (qr) {
@@ -87,6 +77,10 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
           small: true,
         });
         this.logger.log(`\n${qrcode}`);
+        
+        const qrPath = path.join(process.cwd(), 'qr.png');
+        await QRCode.toFile(qrPath, qr);
+        this.logger.log(`QR Code also saved to image at: ${qrPath}`);
       } catch (err) {
         this.logger.error('Failed to generate QR code', err);
       }
@@ -94,14 +88,13 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
 
     if (connection === 'close') {
       const loggedOutStatusCode: number = DisconnectReason.loggedOut;
-      const shouldReconnect =
-        (lastDisconnect?.error as Boom)?.output?.statusCode !==
-        loggedOutStatusCode;
+      const shouldReconnect = (lastDisconnect?.error as Boom)?.output?.statusCode !== loggedOutStatusCode;
 
       if (!this.shouldExit) {
         this.logger.warn('Connection closed.', lastDisconnect?.error);
         if (shouldReconnect) {
-          this.logger.log('Reconnecting...');
+          this.logger.log('Reconnecting in 2 seconds...');
+          await new Promise((resolve) => setTimeout(resolve, 2000));
           await this.connectToWhatsApp();
         }
       }
@@ -118,10 +111,7 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
   public async simulateTyping(jid: string, isTyping: boolean) {
     if (!this.sock) return;
     try {
-      await this.sock.sendPresenceUpdate(
-        isTyping ? 'composing' : 'paused',
-        jid,
-      );
+      await this.sock.sendPresenceUpdate(isTyping ? 'composing' : 'paused', jid);
     } catch (err) {
       this.logger.debug('Failed to send presence update', err);
     }

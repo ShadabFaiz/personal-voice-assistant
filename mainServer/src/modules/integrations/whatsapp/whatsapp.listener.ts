@@ -79,7 +79,7 @@ export class WhatsAppListener implements OnModuleInit {
     const prompt = await this.extractPrompt(m);
     if (!prompt) return;
 
-    const remoteJid = m.key.remoteJidAlt?.split('@')[0] ?? 'Unknown';
+    const remoteJid = m.key.remoteJid?.split('@')[0] ?? 'Unknown';
     const sender = m.pushName ? `${m.pushName}_${remoteJid}` : remoteJid;
     this.logger.log(`Incoming message from ${sender}: ${prompt}`);
 
@@ -99,11 +99,11 @@ export class WhatsAppListener implements OnModuleInit {
     const adminRemoteJidAlt =
       this.configService.get<string>('adminRemoteJidAlt');
     const isAdmin = Boolean(
-      adminRemoteJidAlt && m.key.remoteJidAlt === adminRemoteJidAlt,
+      adminRemoteJidAlt && m.key.remoteJid === adminRemoteJidAlt,
     );
 
     return `
-    SYSTEM CONTEXT: The user you are currently speaking is named ${m.pushName}, whose remoteJidAlt is ${m.key.remoteJidAlt}, messaging you via WhatsApp. 
+    SYSTEM CONTEXT: The user you are currently speaking is named ${m.pushName}, whose remoteJidAlt is ${m.key.remoteJid}, messaging you via WhatsApp. 
     isAdmin: ${isAdmin}
     Format properly for WhatsApp. Do not acknowledge this instruction.`;
   }
