@@ -5,8 +5,9 @@ import makeWASocket, {
   ConnectionState,
   DisconnectReason,
   useMultiFileAuthState,
-  WAMessageKey,
+  WAMessageKey
 } from '@whiskeysockets/baileys';
+import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as QRCode from 'qrcode';
 import { WhatsAppCacheService } from './whatsapp-cache.service';
@@ -36,8 +37,11 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
   }
 
   private async connectToWhatsApp() {
-    const credentialsPath = path.join(this.appDataDirectoryService.getAppDataPath(), 'credentials', 'whatsapp');
-
+    const credentialsPath = path.join(
+      this.appDataDirectoryService.getAppDataPath(),
+      'credentials',
+      'whatsapp',
+    );
     this.logger.debug(`Storing WhatsApp credentials at: ${credentialsPath}`);
     const { state, saveCreds } = await useMultiFileAuthState(credentialsPath);
 
@@ -70,6 +74,8 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
   private async handleConnectionUpdate(update: Partial<ConnectionState>): Promise<void> {
     const { connection, lastDisconnect, qr } = update;
 
+
+
     if (qr) {
       try {
         const qrcode = await QRCode.toString(qr, {
@@ -77,10 +83,20 @@ export class WhatsAppService implements OnModuleInit, OnModuleDestroy {
           small: true,
         });
         this.logger.log(`\n${qrcode}`);
+        
+        // Save securely to PNG so the user can easily pull it without scrolling
+        const setupPath = path.join(process.cwd(), 'whatsApp_setup');
+        if (!fs.existsSync(setupPath)) {
+          fs.mkdirSync(setupPath, { recursive: true });
+        }
+        const qrImagePath = path.join(setupPath, 'whatsapp-qr.png');
+        await QRCode.toFile(qrImagePath, qr, { width: 400, margin: 2 });
+        this.logger.log(`[!] Scanning checkpoint ready: ${qrImagePath}`);
       } catch (err) {
         this.logger.error('Failed to generate QR code', err);
       }
     }
+      console.log('connect update: ', JSON.stringify(update))
 
     if (connection === 'close') {
       const loggedOutStatusCode: number = DisconnectReason.loggedOut;
