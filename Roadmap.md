@@ -92,7 +92,7 @@
 - [ ] Rate-limit handling
 - [ ] Configurable subreddit subscriptions
 
-### WhatsApp Integration
+### [WhatsApp Integration](mainServer/src/modules/integrations/whatsapp/specification.md)
 
 - [x] Incoming message webhook
 - [x] Text message support
