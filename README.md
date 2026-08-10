@@ -10,11 +10,13 @@
 2. [LocationTool](mainServer/src/modules/core/tools/locationTool/specification.md)
 3. [DateTimeTool](mainServer/src/modules/core/tools/dateTimeTools/specification.md)
 4. [GmailTool](mainServer/src/modules/core/tools/gmail/specification.md)
-5. BraveSearchTool
-6. DuckDuckGoSearchTool
-7. WebPageFetcherTool
-8. [BrowserAutomationTool](mainServer/src/modules/core/tools/browserAutomationTool/description.ts)
-9. [Apis](mainServer/APIs.md)
+5. [BraveSearchTool](mainServer/src/modules/core/tools/braveSearchTool/specification.md)
+6. [DuckDuckGoSearchTool](mainServer/src/modules/core/tools/duckDuckGoSearchTool/specification.md)
+7. [WebPageFetcherTool](mainServer/src/modules/core/tools/webPageFetcherTool/specification.md)
+8. [BrowserAutomationTool](mainServer/src/modules/core/tools/browserAutomationTool/specification.md)
+9. [MediaAnalysisTool](mainServer/src/modules/core/tools/mediaAnalysisTool/specification.md)
+10. [TempMailTool](mainServer/src/modules/core/tools/tempMailTool/specification.md)
+11. [Apis](mainServer/APIs.md)
 
 ## NVCC required for voice interaction
 1. `wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.0-1_all.deb`
