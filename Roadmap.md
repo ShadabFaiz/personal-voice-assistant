@@ -18,10 +18,9 @@
 - [x] Date / Time tools
 - [x] Online Search (DuckDuckGo Web search)
 - [x] WebPageFetcherTool
-- [ ] PDFReaderTool
-- [ ] RAGProcessor
-- [ ] Tool invocation governance
-- [ ] Tool caching layer
+- [x] PDFReaderTool
+- [x] Tool invocation governance
+- [x] Tool caching layer
 
 ---
 
@@ -40,7 +39,7 @@
 
 ---
 
-## 4. Local Document Intelligence
+## 4. Local Document Intelligence (not needed due to multimodal approach ?)
 
 - [ ] Local PDF reader
 - [ ] PDF text extraction
@@ -71,30 +70,16 @@
 
 ---
 
-## 7. Network / Fetching Layer
-
-- [x] Custom TLS CA support
-- [ ] Retry mechanism
-- [ ] Exponential backoff
-- [ ] Smart timeout strategy
-- [ ] User-Agent rotation
-- [ ] Proxy support
-- [ ] Request logging
-
----
-
-## 8. Infrastructure & Stability
+## 7. Infrastructure & Stability
 
 - [ ] Session memory
 - [ ] Embedding cache
 - [ ] Tool response cache
-- [ ] Observability / logging
 - [ ] Token usage tracking
-- [ ] Error resilience
 
 ---
 
-## 9. Platform Integrations
+## 8. Platform Integrations
 
 ### Reddit Integration
 
@@ -109,16 +94,15 @@
 
 ### WhatsApp Integration
 
-- [ ] WhatsApp Business API setup
-- [ ] Incoming message webhook
-- [ ] Text message support
-- [ ] Voice message support
-- [ ] Send TTS voice replies
-- [ ] Media handling (images/files)
-- [ ] Conversation session management
+- [x] Incoming message webhook
+- [x] Text message support
+- [x] Voice message support
+- [x] Send TTS voice replies
+- [x] Media handling (images/files)
+- [x] Conversation session management
 - [ ] Contact authorization / allowlist
 
-### Email Integration (Gmail / Outlook)
+### Email Integration (Gmail) (Need more testing)
 
 - [ ] Email API client setup
 - [ ] Read new emails
